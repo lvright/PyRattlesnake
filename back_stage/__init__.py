@@ -7,7 +7,8 @@ from utils import *
 # APIRouter admin模块
 router = APIRouter(prefix='/admin', tags=['back_stage'])
 
-# TODO 数据库连接池
+
+# TODO ------------数据库表连接池------------
 
 # 账户和菜单管理
 admin_account = data_base.table('admin_account')
@@ -33,6 +34,18 @@ admin_post_account = data_base.table('admin_post_account')
 data_dictionary = data_base.table('data_dictionary')
 dictionary = data_base.table('dictionary')
 
+# 附件管理
+attachment = data_base.table('attachment')
+
+# 应用管理
+sys_app_group = data_base.table('sys_app_group')
+sys_app = data_base.table('sys_app')
+
+# api管理
+sys_apis_group = data_base.table('sys_apis_group')
+sys_apis = data_base.table('sys_apis')
+
 # 导出接口模块
 from back_stage.apis.v1 \
-    import account, menu, roles, login, config, message, dept, post, auth
+    import account, menu, roles, login, config, message, \
+    dept, post, auth, attachment, interface, app

@@ -88,8 +88,8 @@ async def create_role(role_data: admin.RolesForm, token_info: str = Depends(http
     role = dict(role_data)
 
     # 插入创建时间
-    role['created_at'] = str(datetime.now())
-    role['created_by'] = int(time.time())
+    role['created_at'] = now_date_time
+    role['created_by'] = now_timestamp
 
     # 插入角色数据
     db.execute(admin_roles.insert().values(role))
@@ -111,8 +111,8 @@ async def create_role(
     del role['dept_ids']
 
     # 插入创建时间
-    role['updated_at'] = str(datetime.now())
-    role['updated_by'] = int(time.time())
+    role['updated_at'] = now_date_time
+    role['updated_by'] = now_timestamp
 
     # 更新角色数据
     db.execute(admin_roles.update().where(admin_roles.c.id == roleId).values(role))

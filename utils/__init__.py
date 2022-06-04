@@ -11,6 +11,11 @@ data_base = DataBase()
 db = DataBase().db_session()
 log = Log()
 manager = ConnectionManager()
+base_code = BaseCode()
 
 # TODO 项目路径
 project_file_path = os.path.abspath(os.path.join(os.getcwd(), "..")) + '/PyRattlesnake'
+
+# TODO 当前时间和时间戳
+now_date_time = str(datetime.now().strftime('%Y-%m-%d %H:%m'))
+now_timestamp = int(time.time())

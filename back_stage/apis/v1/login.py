@@ -12,7 +12,7 @@ async def get_code_key():
     # 调用图片验证码模块获取 code 和 url
     get_code = captcha.code_img()
 
-    # 暂不设置redis
+    # 暂不设置 redis
 
     if get_code:
         return http.respond(200, True, 'OK', {'codeUrl': get_code['img_url']})

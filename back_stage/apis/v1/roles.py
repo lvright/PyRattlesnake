@@ -47,8 +47,8 @@ async def user_import(file: bytes = File(...), token_info: str = Depends(http.to
     import_file_pd = pd.read_excel(import_file, sheet_name='user', index_col=0)
 
     # 插入创建时间
-    import_file_pd.insert(loc=7, column='created_by', value=str(int(time.time())))
-    import_file_pd.insert(loc=8, column='created_at', value=str(datetime.now()))
+    import_file_pd.insert(loc=7, column='created_by', value=str(now_timestamp))
+    import_file_pd.insert(loc=8, column='created_at', value=now_date_time)
 
     # 插入默认密码
     import_file_pd.insert(loc=9, column='password', value='123456')
@@ -251,8 +251,8 @@ async def create_user(account: admin.User, token_info: str = Depends(http.token)
     del acc['dept_id'], acc['role_ids'], acc['post_ids']
 
     # 添加创建时间
-    acc['created_at'] = str(datetime.now())
-    acc['created_by'] = int(time.time())
+    acc['created_at'] = now_date_time
+    acc['created_by'] = now_timestamp
 
     # 插入添加数据
     user_id = db.execute(admin_account.insert().values(acc)).lastrowid
@@ -321,8 +321,8 @@ async def update_user(id: int, account: admin.User, token_info: str = Depends(ht
     del acc['dept_id'], acc['role_ids'], acc['post_ids']
 
     # 添加更新时间
-    acc['updated_at'] = str(datetime.now())
-    acc['updated_by'] = int(time.time())
+    acc['updated_at'] = now_date_time
+    acc['updated_by'] = now_timestamp
 
     # 更新数据
     db.execute(admin_account.update().where(admin_account.c.id == acc['id']).values(acc))

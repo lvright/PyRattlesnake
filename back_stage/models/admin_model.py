@@ -114,17 +114,51 @@ class Dept(BaseModel):
     sort: int = Query(None)
     status: str = Query(None)
 
+# 数据字典
 class DictDate(BaseModel):
-    label: str = Query(None),
-    value: str = Query(None),
-    code: Optional[str] = Query(None),
-    status: Optional[str] = Query(None),
-    remark: Optional[str] = Query(None),
-    sort: Optional[int] = Query(None),
-    type_id: Optional[int] = Query(None),
+    label: str = Query(None)
+    value: str = Query(None)
+    code: Optional[str] = Query(None)
+    status: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)
+    sort: Optional[int] = Query(None)
+    type_id: Optional[int] = Query(None)
 
+# 数据字典类型
 class DictType(BaseModel):
-    code: Optional[str] = Query(None),
-    name: Optional[str] = Query(None),
-    status: Optional[str] = Query(None),
-    remark: Optional[str] = Query(None),
+    code: Optional[str] = Query(None)
+    name: Optional[str] = Query(None)
+    status: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)
+
+# 应用分组
+class AppGroup(BaseModel):
+    name: Optional[str] = Query(None)
+    status: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)
+
+# 应用
+class App(BaseModel):
+    app_id: Optional[str] = Query(None)
+    app_secret: Optional[str] = Query(None)
+    app_name: Optional[str] = Query(None)
+    status: Optional[str] = Query(None)
+    group_id: Optional[str] = Query(None)
+    description: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)
+
+# api分组
+class ApiGroup(BaseModel):
+    name: Optional[str] = Query(None)
+    status: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)
+
+# Apis
+class Api(BaseModel):
+    api_id: Optional[str] = Query(None)
+    app_secret: Optional[str] = Query(None)
+    app_name: Optional[str] = Query(None)
+    status: Optional[str] = Query(None)
+    group_id: Optional[str] = Query(None)
+    description: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)

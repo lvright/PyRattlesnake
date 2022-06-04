@@ -41,4 +41,4 @@ app.add_middleware(
 
 # 静态文件设置
 # Jinja2Templates(directory="./templates")
-# app.mount("/static", StaticFiles(directory="./static"), name="static")
+app.mount("/static", StaticFiles(directory="./static"), name="static")

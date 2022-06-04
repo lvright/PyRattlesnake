@@ -18,8 +18,10 @@ import paginator
 import base64
 import os
 import pickle
+import dload
 import numpy as np
 import pandas as pd
+from binascii import hexlify
 from sqlalchemy import Table, and_, or_, not_, column, select, insert, update, delete, desc
 from sqlalchemy.orm import load_only, sessionmaker, Session, scoped_session
 from PIL import Image, ImageDraw, ImageFont
@@ -395,3 +397,14 @@ class Log:
         logger = logging.getLogger(__name__)
         logger.critical(self.text)
         return
+
+"""
+baseCodeKey 64位加密工具
+"""
+class BaseCode:
+
+    app_id = str(hexlify(os.urandom(12)), 'utf-8')
+
+    app_secret = base64.b64encode(app_id.encode(encoding='utf-8')).decode('utf-8')
+
+    app_key_decode = base64.b64decode(app_secret.encode(encoding='utf-8'))

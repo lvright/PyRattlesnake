@@ -35,12 +35,16 @@ async def admin_info(token_info: str = Depends(http.token)):
                     'type': items['type']
                 }
                 del items['hidden'], items['hiddenBreadcrumb'], items['icon'], items['title'], items['type']
-                items['children'] = [
-                    menu for menu in admin_menu_list
-                    if menu['parent_id'] == items['menu_id']
-                ]
-                if items['parent_id'] == 0: menu_list.append(items)
-            back_setting = db.query(backend_setting).filter_by(id=1).first()
+                if items['status'] == '0':
+                    items['children'] = [
+                        menu for menu in admin_menu_list
+                        if menu['parent_id'] == items['menu_id']
+                        if menu['status'] == '0'
+                    ]
+                    if items['parent_id'] == 0: menu_list.append(items)
+
+            # 获取系统配置
+            back_setting = db.query(backend_setting).filter_by(user_id=token_info['id']).first()
 
             # 插入 backend_setting 系统设置
             admin_info['backend_setting'] = dict(back_setting)
@@ -59,6 +63,7 @@ async def admin_edit_info(edit_info: admin.AdminUpdateInfo, token_info: str = De
 
     """修改账号信息"""
 
+    # 格式化
     edit_data = dict(edit_info)
 
     # 在修改账户接口中删除 AdminUpdateInfo model 的 dept_id

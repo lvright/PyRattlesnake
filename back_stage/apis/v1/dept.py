@@ -109,8 +109,8 @@ async def update_dept(depts: admin.Dept, token_info: str = Depends(http.token)):
     dept = dict(depts)
 
     # 插入更新时间
-    dept['updated_by'] = str(datetime.now())
-    dept['updated_at'] = int(time.time())
+    dept['updated_by'] = now_date_time
+    dept['updated_at'] = now_timestamp
 
     # 更新部门数据
     db.execute(admin_dept.update().where(id=depts.id).values(dept))
@@ -144,8 +144,8 @@ async def dept_save(dept: admin.Dept, token_info: str = Depends(http.token)):
     dept = dict(dept)
 
     # 插入创建时间
-    dept['created_at'] = str(datetime.now())
-    dept['created_by'] = int(time.time())
+    dept['created_at'] = now_date_time
+    dept['created_by'] = now_timestamp
 
     # 格式化 parent_id
     if isinstance(dept['parent_id'], list):
@@ -171,8 +171,8 @@ async def dept_update(deptId: int, dept: admin.Dept, token_info: str = Depends(h
         dept['parent_id'] = dept['parent_id'][-1]
 
     # 更新编辑时间
-    dept['updated_at'] = str(datetime.now())
-    dept['updated_by'] = int(time.time())
+    dept['updated_at'] = now_date_time
+    dept['updated_by'] = now_timestamp
 
     # 更新数据
     db.execute(admin_dept.update().where(admin_dept.c.id == deptId).values(dept))
