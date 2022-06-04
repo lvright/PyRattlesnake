@@ -27,7 +27,7 @@ app = FastAPI(
     ]
 )
 
-# fastapi蓝图
+# fastapi 蓝图
 app.include_router(admin)
 
 # 跨域
