@@ -447,7 +447,7 @@
           if (data.children && data.children.length > 0) {
             filterNode(data.children)
           }
-          // this.queryParams.dept_id = ids.join(',')
+          this.queryParams.dept_id = ids.join(',')
 					this.queryParams.dept_id = data.id
 				}
         this.$refs.table.upData(this.queryParams)

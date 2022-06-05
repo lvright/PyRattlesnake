@@ -177,7 +177,6 @@
         },
         selection: [],
         queryParams: {
-            
           title: undefined,
           type: undefined,
         },
@@ -302,7 +301,6 @@
 
       resetSearch() {
         this.queryParams = {
-          
           title: undefined,
           type: undefined,
         }

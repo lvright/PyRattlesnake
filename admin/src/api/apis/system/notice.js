@@ -12,7 +12,7 @@ export default {
    */
   getList (params = {}) {
     return request({
-      url: 'system/notice/index',
+      url: 'admin/user/notice/index',
       method: 'get',
       params
     })
@@ -36,7 +36,7 @@ export default {
    */
   save (params = {}) {
     return request({
-      url: 'system/notice/save',
+      url: 'admin/notice/save',
       method: 'post',
       data: params
     })
@@ -60,7 +60,7 @@ export default {
    */
   deletes (ids) {
     return request({
-      url: 'system/notice/delete/' + ids,
+      url: 'admin/notice/delete/' + ids,
       method: 'delete'
     })
   },
@@ -93,7 +93,7 @@ export default {
    */
   update (id, params = {}) {
     return request({
-      url: 'system/notice/update/' + id,
+      url: 'admin/notice/update/' + id,
       method: 'put',
       data: params
     })

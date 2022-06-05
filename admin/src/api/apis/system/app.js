@@ -93,7 +93,7 @@ export default {
    */
   update (id, params = {}) {
     return request({
-      url: 'system/app/update/' + id,
+      url: 'admin/app/update/' + id,
       method: 'put',
       data: params
     })

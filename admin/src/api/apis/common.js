@@ -9,7 +9,7 @@ export default {
      */
     getUserList (params = {}) {
         return request({
-            url: 'system/common/getUserList',
+            url: 'admin/user/getUserList',
             method: 'get',
             params
         })
@@ -21,7 +21,7 @@ export default {
      */
     getDeptTreeList (params = {}) {
         return request({
-            url: 'system/common/getDeptTreeList',
+            url: 'admin/user/getDeptTreeList',
             method: 'get',
             params
         })
@@ -33,7 +33,7 @@ export default {
      */
     getRoleList (params = {}) {
         return request({
-            url: 'system/common/getRoleList',
+            url: 'admin/user/getRoleList',
             method: 'get',
             params
         })
@@ -45,7 +45,7 @@ export default {
      */
     getPostList (params = {}) {
         return request({
-            url: 'system/common/getPostList',
+            url: 'admin/user/getPostList',
             method: 'get',
             params
         })
