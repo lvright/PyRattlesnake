@@ -162,3 +162,11 @@ class Api(BaseModel):
     group_id: Optional[str] = Query(None)
     description: Optional[str] = Query(None)
     remark: Optional[str] = Query(None)
+
+# 系统通知
+class Notice(BaseModel):
+    title: Optional[str] = Query(None)
+    type: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)
+    users: Any = Query(None)
+    content: Optional[str] = Query(None)

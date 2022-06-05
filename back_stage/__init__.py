@@ -45,6 +45,9 @@ sys_app = data_base.table('sys_app')
 sys_apis_group = data_base.table('sys_apis_group')
 sys_apis = data_base.table('sys_apis')
 
+# 系统通知
+sys_message = data_base.table('sys_message')
+
 # 导出接口模块
 from back_stage.apis.v1 \
     import account, menu, roles, login, config, message, \

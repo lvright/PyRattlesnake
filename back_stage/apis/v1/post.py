@@ -72,8 +72,8 @@ async def get_post_list(
         'items': posts_list,
         'pageInfo': {
             'total': len(posts_list),
-            'currentPage': page,
-            'totalPage': page
+            'currentPage': pageSize,
+            'totalPage': pageSize
         }
     })
 

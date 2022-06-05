@@ -126,7 +126,7 @@ async def get_roles_list(
         pageSize: int,
         orderBy: Optional[str] = None,
         orderType: Optional[str] = None,
-        dept_id: Optional[int] = 0,
+        dept_id: Optional[str] = '',
         username: Optional[str] = '',
         nickname: Optional[str] = '',
         phone: Optional[str] = '',
@@ -184,8 +184,15 @@ async def get_roles_list(
 
     # 根据部门ID 返回用户
     if dept_id:
-        dept_relation = db.query(admin_dept_account).filter_by(deptId=dept_id).all()
-        account_list = [item for item in account_list for dept in dept_relation if dict(dept)['userId'] == item['id']]
+        dept_relation = [
+            dict(item) for id in dept_id.split(',')
+            for item in db.query(admin_dept_account).filter_by(deptId=id).all()
+        ]
+        account_list = [
+            item for item in account_list
+            for dept in dept_relation
+            if dict(dept)['userId'] == item['id']
+        ]
 
     return http.respond(200, True, 'OK', {
         'items': account_list,

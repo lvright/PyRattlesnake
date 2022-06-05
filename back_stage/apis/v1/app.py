@@ -183,3 +183,18 @@ async def app_delete(ids: str, token_info: str = Depends(http.token)):
         return http.respond(500, False, '删除失败')
 
     return http.respond(200, True, '删除成功')
+
+@router.put(path='/app/update/{id:path}', summary='更新应用')
+def app_update(id: int, app: admin.App, token_info: str = Depends(http.token)):
+
+    """更新应用"""
+
+    app = dict(app)
+
+    app['updated_at'] = now_date_time
+    app['updated_by'] = now_timestamp
+
+    db.execute(sys_app.update().where(sys_app.c.id == id).values(**app))
+    db.commit()
+
+    return http.respond(200, True, '更新成功')
