@@ -115,7 +115,7 @@
 		</el-container>
 	</el-container>
 
-  <el-drawer v-model="drawer" title="详细内容" size="50%" >
+  <el-drawer v-model="drawer" title="消息详情" size="50%" >
     <el-main v-loading="drawerLoading" element-loading-background="rgba(50, 50, 50, 0.5)"
         element-loading-text="数据加载中..." style="height:100%;"
       >
@@ -180,7 +180,6 @@
 
       loadData (type = undefined) {
         if (! this.defaultActive) return
-
         this.api.list = this.defaultActive === 'send_box' ? this.$API.queueMessage.getSendList : this.$API.queueMessage.getReceiveList
         this.queryParams = { read_status: 'all' }
         this.queryParams.content_type = type
@@ -233,7 +232,7 @@
       // 菜单点击事件
       handleSelect(name) {
         this.defaultActive = name
-        this.loadData( (name === 'receive_box' || name === 'send_box') ? undefined : name)
+        this.loadData((name === 'receive_box' || name === 'send_box') ? undefined : name)
       },
 
       // 处理搜索事件

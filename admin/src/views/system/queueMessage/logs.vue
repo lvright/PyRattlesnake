@@ -89,7 +89,6 @@
 
 			// 获取字典数据
 			getDictData() {
-
 				this.getDict('message_send_status').then(res => {
 					this.message_send_status_data = res.data
 				})

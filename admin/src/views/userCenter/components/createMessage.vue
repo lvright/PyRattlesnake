@@ -6,6 +6,16 @@
         <el-input v-model="form.title"  clearable placeholder="请输入消息标题"></el-input>
       </el-form-item>
 
+      <el-form-item label="消息类型" prop="content_type">
+        <el-select v-model="form.content_type" style="width:100%" clearable placeholder="请选择消息类型">
+            <el-option
+                v-for="(item, index) in queue_msg_type_data"
+                :key="index" :label="item.label"
+                :value="item.value"
+            >{{item.label}}</el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="接收人员" prop="users">
         <ma-select-user v-model="form.users" />
       </el-form-item>
@@ -35,19 +45,31 @@ export default {
       form: {
         title: '',
         users: [],
-        content: ''
+        content: '',
+        content_type: ''
       },
       rules: {
         title: [{required: true, message: '消息必填', trigger: 'blur' }],
+        content_type: [{required: true, message: '消息类型必填', trigger: 'blur' }],
         users: [{required: true, message: '接收人员必选', trigger: 'blur' }],
         content: [{required: true, message: '消息内容必填', trigger: 'blur' }],
       },
+      queue_msg_type_data: []
     }
   },
-
+  async created() {
+    await this.getDictData();
+  },
   methods: {
     open() {
       this.visible = true
+    },
+
+    // 获取字典数据
+    getDictData() {
+        this.getDict('queue_msg_type').then(res => {
+            this.queue_msg_type_data = res.data
+        })
     },
 
     submit() {

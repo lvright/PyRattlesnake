@@ -1,5 +1,5 @@
 <template>
-  <el-button icon="el-icon-finished" @click="open" >选择用户</el-button> <el-tag>已选择 {{modelValue.length}} 个用户</el-tag>
+  <el-button icon="el-icon-finished" @click="open">选择用户</el-button> <el-tag size="medium">已选择 {{modelValue.length}} 个用户</el-tag>
 
   <el-dialog
     append-to-body
@@ -335,5 +335,10 @@ export default {
 }
 .el-button+.el-button {
   margin-left: 6px;
+}
+.el-tag {
+  margin-left: 6px;
+  margin-right: 6px;
+  height: 32px;
 }
 </style>

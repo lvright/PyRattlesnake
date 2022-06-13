@@ -3,9 +3,6 @@
     <div class="screen panel-item hidden-sm-and-down" @click="lockScreen">
       <el-icon><el-icon-lock /></el-icon>
     </div>
-    <!-- <div class="screen panel-item hidden-sm-and-down" @click="goDoc">
-      <el-icon><sc-icon-file-word /></el-icon>
-    </div> -->
     <div class="screen panel-item hidden-sm-and-down" @click="screen">
       <el-icon><el-icon-full-screen /></el-icon>
     </div>
@@ -45,7 +42,7 @@
                     <div class="msg-list__main">
                       <h2>{{ item.title }}</h2>
                       <p>
-                        发送人：{{ item.send_user.nickname }}，时间：{{
+                        发送人：{{ item.send_user }}，时间：{{
                           item.created_at
                         }}
                       </p>
@@ -78,19 +75,19 @@
           </el-footer>
         </el-container>
       </el-drawer>
-      <el-drawer v-model="drawer" title="详细内容" size="50%">
-        <el-main
-          v-loading="drawerLoading"
+
+      <el-drawer v-model="drawer" title="消息详情" size="50%" >
+        <el-main 
+          v-loading="drawerLoading" 
           element-loading-background="rgba(50, 50, 50, 0.5)"
-          element-loading-text="数据加载中..."
-          style="height: 100%"
+          element-loading-text="数据加载中..." 
+          style="height:100%; overflow: hidden;"
         >
-          <h2 style="font-size: 24px; line-height: 60px; text-align: center">
-            {{ row.title }}
-          </h2>
+          <h2 style="font-size: 24px; line-height: 60px; text-align:center"> {{ row.title }} </h2>
           <div v-html="row.content"></div>
         </el-main>
       </el-drawer>
+      
     </div>
     <el-dropdown class="user panel-item" trigger="click" @command="handleUser">
       <div class="user-avatar">
@@ -126,7 +123,9 @@ export default {
       wsMessage: null,
       drawer: false,
       drawerLoading: false,
-      row: {},
+      row: {
+        title: '', content: ''
+      },
     };
   },
   created() {
@@ -207,11 +206,6 @@ export default {
         this.$router.push("/lockScreen");
       });
     },
-    // 跳转文档
-    goDoc() {
-      this.$TOOL.data.set("apiAuth", false);
-      this.$router.push({ name: "doc" });
-    },
     // 全部设置已读
     markRead() {
       let ids = this.msgList.map((item) => item.id);
@@ -225,11 +219,11 @@ export default {
       }
     },
     async showDetails(row) {
-      this.drawerLoading = true;
-      this.drawer = true;
-      await this.$API.queueMessage.updateReadStatus(row.id);
-      this.drawerLoading = false;
-      this.row = row;
+      this.drawerLoading = true
+      this.drawer = true
+      await this.$API.queueMessage.updateReadStatus(row.id)
+      this.drawerLoading = false 
+      this.row = row
     },
   },
 };

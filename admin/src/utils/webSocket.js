@@ -135,7 +135,7 @@
     */
    onMessage(evt) {
      let result = this.onParseData(evt)
- 
+
      this.onEvent.hasOwnProperty(result.event) && this.onEvent[result.event](result.message, result.data)
      this.onEvent.hasOwnProperty(result.event) || console.warn(`WebSocket 消息事件[${result.event}]未绑定...`)
    }

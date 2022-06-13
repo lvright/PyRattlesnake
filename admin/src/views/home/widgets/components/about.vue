@@ -1,6 +1,6 @@
 <template>
 	<el-card shadow="hover" header="关于项目" class="item-background">
-		<p>高性能 / 精致 / 优雅。后台基于Swoole的Hyperf框架，前端Vue3 + Element-Plus 的中后台解决方案，如果喜欢就点个星星支持一下。</p>
+		<p>PyRattlesnake 后端是基于FastAPI框架，是高性能、易于学习、高效编码、前后分离的Web框架</p>
 		<p>
 			<a href='https://gitee.com/lvright/PyRattlesnake' target="_blank">
 				<img src='https://gitee.com/xmo/MineAdmin/badge/star.svg?theme=dark' alt='star' style="vertical-align: middle">

@@ -1,13 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 400" class="h-full w-full fill-current">
-  <ellipse stroke="null" ry="61.499919" rx="61.499919" id="svg_1" cy="307.226418" cx="494.749731" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#3C4F63"/>
-  <g transform="rotate(26.32123565673828 140.2502288818359,196.72657775878906) " id="svg_38">
-  <rect id="svg_35" height="250.999657" width="122.999832" y="71.726738" x="78.75029" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="null" fill="#419FFF"/>
-  <ellipse stroke="null" ry="61.499919" rx="61.499919" id="svg_2" cy="73.726737" cx="140.250208" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#419FFF"/>
-  <ellipse stroke="null" ry="61.499919" rx="61.499919" id="svg_3" cy="319.726401" cx="140.250208" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#419FFF"/>
-  </g>
-  <g transform="rotate(26.32123565673828 350.213684082031,196.72657775878903) " id="svg_34">
-  <rect id="svg_29" height="250.999657" width="122.999832" y="71.726738" x="288.713744" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="null" fill="#419FFF"/>
-  <ellipse stroke="null" ry="61.499919" rx="61.499919" id="svg_4" cy="73.726737" cx="350.213663" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#419FFF"/>
-  <ellipse stroke="null" ry="61.499919" rx="61.499919" id="svg_5" cy="319.726401" cx="350.213663" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#419FFF"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="584" height="584" viewBox="0 0 584 584" fill="none"><g opacity="1" transform="translate(0 0)  rotate(0 292 292)"><path id="圆形 1" fill-rule="evenodd" style="fill:#CCCCCC" transform="translate(0 0)  rotate(0 292 292)" opacity="0" d="M292,0C130.73,0 0,130.73 0,292C0,453.27 130.73,584 292,584C453.27,584 584,453.27 584,292C584,130.73 453.27,0 292,0Z " /><g opacity="1" transform="translate(103 154)  rotate(0 189.50000000000003 138.5)"><path id="矩形 1" fill-rule="evenodd" style="fill:#C7CFFF" transform="translate(0 79.61023622047243)  rotate(0 76.07266187050362 98.69488188976378)" opacity="1" d="M0,197.39L98.16,197.39L152.15,0L53.99,0L0,197.39Z " /><path id="矩形 1" fill-rule="evenodd" style="fill:#5770F5" transform="translate(136.33093525179854 0)  rotate(0 76.07266187050362 98.69488188976378)" opacity="1" d="M0,197.39L98.16,197.39L152.15,0L53.99,0L0,197.39Z " /><path id="矩形 1" fill-rule="evenodd" style="fill:#5770F5" transform="translate(257.3928057553956 0)  rotate(0 60.803597122302186 43.076771653543304)" opacity="1" d="M0,86.15L98.16,86.15L121.61,0L23.45,0L0,86.15Z " /></g></g></svg>

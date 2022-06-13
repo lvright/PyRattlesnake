@@ -116,7 +116,6 @@
 
       // 获取字典数据
       getDictData() {
-        
           this.getDict('backend_notice_type').then(res => {
               this.backend_notice_type_data = res.data
           })

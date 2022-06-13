@@ -17,20 +17,16 @@ class Message {
 				onClose: _ => { console.log('与消息服务器断开...') },
 			}
 		)
-
 		this.ws.heartbeat.openHeartbeat = false
 	}
-
 	getMessage() {
 		this.timer = setInterval(() => {
 			this.ws.send({ event: 'get_unread_message' })
 		}, this.interval)
 	}
-
 	connection() {
 		this.ws.connection()
 	}
-
 }
 
 export default Message

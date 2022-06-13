@@ -8,7 +8,7 @@ export default {
      */
     getReceiveList (params = {}) {
         return request({
-            url: 'system/queueMessage/receiveList',
+            url: 'admin/queueMessage/receiveList',
             method: 'get',
             params
         })
@@ -20,7 +20,7 @@ export default {
      */
     getSendList (params = {}) {
         return request({
-            url: 'system/queueMessage/sendList',
+            url: 'admin/queueMessage/sendList',
             method: 'get',
             params
         })
@@ -32,7 +32,7 @@ export default {
      */
     getReceiveUser (params = {}) {
         return request({
-            url: 'system/queueMessage/getReceiveUser',
+            url: 'admin/queueMessage/getReceiveUser',
             method: 'get',
             params
         })
@@ -44,7 +44,7 @@ export default {
      */
     deletes (ids) {
         return request({
-            url: 'system/queueMessage/deletes/' + ids,
+            url: 'admin/queueMessage/delete/' + ids,
             method: 'delete'
         })
     },
@@ -53,10 +53,10 @@ export default {
      * 更新读取状态
      * @returns
      */
-    updateReadStatus (ids = {}) {
+    updateReadStatus (id = {}) {
         return request({
-            url: 'system/queueMessage/updateReadStatus/' + ids,
-            method: 'put',
+            url: 'admin/queueMessage/readMessage/' + id,
+            method: 'get',
         })
     },
 
@@ -66,7 +66,7 @@ export default {
      */
     sendPrivateMessage (data = {}) {
         return request({
-            url: 'system/queueMessage/sendPrivateMessage',
+            url: 'admin/queueMessage/sendPrivateMessage',
             method: 'post',
             data
         })

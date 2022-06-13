@@ -43,7 +43,7 @@ export default {
    */
   save (params = {}) {
     return request({
-      url: 'system/post/save',
+      url: 'admin/post/postSave',
       method: 'post',
       data: params
     })
@@ -55,7 +55,7 @@ export default {
    */
   deletes (ids) {
     return request({
-      url: 'system/post/delete/' + ids,
+      url: 'admin/post/postDelete/' + ids,
       method: 'delete'
     })
   },
@@ -88,7 +88,7 @@ export default {
    */
   update (id, params = {}) {
     return request({
-      url: 'system/post/update/' + id,
+      url: 'admin/post/postUpdate/' + id,
       method: 'put',
       data: params
     })

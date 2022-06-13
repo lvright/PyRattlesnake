@@ -8,15 +8,15 @@
 			<div class="tips">
 				<div class="tips-item">
 					<div class="tips-item-icon"><el-icon><el-icon-promotion /></el-icon></div>
-					<div class="tips-item-message">Python的Web框架目前主流的就是Django和Flask，但对于FastApi可能很对人了解的比较少，而且在开源平台上也很少出现比较适合前后分离的python Web框架，PyRattlesnake 后端是基于FastAPI框架，是高性能、易于学习、高效编码的框架 <a style="color:blue" href="https://fastapi.tiangolo.com/zh/">https://fastapi.tiangolo.com/zh/</a></div>
+					<div class="tips-item-message">PyRattlesnake 后端是基于FastAPI框架，是高性能、易于学习、高效编码的框架</div>
 				</div>
 				<div class="tips-item">
 					<div class="tips-item-icon"><el-icon><el-icon-star /></el-icon></div>
-					<div class="tips-item-message">PyRattlesnake的Vue是套用MineAdmin，MineAdmin是我认为比较精致美观的Vue后台框架 <a style="color:blue" href="https://www.mineadmin.com/">https://www.mineadmin.com/</a></div>
+					<div class="tips-item-message">PyRattlesnake的Vue是套用MineAdmin，MineAdmin是我认为比较精致美观的Vue后台框架</div>
 				</div>
 				<div class="tips-item">
 					<div class="tips-item-icon"><el-icon><el-icon-coffee /></el-icon></div>
-					<div class="tips-item-message">目前代码已经逐步成型，如果有想一起维护的蛇友请在gitee仓库上给我留言</div>
+					<div class="tips-item-message">如果有想一起维护的蛇友请在gitee仓库上给我留言</div>
 				</div>
 			</div>
 			<div class="actions">
