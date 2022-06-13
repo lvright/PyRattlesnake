@@ -25,14 +25,14 @@ admin_roles = data_base.table('admin_roles')
 admin_post = data_base.table('admin_post')
 
 # 部门、角色、岗位、菜单权限与账户之间关联表
-admin_role_relation = data_base.table('admin_role_relation')
+admin_menu_account = data_base.table('admin_menu_account')
 admin_roles_account = data_base.table('admin_roles_account')
 admin_dept_account = data_base.table('admin_dept_account')
 admin_post_account = data_base.table('admin_post_account')
 
 # 数据字典
-data_dictionary = data_base.table('data_dictionary')
-dictionary = data_base.table('dictionary')
+sys_dictionary_data = data_base.table('sys_dictionary_data')
+sys_dictionary = data_base.table('sys_dictionary')
 
 # 附件管理
 attachment = data_base.table('attachment')
@@ -47,6 +47,7 @@ sys_apis = data_base.table('sys_apis')
 
 # 系统通知
 sys_message = data_base.table('sys_message')
+sys_notification = data_base.table('sys_notification')
 
 # 导出接口模块
 from back_stage.apis.v1 \

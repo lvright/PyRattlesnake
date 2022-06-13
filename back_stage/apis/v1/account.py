@@ -17,9 +17,9 @@ async def admin_info(token_info: str = Depends(http.token)):
 
         # 根据 admin_role_relation 关联表查询菜单
         admin_menu_list = [
-            dict(menu) for menu in db.query(admin_system_menu, admin_role_relation).filter(
-                admin_role_relation.c.role_id == admin_info['id'],
-                admin_system_menu.c.id == admin_role_relation.c.menu_id
+            dict(menu) for menu in db.query(admin_system_menu, admin_menu_account).filter(
+                admin_menu_account.c.role_id == admin_info['id'],
+                admin_system_menu.c.id == admin_menu_account.c.menu_id
             ).all()
         ]
 

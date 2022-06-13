@@ -9,9 +9,9 @@ async def get_role_list(token_info: str = Depends(http.token)):
 
     """获取角色列表"""
 
-    roles = db.query(admin_roles).all()
+    roles = [dict(role) for role in db.query(admin_roles).all() if role]
 
-    return http.respond(200, True, 'OK', [dict(role) for role in roles if role])
+    return http.respond(200, True, 'OK', roles)
 
 @router.get(path='/role/rolesIndex', summary='获取角色分页列表')
 async def get_post_list(

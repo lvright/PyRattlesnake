@@ -208,6 +208,7 @@ class Response:
 websocket 连接管理
 """
 class ConnectionManager:
+
     def __init__(self):
         # 存放激活的ws连接对象
         self.active_connections: List[WebSocket] = []
@@ -223,14 +224,30 @@ class ConnectionManager:
         self.active_connections.remove(ws)
 
     @staticmethod
-    async def send_personal_message(message: str, ws: WebSocket):
+    async def send_personal_message(message, ws: WebSocket):
         # 发送个人消息
-        await ws.send_text(message)
 
-    async def broadcast(self, message: str):
+        if isinstance(message, str):
+            await ws.send_text(message)
+
+        if isinstance(message, dict):
+            await ws.send_json(message)
+
+        if isinstance(message, bytes):
+            await ws.send_bytes(message)
+
+    async def broadcast(self, message):
         # 广播消息
         for connection in self.active_connections:
-            await connection.send_text(message)
+
+            if isinstance(message, str):
+                await connection.send_text(message)
+
+            if isinstance(message, dict):
+                await connection.send_json(message)
+
+            if isinstance(message, bytes):
+                await connection.send_bytes(message)
 
 """
 第三方模块

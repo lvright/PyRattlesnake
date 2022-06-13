@@ -300,8 +300,7 @@ async def delete_user(userId: str, token_token: str = Depends(http.token)):
 
     # 删除指定用户
     try:
-        user_id_list = userId.split(',')
-        for user_id in user_id_list:
+        for user_id in userId.split(','):
             db.execute(admin_account.delete().where(admin_account.c.id == int(user_id)))
             # 删除关联表
             db.execute(admin_post_account.delete().where(admin_post_account.c.userId == user_id))

@@ -86,6 +86,14 @@ class RolesForm(BaseModel):
     data_scope: Optional[str] = ''
     dept_ids: Optional[Any] = ''
 
+# 添加岗位
+class Post(BaseModel):
+    code: Optional[str] = Query(None)
+    name: Optional[str] = Query(None)
+    status: Optional[str] = Query(None)
+    sort: Optional[int] = Query(None)
+    remark: Optional[str] = Query(None)
+
 # 添加/编辑用户
 class User(BaseModel):
     status: int = Query(None)
@@ -163,8 +171,16 @@ class Api(BaseModel):
     description: Optional[str] = Query(None)
     remark: Optional[str] = Query(None)
 
+# 系统消息
+class SystemMessage(BaseModel):
+    title: Optional[str] = Query(None)
+    remark: Optional[str] = Query(None)
+    users: Any = Query(None)
+    content: Optional[str] = Query(None)
+    content_type: Optional[str] = Query(None)
+
 # 系统通知
-class Notice(BaseModel):
+class SystemNotification(BaseModel):
     title: Optional[str] = Query(None)
     type: Optional[str] = Query(None)
     remark: Optional[str] = Query(None)

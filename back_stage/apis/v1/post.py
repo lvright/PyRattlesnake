@@ -78,8 +78,51 @@ async def get_post_list(
     })
 
 @router.post(path='/post/postSave', summary='新增岗位')
-def post_save(token_info: str = Depends(http.token)):
+def post_save(post: admin.Post, token_info: str = Depends(http.token)):
 
     """新增岗位"""
 
+    post = dict(post)
+
+    post['created_at'] = now_date_time
+    post['created_by'] = now_timestamp
+
+    db.execute(admin_post.insert().values(**post))
+    db.commit()
+
     return http.respond(200, True, '新增成功')
+
+@router.put(path='/post/postUpdate/{id:path}', summary='修改岗位')
+def post_save(id: int, post: admin.Post, token_info: str = Depends(http.token)):
+
+    """修改岗位"""
+
+    post = dict(post)
+
+    post['updated_at'] = now_date_time
+    post['updated_by'] = now_timestamp
+
+    db.execute(admin_post.update().where(admin_post.c.id == id).values(**post))
+    db.commit()
+
+    return http.respond(200, True, '保存成功')
+
+@router.delete(path='/post/postDelete/{postId:path}', summary='删除岗位')
+def post_save(postId: str, token_info: str = Depends(http.token)):
+
+    """删除岗位"""
+
+    # 删除指定用户
+    try:
+        for user_id in postId.split(','):
+            db.execute(admin_post.delete().where(admin_post.c.id == int(user_id)))
+            # 删除关联表
+            db.execute(admin_post_account.delete().where(admin_post_account.c.postId == user_id))
+            db.commit()
+    except Exception as e:
+        # 报错时生成日志并回滚
+        log.log_error(e)
+        db.rollback()
+        return http.respond(500, False, str(e))
+
+    return http.respond(200, True, '已删除')

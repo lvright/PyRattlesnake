@@ -98,12 +98,31 @@ async def conf_clear_cache(token_info: str = Depends(http.token)):
 
     return http.respond(200, True, '清楚成功')
 
-@router.get(path='/config/apis/{code:path}', summary='获取字典类型')
+@router.post(path='/user/clearSelfCache', summary='清楚浏览器缓存')
+async def conf_clear_cache(token_info: str = Depends(http.token)):
+
+    """清楚浏览器缓存"""
+
+    return http.respond(200, True, '清除成功')
+
+@router.post(path='/user/updateSetting', summary='修改系统设置')
+async def update_setting(setting: admin.BackendSetting, token_info: str = Depends(http.token)):
+
+    """修改系统设置"""
+
+    db.execute(backend_setting.update().where(backend_setting.c.id == 1).values(**dict(setting)))
+    db.commit()
+
+    return http.respond(200, True, '系统设置修改成功')
+
+# TODO ----------数据字典----------
+
+@router.get(path='/config/apis/{code:path}', summary='根据code获取字典类型')
 async def conf_apis(code: str, token_info: str = Depends(http.token)):
 
-    """获取字典类型"""
+    """根据code获取字典类型"""
 
-    result = db.query(dictionary).where(dictionary.c.code == code).all()
+    result = db.query(sys_dictionary_data).where(sys_dictionary_data.c.code == code).all()
 
     if code:
         result = [
@@ -116,55 +135,14 @@ async def conf_apis(code: str, token_info: str = Depends(http.token)):
         ]
         return http.respond(200, True, 'OK', result)
 
-@router.post(path='/user/updateSetting', summary='修改系统设置')
-async def update_setting(setting: admin.BackendSetting, token_info: str = Depends(http.token)):
-
-    """修改系统设置"""
-
-    db.execute(backend_setting.update().where(backend_setting.c.id == 1).values(**dict(setting)))
-    db.commit()
-
-    return http.respond(200, True, '系统设置修改成功')
-
-@router.post(path='/user/clearSelfCache', summary='清楚浏览器缓存')
-async def conf_clear_cache(token_info: str = Depends(http.token)):
-
-    """清楚浏览器缓存"""
-
-    return http.respond(200, True, '清除成功')
-
 @router.get(path='/config/dictType', summary='数据字典类型')
 async def dict_type(_: int, token_info: str = Depends(http.token)):
 
     """数据字典类型"""
 
-    dict_type_data = [dict(item) for item in db.query(data_dictionary).all() if item]
+    dict_type = [dict(item) for item in db.query(sys_dictionary).all() if item]
 
-    return http.respond(200, True, '请求成功', dict_type_data)
-
-@router.get(path='/config/dictDate', summary='获取数据字典')
-async def dict_type(
-        page: Optional[int] = '',
-        pageSize: Optional[int] = '',
-        orderBy: Optional[str] = '',
-        orderType: Optional[str] = '',
-        code: Optional[str] = '',
-        _: Optional[int] = '',
-        token_info: str = Depends(http.token)
-):
-
-    """数据字典类型"""
-
-    dict_data = [dict(item) for item in db.query(dictionary).where(dictionary.c.code == code).limit(pageSize) if item]
-
-    return http.respond(200, True, '请求成功', {
-        'items': dict_data,
-        'pageInfo': {
-            'total': len(dict_data),
-            'currentPage': pageSize,
-            'totalPage': pageSize
-        }
-    })
+    return http.respond(200, True, '请求成功', dict_type)
 
 @router.put(path='/config/dictType/update/{id:path}', summary='更新数据字典类型')
 async def dict_type(id: int, dict_type: admin.DictType, token_info: str = Depends(http.token)):
@@ -179,7 +157,7 @@ async def dict_type(id: int, dict_type: admin.DictType, token_info: str = Depend
     dict_type['updated_at'] = now_date_time
 
     # 提交
-    db.execute(data_dictionary.update().where(data_dictionary.c.id == id).values(**dict(dict_type)))
+    db.execute(sys_dictionary.update().where(sys_dictionary.c.id == id).values(**dict(dict_type)))
     db.commit()
 
     return http.respond(200, True, '保存成功')
@@ -191,7 +169,7 @@ async def dict_type(id: int, token_info: str = Depends(http.token)):
 
     try:
         # 删除字典数据
-        db.execute(data_dictionary.delete().where(data_dictionary.c.id == id))
+        db.execute(sys_dictionary.delete().where(sys_dictionary.c.id == id))
         db.commit()
     except Exception as e:
         # 错误回滚 打印日志
@@ -213,10 +191,40 @@ async def dict_type(dict_type: admin.DictType, token_info: str = Depends(http.to
     dict_type['created_at'] = now_date_time
 
     # 提交
-    db.execute(data_dictionary.insert().values(**dict(dict_type)))
+    db.execute(sys_dictionary_data.insert().values(**dict(dict_type)))
     db.commit()
 
     return http.respond(200, True, '添加成功')
+
+@router.get(path='/config/dictDate', summary='获取数据字典')
+async def dict_type(
+        page: Optional[int] = '',
+        pageSize: Optional[int] = '',
+        orderBy: Optional[str] = '',
+        orderType: Optional[str] = '',
+        code: Optional[str] = '',
+        _: Optional[int] = '',
+        token_info: str = Depends(http.token)
+):
+
+    """获取数据字典"""
+
+    dict_data = [
+        dict(item) for item in db.query(
+            sys_dictionary_data
+        ).where(
+            sys_dictionary_data.c.code == code
+        ).limit(pageSize) if item
+    ]
+
+    return http.respond(200, True, '请求成功', {
+        'items': dict_data,
+        'pageInfo': {
+            'total': len(dict_data),
+            'currentPage': pageSize,
+            'totalPage': pageSize
+        }
+    })
 
 @router.put(path='/config/dictDate/update/{id:path}', summary='更新数据字典')
 async def dict_type(id: int, dict_data: admin.DictDate, token_info: str = Depends(http.token)):
@@ -231,7 +239,7 @@ async def dict_type(id: int, dict_data: admin.DictDate, token_info: str = Depend
     dict_data['updated_at'] = now_date_time
 
     # 提交
-    db.execute(dictionary.update().where(dictionary.c.id == id).values(**dict(dict_data)))
+    db.execute(sys_dictionary_data.update().where(sys_dictionary_data.c.id == id).values(**dict(dict_data)))
     db.commit()
 
     return http.respond(200, True, '保存成功')
@@ -239,7 +247,7 @@ async def dict_type(id: int, dict_data: admin.DictDate, token_info: str = Depend
 @router.post(path='/config/dictDate/save', summary='插入数据字典')
 async def dict_type(dict_data: admin.DictDate, token_info: str = Depends(http.token)):
 
-    """插入数据字典类型"""
+    """插入数据字典"""
 
     # 格式化
     dict_data = dict(dict_data)
@@ -249,7 +257,7 @@ async def dict_type(dict_data: admin.DictDate, token_info: str = Depends(http.to
     dict_data['created_at'] = now_date_time
 
     # 提交
-    db.execute(dictionary.insert().values(**dict(dict_data)))
+    db.execute(sys_dictionary.insert().values(**dict(dict_data)))
     db.commit()
 
     return http.respond(200, True, '添加成功')
@@ -257,12 +265,12 @@ async def dict_type(dict_data: admin.DictDate, token_info: str = Depends(http.to
 @router.delete(path='/config/dictDate/delete/{id:path}', summary='删除数据字典')
 async def dict_type(id: Any, token_info: str = Depends(http.token)):
 
-    """删除数据字典类型"""
+    """删除数据字典"""
 
     try:
         # split 分割 id 删除字典数据
         for _id in id.split(','):
-            db.execute(dictionary.delete().where(dictionary.c.id == _id))
+            db.execute(sys_dictionary_data.delete().where(sys_dictionary_data.c.id == _id))
             db.commit()
     except Exception as e:
         # 错误回滚 打印日志
@@ -287,7 +295,7 @@ async def dict_clear_cache(
 
     """修改数据字典状态"""
 
-    db.execute(dictionary.update().where(dictionary.c.id == id).values(status=status))
+    db.execute(sys_dictionary.update().where(sys_dictionary.c.id == id).values(status=status))
     db.commit()
 
     return http.respond(200, True, '字典状态修改成功')
