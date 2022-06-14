@@ -31,7 +31,7 @@ export default {
      */
     tree (params = {}) {
         return request({
-            url: 'system/menu/tree',
+            url: 'admin/menu/tree',
             method: 'get',
             params
         })

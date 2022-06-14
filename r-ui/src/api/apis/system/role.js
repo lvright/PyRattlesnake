@@ -31,7 +31,7 @@ export default {
    */
   getMenuByRole (id) {
     return request({
-      url: 'system/role/getMenuByRole/' + id,
+      url: 'admin/menu/getMenuByRole/' + id,
       method: 'get'
     })
   },
