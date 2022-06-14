@@ -21,8 +21,8 @@ async def get_post_list(
         status: Optional[str] = '',
         maxDate: Optional[str] = '',
         minDate: Optional[str] = '',
-        orderBy: Optional[str] = None,
-        orderType: Optional[str] = None,
+        orderBy: Optional[str] = '',
+        orderType: Optional[str] = '',
         _: int = None,
         token_info: str = Depends(http.token)
 ):
@@ -72,8 +72,8 @@ async def get_post_list(
         'items': posts_list,
         'pageInfo': {
             'total': len(posts_list),
-            'currentPage': pageSize,
-            'totalPage': pageSize
+            'currentPage': page,
+            'totalPage': int(len(posts_list) / pageSize)
         }
     })
 

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Set, TypeVar, Any
 from fastapi import Path, Query, Body, Header
 
-# 修改登录账户信息
+# 登录账户信息
 class AdminUpdateInfo(BaseModel):
     status: int = Query(None)
     phone: str = Query(None)
@@ -22,7 +22,7 @@ class AdminUpdateInfo(BaseModel):
     user_type: int = Query(None)
     username: str = Query(None)
 
-# 修改账户密码
+# 账户密码
 class ModifyPassword(BaseModel):
     oldPassword: str = Query(None)
     newPassword: str = Query(None)
@@ -55,12 +55,12 @@ class SystemConfig(BaseModel):
     site_record_number: str = Query(None)
     site_storage_mode: str = Query(None)
 
-# 管理员登录
+# 账户登录
 class AdminLogin(BaseModel):
     username: str = Query(None)
     password: str = Query(None)
 
-# 添加/编辑菜单
+# 菜单
 class AdminMenuForm(BaseModel):
     component: Optional[str] = None,
     hidden: Optional[str] = None,
@@ -75,7 +75,7 @@ class AdminMenuForm(BaseModel):
     title: Optional[str] = None,
     type: Optional[str] = None,
 
-# 添加角色
+# 角色
 class RolesForm(BaseModel):
     code: str = Query(None)
     id: int = Query(None)
@@ -83,10 +83,11 @@ class RolesForm(BaseModel):
     remark: str = Query(None)
     sort: int = Query(None)
     status: str = Query(None)
-    data_scope: Optional[str] = ''
-    dept_ids: Optional[Any] = ''
+    data_scope: Optional[str] = Query(None)
+    dept_ids: Optional[Any] = Query(None)
+    menu_ids: Optional[Any] = Query(None)
 
-# 添加岗位
+# 岗位
 class Post(BaseModel):
     code: Optional[str] = Query(None)
     name: Optional[str] = Query(None)
@@ -94,7 +95,7 @@ class Post(BaseModel):
     sort: Optional[int] = Query(None)
     remark: Optional[str] = Query(None)
 
-# 添加/编辑用户
+# 用户
 class User(BaseModel):
     status: int = Query(None)
     phone: str = Query(None)

@@ -13,19 +13,24 @@ async def admin_info(token_info: str = Depends(http.token)):
     admin_info = db.query(admin_account).filter_by(userId=token_info['userId']).first()
 
     if admin_info:
+
         admin_info = dict(admin_info)
 
         # 根据 admin_role_relation 关联表查询菜单
-        admin_menu_list = [
-            dict(menu) for menu in db.query(admin_system_menu, admin_menu_account).filter(
-                admin_menu_account.c.role_id == admin_info['id'],
-                admin_system_menu.c.id == admin_menu_account.c.menu_id
-            ).all()
-        ]
+        admin_menu_list = [dict(menu) for menu in db.query(
+            admin_system_menu,
+            admin_menu_account
+        ).where(
+            admin_system_menu.c.status != '1').filter(
+            admin_menu_account.c.role_id == admin_info['id'],
+            admin_system_menu.c.id == admin_menu_account.c.menu_id
+        ).all()]
 
         # 处理返回的路由结构
         if admin_menu_list:
+
             menu_list = []
+
             for items in admin_menu_list:
                 items['meta'] = {
                     'hidden': bool(int(items['hidden'])),
@@ -34,24 +39,15 @@ async def admin_info(token_info: str = Depends(http.token)):
                     'title': items['title'],
                     'type': items['type']
                 }
+
                 del items['hidden'], items['hiddenBreadcrumb'], items['icon'], items['title'], items['type']
 
-                # 过滤停用状态菜单
-                if items['status'] == '0':
-                    items['children'] = [
-                        menu for menu in admin_menu_list
-                        if menu['parent_id'] == items['menu_id']
-                        # 过滤停用状态菜单
-                        if menu['status'] == '0'
-                    ]
+                items['children'] = [menu for menu in admin_menu_list if menu['parent_id'] == items['menu_id']]
 
-                    if items['parent_id'] == 0: menu_list.append(items)
-
-            # 获取系统配置
-            back_setting = db.query(backend_setting).filter_by(user_id=token_info['id']).first()
+                if items['parent_id'] == 0: menu_list.append(items)
 
             # 插入 backend_setting 系统设置
-            admin_info['backend_setting'] = dict(back_setting)
+            admin_info['backend_setting'] = dict(db.query(backend_setting).filter_by(user_id=token_info['id']).first())
 
             return http.respond(200, True, '加载完成', {
                 'codes': ['*'],
@@ -117,6 +113,7 @@ async def get_user_list(
         _: int = None,
         token_info: str = Depends(http.token)
 ):
+
     """获取用户列表"""
 
     account_list = []
@@ -130,7 +127,7 @@ async def get_user_list(
                 admin_account.c.username.like('%' + username + '%'),
                 admin_account.c.nickname.like('%' + nickname + '%'),
                 admin_account.c.phone.like('%' + phone + '%'),
-                admin_account.c.email.like('%' + email + '%'),
+                admin_account.c.email.like('%' + email + '%')
             ),
         ).limit(pageSize)
 
@@ -201,7 +198,7 @@ async def get_user_list(
         'pageInfo': {
             'total': len(account_list),
             'currentPage': page,
-            'totalPage': page
+            'totalPage': int(len(account_list) / pageSize)
         }
     })
 
@@ -217,7 +214,9 @@ async def get_user_list(_: int = None, token_info: str = Depends(http.token)):
     dept_list = []
 
     if admin_dept_list:
+
         admin_dept_list = [dict(item) for item in admin_dept_list if item]
+
         admin_dept_list = [
             {
                 'id': dept['id'],

@@ -20,8 +20,8 @@ async def get_post_list(
         code: Optional[str] = '',
         status: Optional[str] = '',
         name: Optional[str] = '',
-        orderBy: Optional[str] = None,
-        orderType: Optional[str] = None,
+        orderBy: Optional[str] = '',
+        orderType: Optional[str] = '',
         maxDate: Optional[str] = '',
         minDate: Optional[str] = '',
         _: int = None,
@@ -75,7 +75,7 @@ async def get_post_list(
         'pageInfo': {
             'total': len(roles_list),
             'currentPage': page,
-            'totalPage': page
+            'totalPage': int(len(roles_list) / pageSize)
         }
     })
 
@@ -86,6 +86,8 @@ async def create_role(role_data: admin.RolesForm, token_info: str = Depends(http
 
     # 传参数据格式化
     role = dict(role_data)
+
+    del role['dept_ids']
 
     # 插入创建时间
     role['created_at'] = now_date_time
@@ -108,15 +110,27 @@ async def create_role(
 
     # 传参数据格式化
     role = dict(role_data)
+
     del role['dept_ids']
 
-    # 插入创建时间
-    role['updated_at'] = now_date_time
-    role['updated_by'] = now_timestamp
+    if role['menu_ids']:
 
-    # 更新角色数据
-    db.execute(admin_roles.update().where(admin_roles.c.id == roleId).values(role))
-    db.commit()
+        for menu_id in role['menu_ids']:
+            db.execute(admin_menu_account.delete().where(admin_menu_account.c.role_id == role_data.id))
+            db.execute(admin_menu_account.insert().values({'role_id': role_data.id, 'menu_id': menu_id}))
+            db.commit()
+
+    else:
+
+        del role['menu_ids']
+
+        # 插入创建时间
+        role['updated_at'] = now_date_time
+        role['updated_by'] = now_timestamp
+
+        # 更新角色数据
+        db.execute(admin_roles.update().where(admin_roles.c.id == roleId).values(role))
+        db.commit()
 
     return http.respond(200, True, '更新成功')
 

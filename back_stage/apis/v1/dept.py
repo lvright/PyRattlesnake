@@ -164,7 +164,6 @@ async def dept_update(deptId: int, dept: admin.Dept, token_info: str = Depends(h
 
     # 格式化传参
     dept = dict(dept)
-    print(dict(dept))
 
     # 处理部门 parent_id
     if isinstance(dept['parent_id'], list):

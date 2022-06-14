@@ -10,14 +10,14 @@ async def message_io(token: str, websocket: WebSocket):
 
     token_info = jwt_token.decode(token)
 
-    mess = [
-        dict(item) for item in db.query(sys_message).where(
-            and_(
-                sys_message.c.click_num == 0,
-                sys_message.c.users.like('%' + str(token_info['id']) + '%')
-            )
-        ).all() if item
-    ]
+    mess = db.query(sys_message).where(
+        and_(
+            sys_message.c.click_num == 0,
+            sys_message.c.users.like('%' + str(token_info['id']) + '%')
+        )
+    ).all()
+
+    mess = [dict(item) for item in mess if item]
 
     db.flush()
 
@@ -45,8 +45,8 @@ async def message_io(token: str, websocket: WebSocket):
 async def get_notice(
         page: int,
         pageSize: int,
-        orderBy: Optional[str] = None,
-        orderType: Optional[str] = None,
+        orderBy: Optional[str] = '',
+        orderType: Optional[str] = '',
         type: Optional[str] = '',
         title: Optional[str] = '',
         _: Optional[int] = None,
@@ -82,7 +82,7 @@ async def get_notice(
         'pageInfo': {
             'total': len(notice_list),
             'currentPage': page,
-            'totalPage': page
+            'totalPage': int(len(notice_list) / pageSize)
         }
     })
 
@@ -255,9 +255,21 @@ async def send_message_list(
 
     receive_message = []
 
+    # 定义 orderBy 参数
     orderBy = orderBy.split('.')[0] or 'created_at'
 
+    # orderBy 方法
     def message_order_by(where_sql, order_by_sql):
+
+        """
+
+        Args:
+            where_sql: where 条件 sql
+            order_by_sql:  升降序 desc
+
+        Returns: message_list
+
+        """
 
         if orderType == 'descending':
 
@@ -320,12 +332,14 @@ async def notice_save(message: admin.SystemMessage, token_info: str = Depends(ht
 
     message = dict(message)
 
+    # 插入消息内容
     message['created_at'] = now_date_time
     message['created_by'] = now_timestamp
     message['send_user'] = token_info['nickname']
     message['send_by'] = token_info['id']
     message['click_num'] = 0
 
+    # 判断 users
     if message['users']:
         for user_id in message['users']:
             message['users'] = str(user_id)

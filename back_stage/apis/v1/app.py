@@ -34,8 +34,8 @@ async def app_group(
         'items': app_group_list,
         'pageInfo': {
             'total': len(app_group_list),
-            'currentPage': pageSize,
-            'totalPage': pageSize
+            'currentPage': page,
+            'totalPage': int(len(app_group_list) / pageSize)
         }
     })
 
@@ -46,10 +46,8 @@ async def app_list(token_info: str = Depends(http.token)):
     """获取应用分组列表"""
 
     app_group_list = [
-        {
-            'name': dict(item)['name'],
-            'id': dict(item)['id']
-        } for item in db.query(sys_app_group).all() if item
+        {'name': dict(item)['name'], 'id': dict(item)['id']}
+        for item in db.query(sys_app_group).all() if item
     ]
 
     return http.respond(200, True, '获取成功', app_group_list)
@@ -133,8 +131,8 @@ def app_index(
         'items': app_list,
         'pageInfo': {
             'total': len(app_list),
-            'currentPage': pageSize,
-            'totalPage': pageSize
+            'currentPage': page,
+            'totalPage': int(len(app_list) / pageSize)
         }
     })
 

@@ -130,8 +130,7 @@ async def conf_apis(code: str, token_info: str = Depends(http.token)):
                 'id': dict(item)['id'],
                 'label': dict(item)['label'],
                 'value': dict(item)['value']
-            }
-            for item in result if item
+            } for item in result if item
         ]
         return http.respond(200, True, 'OK', result)
 

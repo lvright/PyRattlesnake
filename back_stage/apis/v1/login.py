@@ -28,6 +28,7 @@ async def admin_login(login_info: admin.AdminLogin):
     if admin_info:
 
         admin_info = dict(admin_info)
+
         del admin_info['password']
 
         # token 加密
