@@ -82,7 +82,7 @@ async def get_notice(
         'pageInfo': {
             'total': len(notice_list),
             'currentPage': page,
-            'totalPage': int(len(notice_list) / pageSize)
+            'totalPage': math.ceil(len(notice_list) / pageSize)
         }
     })
 

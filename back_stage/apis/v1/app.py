@@ -35,7 +35,7 @@ async def app_group(
         'pageInfo': {
             'total': len(app_group_list),
             'currentPage': page,
-            'totalPage': int(len(app_group_list) / pageSize)
+            'totalPage': math.ceil(len(app_group_list) / pageSize)
         }
     })
 
@@ -132,7 +132,7 @@ def app_index(
         'pageInfo': {
             'total': len(app_list),
             'currentPage': page,
-            'totalPage': int(len(app_list) / pageSize)
+            'totalPage': math.ceil(len(app_list) / pageSize)
         }
     })
 

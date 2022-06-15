@@ -63,7 +63,10 @@ async def admin_info(token_info: str = Depends(http.token)):
 
             if user_setting:
 
-                admin_info['backend_setting'] = dict(user_setting)
+                user_setting = dict(user_setting)
+
+                user_setting['layoutTags'] = bool(user_setting['layoutTags'])
+                admin_info['backend_setting'] = user_setting
 
             else:
 
@@ -225,7 +228,7 @@ async def get_user_list(
         'pageInfo': {
             'total': len(account_list),
             'currentPage': page,
-            'totalPage': int(len(account_list) / pageSize)
+            'totalPage': math.ceil(len(account_list) / pageSize)
         }
     })
 

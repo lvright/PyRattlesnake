@@ -199,7 +199,7 @@ async def get_roles_list(
         'pageInfo': {
             'total': len(account_list),
             'currentPage': page,
-            'totalPage': page
+            'totalPage': math.ceil(len(account_list) / pageSize)
         }
     })
 

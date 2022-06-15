@@ -75,7 +75,7 @@ async def get_post_list(
         'pageInfo': {
             'total': len(roles_list),
             'currentPage': page,
-            'totalPage': int(len(roles_list) / pageSize)
+            'totalPage': math.ceil(len(roles_list) / pageSize)
         }
     })
 

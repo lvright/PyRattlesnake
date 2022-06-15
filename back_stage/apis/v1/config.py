@@ -82,6 +82,31 @@ def server_monitor(token_info: str = Depends(http.token)):
         'pyenv': pyenv
     })
 
+@router.get(path='/config/rely/index', summary='获取python依赖包')
+def rely_index(
+        page: int,
+        pageSize: int,
+        orderBy: Optional[str] = '',
+        orderType: Optional[str] = '',
+        _: int = None,
+        token_info: str = Depends(http.token)
+):
+
+    """获取python依赖包"""
+
+    with open(project_file_path + '/requirements.txt', 'r') as f:
+        data = [{'name': item.split('==')[0], 'version': 'v' + item.split('==')[1]} for item in f.read().split()]
+
+    return http.respond(200, True, '获取成功', {
+        'items': data[page:page + pageSize],
+        'pageInfo': {
+            'total': len(data),
+            'currentPage': page,
+            'totalPage': math.ceil(len(data) / pageSize)
+        }
+    })
+
+
 @router.get(path='/getSysConfig', summary='getSysConfig')
 async def get_sys_config():
 
@@ -181,7 +206,11 @@ async def update_setting(setting: admin.BackendSetting, token_info: str = Depend
 
     """修改系统设置"""
 
-    db.execute(backend_setting.update().where(backend_setting.c.id == 1).values(**dict(setting)))
+    setting = dict(setting)
+
+    setting['layoutTags'] = int(setting['layoutTags'])
+
+    db.execute(backend_setting.update().where(backend_setting.c.user_id == token_info['id']).values(**dict(setting)))
     db.commit()
 
     return http.respond(200, True, '系统设置修改成功')
@@ -291,8 +320,8 @@ async def dict_type(
         'items': dict_data,
         'pageInfo': {
             'total': len(dict_data),
-            'currentPage': pageSize,
-            'totalPage': pageSize
+            'currentPage': page,
+            'totalPage': math.ceil(len(dict_data) / pageSize)
         }
     })
 

@@ -10,8 +10,8 @@ from back_stage import router as admin
 # 创建app
 app = FastAPI(
     title="APIS-LINE",
-    description="""PYRIGHT 是基于FASTAPI模块，配备了Web开发过程所需的工具和代码块。""",
-    version='1.0',
+    description="""PyRattlesnake 是基于FASTAPI模块，配备了Web开发过程所需的工具和代码块。""",
+    version='0.0.1',
     docs_url="/api/v1/docs",  # 自定义文档地址
     redoc_url=None,  # 禁用redoc文档
     openapi_url="/api/v1/openapi.json",
@@ -19,10 +19,6 @@ app = FastAPI(
         {
             "name": "back_stage",
             "description": "后台模块API",
-        },
-        {
-            "name": "application_tools",
-            "description": "应用工具模块API",
         },
     ]
 )

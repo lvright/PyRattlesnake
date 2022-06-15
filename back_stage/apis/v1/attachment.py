@@ -47,8 +47,8 @@ async def get_attachment(
         'items': file_data,
         'pageInfo': {
             'total': len(file_data),
-            'currentPage': pageSize,
-            'totalPage': pageSize,
+            'currentPage': page,
+            'totalPage': math.ceil(len(file_data) / pageSize),
         }
     })
 

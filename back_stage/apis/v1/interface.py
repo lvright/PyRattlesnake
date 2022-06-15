@@ -35,7 +35,7 @@ def apis_group_index(
         'pageInfo': {
             'total': len(apis_list),
             'currentPage': page,
-            'totalPage': int(len(apis_list) / pageSize)
+            'totalPage': math.ceil(len(apis_list) / pageSize)
         }
     })
 
@@ -116,7 +116,6 @@ def apis_column_index(
         'pageInfo': {
             'total': len(apis_list),
             'currentPage': page,
-            'totalPage': int(len(apis_list) / pageSize)
+            'totalPage': math.ceil(len(apis_list) / pageSize)
         }
     })
-
