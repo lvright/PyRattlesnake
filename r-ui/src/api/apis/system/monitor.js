@@ -8,7 +8,7 @@ export default {
    */
   getServerInfo () {
     return request({
-      url: 'system/server/monitor',
+      url: 'admin/config/server/monitor',
       method: 'get'
     })
   },
@@ -19,7 +19,7 @@ export default {
    */
   getPackagePageList (params = {}) {
     return request({
-      url: 'system/rely/index',
+      url: 'admin/config/rely/index',
       method: 'get',
       params
     })

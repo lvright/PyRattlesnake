@@ -19,17 +19,6 @@ export default {
   },
 
   /**
-   * 获取模块列表
-   * @returns
-   */
-  getModuleList () {
-    return request({
-      url: 'system/api/getModuleList',
-      method: 'get'
-    })
-  },
-
-  /**
    * 从回收站获取接口管理数据列表
    * @returns
    */

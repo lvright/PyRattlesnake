@@ -64,19 +64,15 @@
                     <tbody>
                       <tr>
                         <td><div class="cell">总内存</div></td>
-                        <td><div class="cell" v-if="server.memory">{{ server.memory.total }}G</div></td>
+                        <td><div class="cell" v-if="server.memory">{{ server.memory.total }}M</div></td>
                       </tr>
                       <tr>
                         <td><div class="cell">已使用内存</div></td>
-                        <td><div class="cell" v-if="server.memory">{{ server.memory.usage }}G</div></td>
-                      </tr>
-                      <tr>
-                        <td><div class="cell">PHP使用内存</div></td>
-                        <td><div class="cell" v-if="server.memory">{{ server.memory.php }}M</div></td>
+                        <td><div class="cell" v-if="server.memory">{{ server.memory.usage }}M</div></td>
                       </tr>
                       <tr>
                         <td><div class="cell">空闲内存</div></td>
-                        <td><div class="cell" v-if="server.memory">{{ server.memory.free }}G</div></td>
+                        <td><div class="cell" v-if="server.memory">{{ server.memory.free }}M</div></td>
                       </tr>
                       <tr>
                         <td><div class="cell">使用率</div></td>
@@ -98,34 +94,34 @@
         <el-col :md="24" :xs="24">
           <el-card shadow="hover" style="margin-bottom:15px;">
             <template #header>
-              <span>PHP及环境信息</span>
+              <span>Python及环境信息</span>
             </template>
             <div class="table">
               <table cellspacing="0" style="width: 100%;">
                 <tbody>
                   <tr>
                     <td><div class="cell">操作系统</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.os }}</div></td>
-                    <td><div class="cell">PHP版本</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.php_version }}</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.os }}</div></td>
+                    <td><div class="cell">python版本</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.pythpn_version }}</div></td>
                   </tr>
                   <tr>
-                    <td><div class="cell">Swoole版本</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.swoole_version }}</div></td>
-                    <td><div class="cell">Hyperf版本</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.hyperf_version }}</div></td>
+                    <td><div class="cell">FastAPI版本</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.fastapi_version }}</div></td>
+                    <td><div class="cell">uvicorn版本</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.uvicorn_version }}</div></td>
                   </tr>
                   <tr>
                     <td><div class="cell">PyRattlesnake版本</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.mineadmin_version }}</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.pyrattlesnake_version }}</div></td>
                     <td><div class="cell">系统物理路径</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.project_path }}</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.project_path }}</div></td>
                   </tr>
                   <tr>
                     <td><div class="cell">系统启动时间</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.start_time }}</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.start_time }}</div></td>
                     <td><div class="cell">系统运行时间</div></td>
-                    <td><div class="cell" v-if="server.phpenv">{{ server.phpenv.run_time }}</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.run_time }}</div></td>
                   </tr>
                   <tr>
                     <td><div class="cell">磁盘信息</div></td>

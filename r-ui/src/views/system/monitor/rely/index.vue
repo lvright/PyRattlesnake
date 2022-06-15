@@ -40,24 +40,6 @@
           width="100"
         ></el-table-column>
 
-        <el-table-column
-          label="简介"
-          prop="description"
-          :show-overflow-tooltip="true"
-        ></el-table-column>
-
-        <el-table-column label="操作" fixed="right" align="right">
-          <template #default="scope">
-
-            <el-button
-            type="text"
-            v-auth="['system:monitor:relyDetail']"
-            @click="handleDetail(scope.row.name)"
-          >详细</el-button>
-            
-          </template>
-        </el-table-column>
-
       </maTable>
     </el-main>
 
