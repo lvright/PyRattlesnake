@@ -19,8 +19,13 @@ import base64
 import os
 import pickle
 import dload
+import psutil
+import cpuinfo
+import platform
+import uvicorn
 import numpy as np
 import pandas as pd
+import fastapi
 from binascii import hexlify
 from sqlalchemy import Table, and_, or_, not_, column, select, insert, update, delete, desc
 from sqlalchemy.orm import load_only, sessionmaker, Session, scoped_session

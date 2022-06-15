@@ -11,6 +11,77 @@ async def get_config_by_key():
 
     return http.respond(200, True, 'OK')
 
+@router.get(path='/config/server/monitor', summary='获取系统服务信息')
+def server_monitor(token_info: str = Depends(http.token)):
+
+    """获取系统服务信息"""
+
+    cpu_proportion = psutil.cpu_times()
+    cpu_core = psutil.cpu_count
+    cpu_info = cpuinfo.get_cpu_info()
+    mem = psutil.virtual_memory()
+    swap = psutil.swap_memory()
+    net_io = psutil.net_io_counters()
+    os_suers = psutil.users()
+
+    cpu = {
+        'free': round(cpu_proportion.idle / 10000, 2),
+        'usage': round(cpu_proportion.system / 1000 + cpu_proportion.user / 1000, 2),
+        'cores': '物理核心数：{}个，逻辑核心数：{}个'.format(str(cpu_core(logical=False)), str(cpu_core())),
+        'name': cpu_info['brand_raw'],
+        'cache': round(cpu_info['l2_cache_size'] / 100, 2)
+    }
+
+    memory_free = round(mem.available / 1000000, 2)
+    memory_total = round(mem.total / 1000000, 2)
+
+    memory = {
+        'free': memory_free,
+        'total': memory_total,
+        'rate': mem.percent,
+        'usage': round(memory_total - memory_free, 2),
+    }
+
+    swap_free = round(swap.free / 10000000, 2)
+    swap_total = round(swap.total / 1000000, 2)
+
+    disk = {
+        'free': swap_free,
+        'rate': str(swap.percent) + '%',
+        'total': swap_total,
+        'usage': round(swap_total - swap_free, 2)
+    }
+
+    net = {
+        'receive_pack': str(round(net_io.bytes_sent / 100000, 2)),
+        'receive_total': str(round(net_io.bytes_recv / 100000, 2)),
+        'send_pack': str(round(net_io.packets_sent / 10000, 2)),
+        'send_total': str(round(net_io.packets_recv / 10000, 2))
+    }
+
+    start_time = time.localtime(os_suers[0].started)
+    run_time = round((int(time.time()) - os_suers[0].started) / 10000, 2)
+
+    pyenv = {
+        'fastapi_version': fastapi.__version__,
+        'pyrattlesnake_version': '0.0.1',
+        'pythpn_version': platform.python_version(),
+        'project_path': os.path.abspath(os.path.join(os.getcwd(), "..")) + '/PyRattlesnake',
+        'os': platform.system(),
+        'uvicorn_version': uvicorn.__version__,
+        'run_time': '已运行{}小时'.format(run_time),
+        'start_time': time.strftime('%Y-%m-%d %H:%M:%S', start_time)
+
+    }
+
+    return http.respond(200, True, '获取成功', {
+        'cpu': cpu,
+        'memory': memory,
+        'disk': disk,
+        'net': net,
+        'pyenv': pyenv
+    })
+
 @router.get(path='/getSysConfig', summary='getSysConfig')
 async def get_sys_config():
 
