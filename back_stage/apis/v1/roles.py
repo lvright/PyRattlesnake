@@ -341,6 +341,7 @@ async def update_user(id: int, account: admin.User, token_info: str = Depends(ht
             # 再重新插入新的关联数据
             for _id in dict(account)[ids]:
                 db.execute(tabel.insert().values({id_name: _id, 'userId': id}))
+                db.commit()
         except Exception as e:
             # 错误回滚 日志打印
             log.log_error(e)

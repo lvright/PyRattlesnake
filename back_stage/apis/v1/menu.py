@@ -73,8 +73,6 @@ def get_menu_by_role(id: int, token_info: str = Depends(http.token)):
 
     role_menu_list = [dict(menu) for menu in role_menu_list if menu]
 
-    print(role_menu_list)
-
     menu_list = [
         {
             'id': id,
@@ -114,7 +112,7 @@ async def menu_update(menu: admin.AdminMenuForm, token_info: str = Depends(http.
     return http.respond(200, True, '保存成功')
 
 @router.delete(path='/menu/menuDelete/{ids:path}', summary='删除菜单')
-def menu_delete(ids: Any, token_info: str = Depends(http.token)):
+def menu_delete(ids: str, token_info: str = Depends(http.token)):
 
     """删除菜单"""
 
@@ -122,7 +120,7 @@ def menu_delete(ids: Any, token_info: str = Depends(http.token)):
         # split ids
         for id in ids.split(','):
             # 循环删除
-            db.execute(admin_system_menu.delete().where(admin_system_menu.c.id == int(id)))
+            db.execute(admin_system_menu.delete().where(admin_system_menu.c.id == id))
             db.commit()
     except Exception as e:
         # 错误回滚 打印日志

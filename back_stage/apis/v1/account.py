@@ -10,19 +10,23 @@ async def admin_info(token_info: str = Depends(http.token)):
     """获取账号信息"""
 
     # 根据返回的 token 解密后获得当前账户 userid 查询 userid 账户信息
-    admin_info = db.query(admin_account).filter_by(userId=token_info['userId']).first()
+    admin_info = db.query(admin_account).filter_by(id=token_info['id']).first()
+
+    # 获取当前账户关联菜单权限
+    admin_role = db.query(admin_roles_account).filter_by(userId=token_info['id']).first()
 
     if admin_info:
 
         admin_info = dict(admin_info)
+        admin_role = dict(admin_role)
 
-        # 根据 admin_role_relation 关联表查询菜单
+        # 根据 admin_menu_account 关联表查询菜单
         admin_menu_list = [dict(menu) for menu in db.query(
             admin_system_menu,
             admin_menu_account
         ).where(
             admin_system_menu.c.status != '1').filter(
-            admin_menu_account.c.role_id == admin_info['id'],
+            admin_menu_account.c.role_id == admin_role['roleId'],
             admin_system_menu.c.id == admin_menu_account.c.menu_id
         ).all()]
 
@@ -31,7 +35,12 @@ async def admin_info(token_info: str = Depends(http.token)):
 
             menu_list = []
 
+            codes = []
+
             for items in admin_menu_list:
+
+                codes.append(items['title'])
+
                 items['meta'] = {
                     'hidden': bool(int(items['hidden'])),
                     'hiddenBreadcrumb': bool(items['hiddenBreadcrumb']),
@@ -46,11 +55,29 @@ async def admin_info(token_info: str = Depends(http.token)):
 
                 if items['parent_id'] == 0: menu_list.append(items)
 
+            # superAdmin 拥有所有权限
+            if token_info['username'] == 'superAdmin': codes = ['*']
+
             # 插入 backend_setting 系统设置
-            admin_info['backend_setting'] = dict(db.query(backend_setting).filter_by(user_id=token_info['id']).first())
+            user_setting = db.query(backend_setting).filter_by(user_id=token_info['id']).first()
+
+            if user_setting:
+
+                admin_info['backend_setting'] = dict(user_setting)
+
+            else:
+
+                # 初始化用户 提供默认配置
+                admin_info['backend_setting'] = {
+                    'colorPrimary': '#536DFE',
+                    'lang': 'zh_CN',
+                    'layout': 'header',
+                    'layoutTags': '1',
+                    'theme': 'default'
+                }
 
             return http.respond(200, True, '加载完成', {
-                'codes': ['*'],
+                'codes': codes,
                 'roles': [token_info['userId']],
                 'routers': menu_list,
                 'user': admin_info
@@ -235,7 +262,7 @@ async def get_user_list(_: int = None, token_info: str = Depends(http.token)):
     return http.respond(200, True, 'OK', dept_list)
 
 @router.get(path='/user/getRoleList', summary='按角色获取用户')
-async def get_role_list(_: Optional[int] = None, token_info: str = Depends(http.token)):
+async def get_role_list(_: int = None, token_info: str = Depends(http.token)):
 
     """按角色获取用户"""
 
