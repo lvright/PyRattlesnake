@@ -187,3 +187,11 @@ class SystemNotification(BaseModel):
     remark: Optional[str] = Query(None)
     users: Optional[Any] = Query(None)
     content: Optional[str] = Query(None)
+
+# 系统登录配置
+class ConfigByKey(BaseModel):
+    key: str = Query(None)
+
+# 在线用户
+class OnlineUser(BaseModel):
+    id: int = Query(None)

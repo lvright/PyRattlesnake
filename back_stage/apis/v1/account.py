@@ -129,8 +129,8 @@ async def get_user_list(
         # 列表筛选条件
         page: int,
         pageSize: int,
-        orderBy: Optional[str] = None,
-        orderType: Optional[str] = None,
+        orderBy: Optional[str] = '',
+        orderType: Optional[str] = '',
         dept_id: Optional[str] = '',
         role_id: Optional[str] = '',
         post_id: Optional[str] = '',
@@ -281,3 +281,56 @@ async def get_post_list(_: Optional[int] = None, token_info: str = Depends(http.
     post_list = [dict(post) for post in db.query(admin_post).all() if post]
 
     return http.respond(200, True, 'OK', post_list)
+
+@router.get(path='/user/onlineUser/index', summary='获取在线用户')
+def user_online(
+        page: int,
+        pageSize: int,
+        orderBy: Optional[str] = '',
+        orderType: Optional[str] = '',
+        _: int = None,
+        token_info: str = Depends(http.token)
+):
+
+    """获取在线用户"""
+
+    online_user_list = data_base.redis.keys()
+
+    if online_user_list:
+
+        online_user_data = []
+
+        for item in online_user_list:
+            online_user = db.query(admin_account).filter_by(username=item).first()
+
+            user_dept = db.query(admin_dept_account).filter_by(userId=online_user['id']).first()
+            dept = db.query(admin_dept).filter_by(id=dict(user_dept)['deptId']).first()
+
+            online_user = dict(online_user)
+            online_user['dept'] = dict(dept)['name']
+
+            if online_user: online_user_data.append(dict(online_user))
+
+        return http.respond(200, True, '获取成功', {
+            'items': online_user_data,
+            'pageInfo': {
+                'total': len(online_user_data),
+                'currentPage': page,
+                'totalPage': math.ceil(len(online_user_data) / pageSize)
+            }
+        })
+
+@router.post(path='/user/onlineUser/kick', summary='强退用户')
+def user_kick(online_user: admin.OnlineUser, token_info: str = Depends(http.token)):
+
+    """强退用户"""
+
+    online_user = dict(online_user)
+
+    user = db.query(admin_account).filter_by(id=online_user['id']).first()
+
+    if user:
+        user_name = dict(user)['username']
+        data_base.redis.delete(user_name)
+
+        return http.respond(200, True, '强退成功')

@@ -18,7 +18,7 @@ async def get_code_key():
         return http.respond(200, True, 'OK', {'codeUrl': get_code['img_url']})
 
 @router.post(path='/login', summary='后台登录')
-async def admin_login(login_info: admin.AdminLogin):
+async def admin_login(login_info: admin.AdminLogin, request: Request):
 
     """后台登录"""
 
@@ -34,8 +34,22 @@ async def admin_login(login_info: admin.AdminLogin):
         # token 加密
         token = jwt_token.encode(dict(admin_info))
 
-        # token 有效期暂不设置redis
+        db.execute(admin_account.update().where(admin_account.c.id == admin_info['id']).values(
+            **{'login_ip': request.client.host, 'login_time': now_date_time}
+        ))
+        db.commit()
+
+        data_base.redis.set(admin_info['username'], token, ex=3000)
 
         return http.respond(200, True, '登陆成功', {'token': token})
 
     return http.respond(500, False, '账户或密码错误')
+
+@router.post(path='/logout', summary='退出登录')
+def logout(token_info: str = Depends(http.token)):
+
+    """退出登录"""
+
+    data_base.redis.delete(token_info['username'])
+
+    return http.respond(200, True, '退出成功')
