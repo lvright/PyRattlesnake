@@ -8,8 +8,8 @@ export default {
 		sort_fail: 'Sort failed',
 	},
 	login: {
-		slogan: 'High performance / delicate / grace',
-		describe: 'Backstage based on Swoole Hyperf framework, a mid-background solution for front-end Vue3 and SCUI (Element-Plus).',
+		slogan: 'High performance Easy to learn Efficient coding Production ready',
+		describe: 'The backend is based on the Python-based FastAPI framework, and the front-end Vue3 + SCUI (Element-Plus) middle and backend solution',
 		signInTitle: 'Sign in',
 		rememberMe: 'Remember me',
 		forgetPassword: 'Forget password',

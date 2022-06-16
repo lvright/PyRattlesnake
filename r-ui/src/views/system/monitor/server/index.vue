@@ -64,15 +64,15 @@
                     <tbody>
                       <tr>
                         <td><div class="cell">总内存</div></td>
-                        <td><div class="cell" v-if="server.memory">{{ server.memory.total }}M</div></td>
+                        <td><div class="cell" v-if="server.memory">{{ server.memory.total }}G</div></td>
                       </tr>
                       <tr>
                         <td><div class="cell">已使用内存</div></td>
-                        <td><div class="cell" v-if="server.memory">{{ server.memory.usage }}M</div></td>
+                        <td><div class="cell" v-if="server.memory">{{ server.memory.usage }}G</div></td>
                       </tr>
                       <tr>
                         <td><div class="cell">空闲内存</div></td>
-                        <td><div class="cell" v-if="server.memory">{{ server.memory.free }}M</div></td>
+                        <td><div class="cell" v-if="server.memory">{{ server.memory.free }}G</div></td>
                       </tr>
                       <tr>
                         <td><div class="cell">使用率</div></td>
@@ -103,7 +103,7 @@
                     <td><div class="cell">操作系统</div></td>
                     <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.os }}</div></td>
                     <td><div class="cell">python版本</div></td>
-                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.pythpn_version }}</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.python_version }}</div></td>
                   </tr>
                   <tr>
                     <td><div class="cell">FastAPI版本</div></td>
@@ -113,7 +113,7 @@
                   </tr>
                   <tr>
                     <td><div class="cell">PyRattlesnake版本</div></td>
-                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.pyrattlesnake_version }}</div></td>
+                    <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.py_rattlesnake_version }}</div></td>
                     <td><div class="cell">系统物理路径</div></td>
                     <td><div class="cell" v-if="server.pyenv">{{ server.pyenv.project_path }}</div></td>
                   </tr>
@@ -127,11 +127,11 @@
                     <td><div class="cell">磁盘信息</div></td>
                     <td colspan="3">
                       <div class="cell" v-if="server.disk">
-                        总空间：{{ server.disk.total }}
+                        总空间：{{ server.disk.total }}G
                         <el-divider direction="vertical"></el-divider>
-                        已使用：{{ server.disk.usage }}
+                        已使用：{{ server.disk.usage }}G
                         <el-divider direction="vertical"></el-divider>
-                        已剩余：{{ server.disk.free }}
+                        已剩余：{{ server.disk.free }}G
                         <el-divider direction="vertical"></el-divider>
                         使用率：{{ server.disk.rate }}
                       </div>

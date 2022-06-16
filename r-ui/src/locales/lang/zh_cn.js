@@ -8,8 +8,8 @@ export default {
 		sort_fail: '排序失败',
 	},
 	login: {
-		slogan: '高性能 / 精致 / 优雅',
-		describe: '后台基于Swoole的Hyperf框架，前端Vue3 + SCUI (Element-Plus) 的中后台解决方案',
+		slogan: '高性能 易于学习 高效编码 生产可用',
+		describe: '后台基于Python的FastAPI框架，前端Vue3 + SCUI (Element-Plus) 的中后台解决方案',
 		signInTitle: '用户登录',
 		rememberMe: '记住我',
 		forgetPassword: '忘记密码',

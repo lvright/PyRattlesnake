@@ -10,10 +10,11 @@
       <el-badge
         :hidden="msgList.length == 0"
         :value="msgList.length"
+        :style="{ marginTop: '6px' }"
         class="badge"
         type="danger"
       >
-        <el-icon><el-icon-chat-dot-round /></el-icon>
+        <el-icon><el-icon-chat-line-square /></el-icon>
       </el-badge>
       <el-drawer
         title="新消息"

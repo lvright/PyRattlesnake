@@ -34,7 +34,7 @@ export default {
      */
     Logout (params = {}) {
         return request({
-            url: 'system/logout',
+            url: 'admin/logout',
             method: 'post',
             data: params
         })

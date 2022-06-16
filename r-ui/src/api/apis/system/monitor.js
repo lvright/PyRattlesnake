@@ -26,24 +26,13 @@ export default {
   },
 
   /**
-   * 获取依赖包详细
-   * @returns
-   */
-  getPackageDetail (name) {
-    return request({
-      url: 'system/rely/detail?name='+name,
-      method: 'get',
-    })
-  },
-
-  /**
    * 获取在线用户列表
    * @param {*} params 
    * @returns 
    */
   getOnlineUserPageList (params = {}) {
     return request({
-      url: 'system/onlineUser/index',
+      url: 'admin/user/onlineUser/index',
       method: 'get',
       params
     })
@@ -56,7 +45,7 @@ export default {
    */
   kickUser (params = {}) {
     return request({
-      url: 'system/onlineUser/kick',
+      url: 'admin/user/onlineUser/kick',
       method: 'post',
       data: params
     })
@@ -68,7 +57,7 @@ export default {
    */
   getCacheInfo () {
     return request({
-      url: 'system/cache/monitor',
+      url: 'admin/config/redis',
       method: 'get'
     })
   },
@@ -79,7 +68,7 @@ export default {
    */
   view (data) {
     return request({
-      url: 'system/cache/view',
+      url: 'admin/config/redisView',
       method: 'post',
       data
     })
@@ -92,7 +81,7 @@ export default {
    */
   deleteKey (data) {
     return request({
-      url: 'system/cache/delete',
+      url: 'admin/config/redisDelete',
       method: 'delete',
       data
     })
@@ -104,7 +93,7 @@ export default {
    */
   clear () {
     return request({
-      url: 'system/cache/clear',
+      url: 'admin/config/redisClear',
       method: 'delete'
     })
   },

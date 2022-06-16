@@ -131,15 +131,7 @@
 					},{
 						label: "登录地点",
 						prop: "ip_location",
-						width: "150"
-					},{
-						label: "操作系统",
-						prop: "os",
-						width: "150"
-					},{
-						label: "浏览器",
-						prop: "browser",
-						width: "150"
+						width: "400"
 					},{
 						label: "登录信息",
 						prop: "message",

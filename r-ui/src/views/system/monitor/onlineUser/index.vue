@@ -40,7 +40,7 @@
 
         <el-table-column
           label="部门"
-          prop="dept.name"
+          prop="dept"
         ></el-table-column>
 
         <el-table-column

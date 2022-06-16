@@ -5,31 +5,10 @@
         <h2>PyRattlesnake</h2>
         <h4>{{ $t("login.slogan") }}</h4>
         <p>{{ $t("login.describe") }}</p>
-
-        <div>
-          <span>
-            <el-icon><ma-icon-mineadmin style="font-size: 48px" /></el-icon>
-          </span>
-          <span>
-            <el-icon class="add"><el-icon-plus /></el-icon>
-          </span>
-          <span>
-            <el-icon><el-icon-eleme-filled /></el-icon>
-          </span>
-        </div>
       </div>
       <div class="login_adv__bottom">
         <p>{{ $CONFIG.APP_NAME }} {{ $CONFIG.APP_VER }}</p>
         <p>Copyright © 2021-2022 PyRattlesnake.com All Rights Reserved.</p>
-        <p>
-          <a
-            href="https://beian.miit.gov.cn/"
-            target="_blank"
-            v-if="$TOOL.data.get('site_record_number')"
-            style="color: #fff"
-            >{{ $TOOL.data.get("site_record_number") }}</a
-          >
-        </p>
       </div>
     </div>
     <div class="login_main">

@@ -23,13 +23,16 @@
                       <td><div class="cell">运行模式</div></td>
                       <td><div class="cell">{{ server.redis_mode }}</div></td>
                       <td><div class="cell">运行天数</div></td>
-                      <td><div class="cell">{{ server.run_days }}</div></td>
+                      <td><div class="cell">{{ server.run_days }}天</div></td>
                     </tr>
                     <tr>
                       <td><div class="cell">端口</div></td>
                       <td><div class="cell">{{ server.port }}</div></td>
                       <td><div class="cell">AOF状态</div></td>
-                      <td><div class="cell">{{ server.aof_enabled }}</div></td>
+                      <td>
+                        <div class="cell" v-if="(server.aof_enabled) == 0">关闭</div>
+                        <div class="cell" v-if="(server.aof_enabled) == 1">开启</div>
+                      </td>
                     </tr>
                     <tr>
                       <td><div class="cell">已过期key</div></td>

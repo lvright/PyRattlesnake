@@ -28,7 +28,7 @@
       >
         
         <el-table-column
-          label="依赖名称"
+          label="Python 依赖名称"
           prop="name"
           width="260"
           :show-overflow-tooltip="true"
@@ -37,7 +37,7 @@
         <el-table-column
           label="版本号"
           prop="version"
-          width="100"
+          width="260"
         ></el-table-column>
 
       </maTable>
