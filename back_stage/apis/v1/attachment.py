@@ -7,9 +7,9 @@ from back_stage import *
 
 @router.get(path='/attachment/index', summary='获取附件内容')
 async def get_attachment(
+        page: int,
+        pageSize: int,
         mime_type: Optional[str] = '',
-        page: Optional[str] = '',
-        pageSize: Optional[str] = '',
         origin_name: Optional[str] = '',
         type: Optional[str] = '',
         _: Optional[int] = '',

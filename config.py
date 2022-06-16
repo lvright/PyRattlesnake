@@ -16,9 +16,9 @@ class Config:
     databases = 'mysql+pymysql://root:root123456@localhost:3306/pysql'
 
     # redis
-    redis_host = '101.35.53.208'
+    redis_host = '127.0.0.1'
     redis_port = 6379
-    redis_paw = 'xiaoguo6379'
+    redis_paw = ''
     decode = True
     redis_db = 0
 

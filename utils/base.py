@@ -29,10 +29,11 @@ import numpy as np
 import pandas as pd
 import fastapi
 from binascii import hexlify
+from fuzzywuzzy import fuzz
 from sqlalchemy import Table, and_, or_, not_, column, select, insert, update, delete, desc
 from sqlalchemy.orm import load_only, sessionmaker, Session, scoped_session
 from PIL import Image, ImageDraw, ImageFont
-from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect
+from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import JSONResponse, StreamingResponse, UJSONResponse, FileResponse
 from typing import List, Optional, Set, TypeVar, Any
 from openpyxl import Workbook
@@ -202,7 +203,8 @@ class Response:
     # token 失效响应状态
     def token(self, token: str = Header(None)):
         info = JsonWebToken().decode(token)
-        if isinstance(info, dict):
+        token_redis = DataBase().redis.get(info['username'])
+        if isinstance(info, dict) and token_redis:
             return info
         raise HTTPException(status_code=401, detail={
             'code': 401,
