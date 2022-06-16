@@ -5,11 +5,20 @@ from back_stage import *
 # TODO ----------config系统配置模块----------
 
 @router.post(path='/getConfigByKey', summary='getConfigByKey')
-async def get_config_by_key():
+async def get_config_by_key(conf_key: admin.ConfigByKey):
 
     """getConfigByKey"""
 
-    return http.respond(200, True, 'OK')
+    conf_key = dict(conf_key)
+
+    config_key = db.query(admin_extend).filter_by(key=conf_key['key']).first()
+
+    if config_key:
+
+        config_key = dict(config_key)
+
+    return http.respond(200, True, 'OK', config_key)
+
 
 @router.get(path='/config/server/monitor', summary='获取系统服务信息')
 def server_monitor(token_info: str = Depends(http.token)):
@@ -20,7 +29,7 @@ def server_monitor(token_info: str = Depends(http.token)):
     cpu_core = psutil.cpu_count
     cpu_info = cpuinfo.get_cpu_info()
     mem = psutil.virtual_memory()
-    swap = psutil.swap_memory()
+    swap = psutil.disk_usage('/')
     net_io = psutil.net_io_counters()
     os_suers = psutil.users()
 
@@ -32,8 +41,8 @@ def server_monitor(token_info: str = Depends(http.token)):
         'cache': round(cpu_info['l2_cache_size'] / 100, 2)
     }
 
-    memory_free = round(mem.available / 1000000, 2)
-    memory_total = round(mem.total / 1000000, 2)
+    memory_free = round(mem.available / 1000000000, 2)
+    memory_total = round(mem.total / 1000000000, 2)
 
     memory = {
         'free': memory_free,
@@ -42,8 +51,8 @@ def server_monitor(token_info: str = Depends(http.token)):
         'usage': round(memory_total - memory_free, 2),
     }
 
-    swap_free = round(swap.free / 10000000, 2)
-    swap_total = round(swap.total / 1000000, 2)
+    swap_free = round(swap.free / 1000000000, 2)
+    swap_total = round(swap.total / 1000000000, 2)
 
     disk = {
         'free': swap_free,
@@ -64,14 +73,13 @@ def server_monitor(token_info: str = Depends(http.token)):
 
     pyenv = {
         'fastapi_version': fastapi.__version__,
-        'pyrattlesnake_version': '0.0.1',
-        'pythpn_version': platform.python_version(),
+        'py_rattlesnake_version': '0.0.1',
+        'python_version': platform.python_version(),
         'project_path': os.path.abspath(os.path.join(os.getcwd(), "..")) + '/PyRattlesnake',
         'os': platform.system(),
         'uvicorn_version': uvicorn.__version__,
         'run_time': '已运行{}小时'.format(run_time),
         'start_time': time.strftime('%Y-%m-%d %H:%M:%S', start_time)
-
     }
 
     return http.respond(200, True, '获取成功', {
@@ -82,10 +90,18 @@ def server_monitor(token_info: str = Depends(http.token)):
         'pyenv': pyenv
     })
 
+@router.get(path='/config/redis', summary='获取缓存监控信息')
+def get_redis_config(token_info: str = Depends(http.token)):
+
+    """获取缓存监控信息"""
+
+    pass
+
 @router.get(path='/config/rely/index', summary='获取python依赖包')
 def rely_index(
         page: int,
         pageSize: int,
+        name: Optional[str] = '',
         orderBy: Optional[str] = '',
         orderType: Optional[str] = '',
         _: int = None,
@@ -95,7 +111,21 @@ def rely_index(
     """获取python依赖包"""
 
     with open(project_file_path + '/requirements.txt', 'r') as f:
-        data = [{'name': item.split('==')[0], 'version': 'v' + item.split('==')[1]} for item in f.read().split()]
+        if name:
+            data = [
+                {
+                    'name': item.split('==')[0],
+                    'version': 'v' + item.split('==')[1]
+                } for item in f.read().split()
+                if fuzz.ratio(item.split('==')[0], name)
+            ]
+        else:
+            data = [
+                {
+                    'name': item.split('==')[0],
+                    'version': 'v' + item.split('==')[1]
+                } for item in f.read().split()
+            ]
 
     return http.respond(200, True, '获取成功', {
         'items': data[page:page + pageSize],
