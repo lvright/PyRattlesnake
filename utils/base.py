@@ -28,6 +28,7 @@ import uvicorn
 import numpy as np
 import pandas as pd
 import fastapi
+import requests
 from binascii import hexlify
 from fuzzywuzzy import fuzz
 from sqlalchemy import Table, and_, or_, not_, column, select, insert, update, delete, desc
@@ -198,18 +199,20 @@ class Response:
         if args != ():
             for i in args:
                 results['data'] = i
+
+
         return JSONResponse(status_code=code, content=results)
 
     # token 失效响应状态
     def token(self, token: str = Header(None)):
         info = JsonWebToken().decode(token)
-        token_redis = DataBase().redis.get(info['username'])
+        token_redis = DataBase().redis.get('user_token:' + info['username'])
         if isinstance(info, dict) and token_redis:
             return info
         raise HTTPException(status_code=401, detail={
-            'code': 401,
+            'status': 401,
             'success': False,
-            'message': '登录验证失效！',
+            'message': '登录验证失效',
             'timestamp': str(int(time.time()))
         })
 

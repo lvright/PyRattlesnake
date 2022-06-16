@@ -58,10 +58,10 @@ async def get_notice(
     notice_list = []
 
     if any([type, title]):
-        notice = db.query(sys_message).where(
+        notice = db.query(sys_notification).where(
             and_(
-                sys_message.c.title.like('%' + title + '%'),
-                sys_message.c.type.like('%' + type + '%')
+                sys_notification.c.title.like('%' + title + '%'),
+                sys_notification.c.type.like('%' + type + '%')
             )
         ).limit(pageSize).all()
 
@@ -69,13 +69,13 @@ async def get_notice(
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        notice_list = [dict(item) for item in db.query(sys_message).order_by(desc(orderBy)).limit(pageSize) if item]
+        notice_list = [dict(item) for item in db.query(sys_notification).order_by(desc(orderBy)).limit(pageSize) if item]
 
     elif orderType == 'ascending':
-        notice_list = [dict(item) for item in db.query(sys_message).order_by(orderBy).limit(pageSize) if item]
+        notice_list = [dict(item) for item in db.query(sys_notification).order_by(orderBy).limit(pageSize) if item]
 
     else:
-        notice_list = [dict(item) for item in db.query(sys_message).limit(pageSize).all() if item]
+        notice_list = [dict(item) for item in db.query(sys_notification).limit(pageSize).all() if item]
 
     return http.respond(200, True, 'OK', {
         'items': notice_list,
@@ -121,7 +121,7 @@ async def notice_save(id: int, notice: admin.SystemNotification, token_info: str
     notice['updated_at'] = now_date_time
     notice['updated_by'] = now_timestamp
 
-    db.execute(sys_message.update().where(sys_message.c.id == id).values(**notice))
+    db.execute(sys_notification.update().where(sys_notification.c.id == id).values(**notice))
     db.commit()
 
     return http.respond(200, True, '发送成功')

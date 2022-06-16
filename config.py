@@ -30,6 +30,10 @@ class Config:
     # JWT 密钥
     secret_key = 'pyright'
 
+    # ip123
+    get_ip_url = 'http://api.ip138.com/ip/'
+    get_ip_token = '3eb53efc697b0bf6f26360194e427dcd'
+
     # 云存储
     security_token = ''
     secretID = ''

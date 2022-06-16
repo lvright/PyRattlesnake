@@ -7,7 +7,6 @@ from utils import *
 # APIRouter admin模块
 router = APIRouter(prefix='/admin', tags=['back_stage'])
 
-
 # TODO ------------数据库表连接池------------
 
 # 账户和菜单管理
@@ -49,7 +48,11 @@ sys_apis = data_base.table('sys_apis')
 sys_message = data_base.table('sys_message')
 sys_notification = data_base.table('sys_notification')
 
-# 导出接口模块
+# 系统日志
+sys_login_log = data_base.table('sys_login_log')
+
+# TODO ------------导出接口模块------------
+
 from back_stage.apis.v1 \
     import account, menu, roles, login, config, message, \
-    dept, post, auth, attachment, interface, app
+    dept, post, auth, attachment, interface, app, logger

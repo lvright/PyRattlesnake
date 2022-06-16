@@ -195,3 +195,7 @@ class ConfigByKey(BaseModel):
 # 在线用户
 class OnlineUser(BaseModel):
     id: int = Query(None)
+
+# redis信息
+class RedisInfo(BaseModel):
+    key: str = Query(None)

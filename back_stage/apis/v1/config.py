@@ -2,7 +2,7 @@
 
 from back_stage import *
 
-# TODO ----------config系统配置模块----------
+# TODO ----------config key----------
 
 @router.post(path='/getConfigByKey', summary='getConfigByKey')
 async def get_config_by_key(conf_key: admin.ConfigByKey):
@@ -10,15 +10,14 @@ async def get_config_by_key(conf_key: admin.ConfigByKey):
     """getConfigByKey"""
 
     conf_key = dict(conf_key)
-
     config_key = db.query(admin_extend).filter_by(key=conf_key['key']).first()
 
     if config_key:
-
         config_key = dict(config_key)
 
     return http.respond(200, True, 'OK', config_key)
 
+# TODO ----------系统服务信息----------
 
 @router.get(path='/config/server/monitor', summary='获取系统服务信息')
 def server_monitor(token_info: str = Depends(http.token)):
@@ -95,7 +94,61 @@ def get_redis_config(token_info: str = Depends(http.token)):
 
     """获取缓存监控信息"""
 
-    pass
+    redis_info = data_base.redis.info()
+
+    server = {
+        'version': redis_info['redis_version'],
+        'redis_mode': redis_info['redis_mode'],
+        'aof_enabled': redis_info['aof_enabled'],
+        'clients': redis_info['connected_clients'],
+        'expired_keys': redis_info['expired_keys'],
+        'port': redis_info['tcp_port'],
+        'run_days': redis_info['uptime_in_days'],
+        'sys_total_keys': len(data_base.redis.keys()),
+        'use_memory': redis_info['used_memory_human'],
+    }
+
+    return http.respond(200, True, '获取成功', {
+        'server': server,
+        'keys': data_base.redis.keys()
+    })
+
+@router.post(path='/config/redisView', summary='查看redis key')
+def redis_view(redis_info: admin.RedisInfo, token_info: str = Depends(http.token)):
+
+    """查看 redis key"""
+
+    redis_info = dict(redis_info)
+    redis_key = data_base.redis.get(redis_info['key'])
+
+    if redis_key:
+        return http.respond(200, True, '获取成功', {'content':  redis_key})
+
+    return http.respond(500, False, '找不到key，或key值已过期')
+
+@router.delete(path='/config/redisClear', summary='一键清除redis')
+def redis_delete(token_info: str = Depends(http.token)):
+
+    """一键清除 redis"""
+
+    redis_keys = data_base.redis.keys()
+
+    if redis_keys:
+        for key in redis_keys:
+            data_base.redis.delete(key)
+
+    return http.respond(200, True, '清除成功')
+
+@router.delete(path='/config/redisDelete', summary='删除redis key')
+def redis_delete(redis_info: admin.RedisInfo, token_info: str = Depends(http.token)):
+
+    """删除redis key"""
+
+    redis_info = dict(redis_info)
+
+    data_base.redis.delete(redis_info['key'])
+
+    return http.respond(200, True, '清除成功')
 
 @router.get(path='/config/rely/index', summary='获取python依赖包')
 def rely_index(

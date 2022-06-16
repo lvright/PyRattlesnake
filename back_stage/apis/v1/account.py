@@ -5,7 +5,7 @@ from back_stage import *
 # TODO ----------用户账户模块----------
 
 @router.post(path='/info', summary='获取账号信息')
-async def admin_info(token_info: str = Depends(http.token)):
+async def admin_info(request: Request, token_info: str = Depends(http.token)):
 
     """获取账号信息"""
 
@@ -39,7 +39,8 @@ async def admin_info(token_info: str = Depends(http.token)):
 
             for items in admin_menu_list:
 
-                codes.append(items['title'])
+                # superAdmin 拥有所有权限
+                if token_info['username'] == 'superAdmin': codes = ['*'] or codes.append(items['title'])
 
                 items['meta'] = {
                     'hidden': bool(int(items['hidden'])),
@@ -54,9 +55,6 @@ async def admin_info(token_info: str = Depends(http.token)):
                 items['children'] = [menu for menu in admin_menu_list if menu['parent_id'] == items['menu_id']]
 
                 if items['parent_id'] == 0: menu_list.append(items)
-
-            # superAdmin 拥有所有权限
-            if token_info['username'] == 'superAdmin': codes = ['*']
 
             # 插入 backend_setting 系统设置
             user_setting = db.query(backend_setting).filter_by(user_id=token_info['id']).first()
@@ -109,7 +107,11 @@ async def modify_password(password: admin.ModifyPassword, token_info: str = Depe
 
     """修改账户密码"""
 
-    db.execute(admin_account.update().where(admin_account.c.userId == token_info['userId']).values(password=password.newPassword))
+    db.execute(admin_account.update().where(
+        admin_account.c.userId == token_info['userId']
+    ).values(
+        password=password.newPassword)
+    )
     db.commit()
 
     return http.respond(200, True, '密码修改成功')
@@ -296,29 +298,32 @@ def user_online(
 
     online_user_list = data_base.redis.keys()
 
+    online_user_data = []
+
     if online_user_list:
 
-        online_user_data = []
-
         for item in online_user_list:
-            online_user = db.query(admin_account).filter_by(username=item).first()
+            username = str(item).split(':')[1]
+            online_user = db.query(admin_account).filter_by(username=username).first()
 
-            user_dept = db.query(admin_dept_account).filter_by(userId=online_user['id']).first()
-            dept = db.query(admin_dept).filter_by(id=dict(user_dept)['deptId']).first()
+            if online_user:
 
-            online_user = dict(online_user)
-            online_user['dept'] = dict(dept)['name']
+                user_dept = db.query(admin_dept_account).filter_by(userId=online_user['id']).first()
+                dept = db.query(admin_dept).filter_by(id=dict(user_dept)['deptId']).first()
 
-            if online_user: online_user_data.append(dict(online_user))
+                online_user = dict(online_user)
+                online_user['dept'] = dict(dept)['name']
 
-        return http.respond(200, True, '获取成功', {
-            'items': online_user_data,
-            'pageInfo': {
-                'total': len(online_user_data),
-                'currentPage': page,
-                'totalPage': math.ceil(len(online_user_data) / pageSize)
-            }
-        })
+                if online_user: online_user_data.append(dict(online_user))
+
+    return http.respond(200, True, 'OK', {
+        'items': online_user_data,
+        'pageInfo': {
+            'total': len(online_user_data),
+            'currentPage': page,
+            'totalPage': math.ceil(len(online_user_data) / pageSize)
+        }
+    })
 
 @router.post(path='/user/onlineUser/kick', summary='强退用户')
 def user_kick(online_user: admin.OnlineUser, token_info: str = Depends(http.token)):
@@ -333,4 +338,4 @@ def user_kick(online_user: admin.OnlineUser, token_info: str = Depends(http.toke
         user_name = dict(user)['username']
         data_base.redis.delete(user_name)
 
-        return http.respond(200, True, '强退成功')
+        return http.respond(200, True, '已强退用户')
