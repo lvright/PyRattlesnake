@@ -31,11 +31,14 @@ import fastapi
 import requests
 from binascii import hexlify
 from fuzzywuzzy import fuzz
-from sqlalchemy import Table, and_, or_, not_, column, select, insert, update, delete, desc
+from sqlalchemy import Table, and_, or_, not_, column, select, insert, update, delete, desc, func
 from sqlalchemy.orm import load_only, sessionmaker, Session, scoped_session
 from PIL import Image, ImageDraw, ImageFont
-from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect, Request
+from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect, Request, FastAPI, Response
 from fastapi.responses import JSONResponse, StreamingResponse, UJSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional, Set, TypeVar, Any
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
@@ -167,7 +170,7 @@ class Captcha:
 """
 Response 工具类
 """
-class Response:
+class ResponseMethod:
     """
     200 - 服务器成功返回网页，客户端请求已成功。
     302 - 对象临时移动。服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求。
@@ -199,7 +202,6 @@ class Response:
         if args != ():
             for i in args:
                 results['data'] = i
-
 
         return JSONResponse(status_code=code, content=results)
 
@@ -238,26 +240,20 @@ class ConnectionManager:
     @staticmethod
     async def send_personal_message(message, ws: WebSocket):
         # 发送个人消息
-
         if isinstance(message, str):
             await ws.send_text(message)
-
         if isinstance(message, dict):
             await ws.send_json(message)
-
         if isinstance(message, bytes):
             await ws.send_bytes(message)
 
     async def broadcast(self, message):
         # 广播消息
         for connection in self.active_connections:
-
             if isinstance(message, str):
                 await connection.send_text(message)
-
             if isinstance(message, dict):
                 await connection.send_json(message)
-
             if isinstance(message, bytes):
                 await connection.send_bytes(message)
 
@@ -323,6 +319,27 @@ class Tackle:
             'markdown.extensions.tables'
         ])
         return mkd_text
+
+    # 拦截请求用户 ip 并查询地区
+    def get_request_ip_info(self, host):
+
+        ip_info = {}
+        get_ip_info = requests.get(Config.get_ip_url, {'ip': host, 'token': Config.get_ip_token})
+
+        if get_ip_info.status_code == 200:
+            ip_location = get_ip_info.json()['data']
+
+            if host == '0.0.0.0' or '127.0.0.1':
+                ip_info['ip_location'] = '本地测试'
+            else:
+                ip_info['ip_location'] = '{}-{}-{}-{}:{}' \
+                    .format(
+                    ip_location[0], ip_location[1],
+                    ip_location[2], ip_location[3],
+                    ip_location[4]
+                )
+
+        return ip_info
 
 """
 数据库类 SQLAlchemy
@@ -432,8 +449,9 @@ baseCodeKey 64位加密工具
 """
 class BaseCode:
 
+    def __init__(self):
+        return
+
     app_id = str(hexlify(os.urandom(12)), 'utf-8')
-
     app_secret = base64.b64encode(app_id.encode(encoding='utf-8')).decode('utf-8')
-
     app_key_decode = base64.b64decode(app_secret.encode(encoding='utf-8'))

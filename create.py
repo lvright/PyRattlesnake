@@ -1,30 +1,30 @@
 # -*- coding: utf-8 -*-
+import json
 
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware
-from config import Config
-from back_stage import router as admin
+from back_stage import *
+from utils import *
+
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+
 
 # 创建app
 app = FastAPI(
-    title="APIS-LINE",
-    description="""PyRattlesnake 是基于FASTAPI模块，配备了Web开发过程所需的工具和代码块。""",
+    title='APIS-LINE',
+    description="""PyRattlesnake 是基于FASTAPI模块，配备了Web开发过程所需的工具和代码块""",
     version='0.0.1',
-    docs_url="/api/v1/docs",  # 自定义文档地址
+    docs_url='/api/v1/docs',  # 自定义文档地址
     redoc_url=None,  # 禁用redoc文档
-    openapi_url="/api/v1/openapi.json",
+    openapi_url='/api/v1/openapi.json',
     openapi_tags=[
         {
-            "name": "back_stage",
-            "description": "后台模块API",
+            'name': 'back_stage',
+            'description': '后台模块API',
         },
     ]
 )
 
 # fastapi 蓝图
-app.include_router(admin)
+app.include_router(router)
 
 # 跨域
 app.add_middleware(
@@ -35,6 +35,60 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+# 请求拦截器 捕获请求日志
+@app.middleware('http')
+async def request_info(request: Request, call_next):
+    response = await call_next(request)
+    body = b""
+    async for chunk in response.body_iterator:
+        body += chunk
+    # do something with body ...
+
+    if request.method not in ['GET', 'OPTIONS'] \
+            and request.url.path not in ['/admin/getConfigByKey', '/admin/info', '/admin/login']:
+
+        success = True
+        message = 'OK'
+        if response.status_code != 200:
+            success = False
+            message = 'ERROR'
+
+        ip_location = tackle.get_request_ip_info(request.client.host)['ip_location']
+        username = db.query(sys_login_log).filter_by(ip=request.client.host).first()
+
+        db.execute(sys_oper_log.insert().values(
+            **{
+                'username': dict(username)['username'],
+                'method': request.method,
+                'router': request.url.path,
+                'ip': request.client.host,
+                'ip_location': ip_location,
+                'request_data': json.dumps(request.path_params)
+                                or json.dumps(request.query_params)
+                                or json.dumps(request.body())
+                                or json.dumps(request.json())
+                                or json.dumps(request.form()),
+                'response_code': response.status_code,
+                'response_data': json.dumps({
+                    'status': response.status_code,
+                    'success': success,
+                    'message': message,
+                    'timestamp': now_timestamp,
+                }),
+                'created_by': now_timestamp,
+                'updated_by': now_timestamp,
+                'created_at': now_date_time,
+                'updated_at': now_date_time,
+            }
+        ))
+        db.commit()
+
+    return Response(
+        content=body,
+        status_code=response.status_code,
+        headers=dict(response.headers),
+        media_type=response.media_type
+    )
+
 # 静态文件设置
-# Jinja2Templates(directory="./templates")
-app.mount("/static", StaticFiles(directory="./static"), name="static")
+app.mount('/static', StaticFiles(directory='./static'), name='static')
