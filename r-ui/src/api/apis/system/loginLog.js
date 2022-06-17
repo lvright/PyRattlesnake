@@ -20,7 +20,7 @@ export default {
      */
     deletes (ids) {
         return request({
-            url: 'system/logs/deleteLoginLog/' + ids,
+            url: 'admin/logs/loginLog/delete/' + ids,
             method: 'delete'
         })
     }

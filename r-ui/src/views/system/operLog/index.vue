@@ -36,8 +36,8 @@
       </div>
       <el-card class="filter-panel" shadow="never">
         <el-form label-width="80px" :inline="true">
-          <el-form-item label="业务名称" prop="service_name">
-            <el-input v-model="queryParams.service_name" clearable placeholder="请输入业务名称"></el-input>
+          <el-form-item label="操作用户" prop="username">
+            <el-input v-model="queryParams.username" clearable placeholder="请输入操作用户"></el-input>
           </el-form-item>
 
           <el-form-item label="操作ID" prop="ip">
@@ -73,19 +73,17 @@
       >
         <el-table-column type="selection" width="50"></el-table-column>
 
-        <el-table-column prop="username" label="操作用户"></el-table-column>
-
-        <el-table-column prop="service_name" label="业务名称"></el-table-column>
+        <el-table-column prop="username" label="操作用户" width="150"></el-table-column>
 
         <el-table-column prop="router" label="路由" :show-overflow-tooltip="true"></el-table-column>
 
-        <el-table-column prop="ip" label="IP"></el-table-column>
+        <el-table-column prop="ip" label="IP" width="150"></el-table-column>
 
         <el-table-column prop="ip_location" label="登录地点"></el-table-column>
 
-        <el-table-column prop="response_code" label="状态码" width="100"></el-table-column>
+        <el-table-column prop="response_code" label="状态码" width="150"></el-table-column>
 
-        <el-table-column prop="created_at" label="操作时间" width="160" ></el-table-column>
+        <el-table-column prop="created_at" label="操作时间" width="200" ></el-table-column>
 
       </maTable>
     </el-main>
@@ -119,7 +117,6 @@
         selection: [],
         queryParams: {
           username: undefined,
-          service_name: undefined,
           ip: undefined,
           maxDate: undefined,
           minDate: undefined,

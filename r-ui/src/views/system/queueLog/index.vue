@@ -4,13 +4,13 @@
       <div class="panel-container">
         <div class="left-panel">
 
-          <!-- <el-button
+          <el-button
             type="primary"
             icon="el-icon-plus"
             v-auth="['system:queueLog:produceStatus']"
             :disabled="selection.length==0"
             @click="batchDel"
-          >重新加入队列</el-button> -->
+          >重新加入队列</el-button>
 
           <el-button
             type="danger"

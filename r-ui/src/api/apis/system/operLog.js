@@ -8,7 +8,7 @@ export default {
      */
     getPageList (params = {}) {
         return request({
-            url: 'system/logs/getOperLogPageList',
+            url: 'admin/logs/getOperLogPageList',
             method: 'get',
             params
         })
