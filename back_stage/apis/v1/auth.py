@@ -42,7 +42,7 @@ async def get_post_list(
                 admin_roles.c.name.like('%' + name + '%'),
                 admin_roles.c.status.like('%' + status + '%'),
             ),
-        ).limit(pageSize)
+        ).limit(pageSize).offset((page - 1) * pageSize)
 
         # 更新data列表数据
         for item in fuzzy_range_data:
@@ -53,7 +53,7 @@ async def get_post_list(
         time_range_data = db.query(admin_roles).filter(
             minDate <= admin_roles.c.created_at,
             maxDate >= admin_roles.c.created_at
-        ).all()
+        ).limit(pageSize).offset((page - 1) * pageSize)
 
         # 更新data列表数据
         for item in time_range_data:
@@ -61,21 +61,31 @@ async def get_post_list(
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        roles_list = [dict(role) for role in db.query(admin_roles).order_by(desc(orderBy)).limit(pageSize) if role]
+        roles_list = [
+            dict(role) for role in db.query(admin_roles)
+            .order_by(desc(orderBy)).limit(pageSize)
+            .offset((page - 1) * pageSize) if role
+        ]
 
     elif orderType == 'ascending':
-        roles_list = [dict(role) for role in db.query(admin_roles).order_by(orderBy).limit(pageSize) if role]
+        roles_list = [
+            dict(role) for role in db.query(admin_roles)
+            .order_by(orderBy).limit(pageSize)
+            .offset((page - 1) * pageSize) if role
+        ]
 
     # 如果没有查询条件则按分页查询
     else:
-        roles_list = [dict(role) for role in db.query(admin_roles).limit(pageSize) if role]
+        roles_list = [dict(role) for role in db.query(admin_roles).limit(pageSize).offset((page - 1) * pageSize) if role]
+
+    total = db.query(func.count(sys_oper_log.c.id)).scalar()
 
     return http.respond(200, True, 'OK', {
         'items': roles_list,
         'pageInfo': {
-            'total': len(roles_list),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(roles_list) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })
 

@@ -23,19 +23,19 @@ async def app_group(
             dict(item) for item in db.query(sys_app_group).where(
                 sys_app_group.c.name.like('%' + name + '%'),
                 sys_app_group.c.status.like('%' + status + '%')
-            ).limit(pageSize).all() if item
+            ).limit(pageSize).offset((page - 1) * pageSize) if item
         ]
     else:
-        app_group_list = [
-            dict(item) for item in db.query(sys_app_group).limit(pageSize).all() if item
-        ]
+        app_group_list = [dict(item) for item in db.query(sys_app_group).limit(pageSize).offset((page - 1) * pageSize) if item]
+
+    total = db.query(func.count(sys_app_group.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': app_group_list,
         'pageInfo': {
-            'total': len(app_group_list),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(app_group_list) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })
 
@@ -120,19 +120,19 @@ def app_index(
                 sys_app.c.name.like('%' + name + '%'),
                 sys_app.c.status.like('%' + status + '%'),
                 sys_app.c.app_id.like('%' + app_id + '%')
-            ).limit(pageSize).all() if item
+            ).limit(pageSize).offset((page - 1) * pageSize) if item
         ]
     else:
-        app_list = [
-            dict(item) for item in db.query(sys_app).limit(pageSize).all() if item
-        ]
+        app_list = [dict(item) for item in db.query(sys_app).limit(pageSize).offset((page - 1) * pageSize) if item]
+
+    total = db.query(func.count(sys_app.c.id)).scalar()
 
     return http.respond(200, True, '获取成功', {
         'items': app_list,
         'pageInfo': {
-            'total': len(app_list),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(app_list) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })
 

@@ -2,11 +2,11 @@
 
 from back_stage import *
 
+
 # TODO ----------用户账户模块----------
 
 @router.post(path='/info', summary='获取账号信息')
 async def admin_info(request: Request, token_info: str = Depends(http.token)):
-
     """获取账号信息"""
 
     # 根据返回的 token 解密后获得当前账户 userid 查询 userid 账户信息
@@ -86,9 +86,9 @@ async def admin_info(request: Request, token_info: str = Depends(http.token)):
 
     return http.respond(500, False, '获取失败')
 
+
 @router.post(path='/user/updateInfo', summary='修改账号信息')
 async def admin_edit_info(edit_info: admin.AdminUpdateInfo, token_info: str = Depends(http.token)):
-
     """修改账号信息"""
 
     # 格式化
@@ -102,9 +102,9 @@ async def admin_edit_info(edit_info: admin.AdminUpdateInfo, token_info: str = De
 
     return http.respond(200, True, '修改成功')
 
+
 @router.post(path='/user/modifyPassword', summary='修改账户密码')
 async def modify_password(password: admin.ModifyPassword, token_info: str = Depends(http.token)):
-
     """修改账户密码"""
 
     db.execute(admin_account.update().where(
@@ -116,15 +116,16 @@ async def modify_password(password: admin.ModifyPassword, token_info: str = Depe
 
     return http.respond(200, True, '密码修改成功')
 
+
 @router.put(path='/user/initUserPassword/{userId:path}', summary='初始化账户密码')
 async def init_password(userId: int, token_info: str = Depends(http.token)):
-
     """初始化账户密码"""
 
     db.execute(admin_account.update().where(admin_account.c.id == userId).values(password='123456'))
     db.commit()
 
     return http.respond(200, True, '已初始化密码')
+
 
 @router.get(path='/user/getUserList', summary='按条件获取用户')
 async def get_user_list(
@@ -145,7 +146,6 @@ async def get_user_list(
         _: int = None,
         token_info: str = Depends(http.token)
 ):
-
     """获取用户列表"""
 
     account_list = []
@@ -161,7 +161,7 @@ async def get_user_list(
                 admin_account.c.phone.like('%' + phone + '%'),
                 admin_account.c.email.like('%' + email + '%')
             ),
-        ).limit(pageSize)
+        ).limit(pageSize).offset((page - 1) * pageSize)
 
         # 更新data列表数据
         for item in fuzzy_range_data:
@@ -172,7 +172,7 @@ async def get_user_list(
         time_range_data = db.query(admin_account).filter(
             minDate <= admin_account.c.created_at,
             maxDate >= admin_account.c.created_at
-        ).all()
+        ).limit(pageSize).offset((page - 1) * pageSize)
 
         # 更新data列表数据
         for item in time_range_data:
@@ -180,14 +180,25 @@ async def get_user_list(
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        account_list = [dict(acc) for acc in db.query(admin_account).order_by(desc(orderBy)).limit(pageSize) if acc]
+        account_list = [
+            dict(acc) for acc in db.query(admin_account)
+            .order_by(desc(orderBy)).limit(pageSize)
+            .offset((page - 1) * pageSize) if acc
+        ]
 
     elif orderType == 'ascending':
-        account_list = [dict(acc) for acc in db.query(admin_account).order_by(orderBy).limit(pageSize) if acc]
+        account_list = [
+            dict(acc) for acc in db.query(admin_account)
+            .order_by(orderBy).limit(pageSize)
+            .offset((page - 1) * pageSize) if acc
+        ]
 
     # 如果没有查询条件则按分页查询
     else:
-        account_list = [dict(acc) for acc in db.query(admin_account).limit(pageSize) if acc]
+        account_list = [
+            dict(acc) for acc in db.query(admin_account)
+            .limit(pageSize).offset((page - 1) * pageSize) if acc
+        ]
 
     # 根据部门 ID 返回用户
     if dept_id:
@@ -225,18 +236,20 @@ async def get_user_list(
             if dict(post)['userId'] == item['id']
         ]
 
+    total = db.query(func.count(admin_post_account.c.id)).scalar()
+
     return http.respond(200, True, 'OK', {
         'items': account_list,
         'pageInfo': {
-            'total': len(account_list),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(account_list) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })
 
+
 @router.get(path='/user/getDeptTreeList', summary='按部门获取用户')
 async def get_user_list(_: int = None, token_info: str = Depends(http.token)):
-
     """按部门获取用户"""
 
     admin_dept_list = db.query(admin_dept).all()
@@ -266,23 +279,24 @@ async def get_user_list(_: int = None, token_info: str = Depends(http.token)):
 
     return http.respond(200, True, 'OK', dept_list)
 
+
 @router.get(path='/user/getRoleList', summary='按角色获取用户')
 async def get_role_list(_: int = None, token_info: str = Depends(http.token)):
-
     """按角色获取用户"""
 
     roles = [dict(role) for role in db.query(admin_roles).all() if role]
 
     return http.respond(200, True, 'OK', roles)
 
+
 @router.get(path='/user/getPostList', summary='按岗位获取用户')
 async def get_post_list(_: Optional[int] = None, token_info: str = Depends(http.token)):
-
     """按岗位获取用户"""
 
     post_list = [dict(post) for post in db.query(admin_post).all() if post]
 
     return http.respond(200, True, 'OK', post_list)
+
 
 @router.get(path='/user/onlineUser/index', summary='获取在线用户')
 def user_online(
@@ -293,7 +307,6 @@ def user_online(
         _: int = None,
         token_info: str = Depends(http.token)
 ):
-
     """获取在线用户"""
 
     online_user_list = data_base.redis.keys()
@@ -314,10 +327,12 @@ def user_online(
                 online_user = dict(online_user)
                 online_user['dept'] = dict(dept)['name']
 
-                if online_user: online_user_data.append(dict(online_user))
+                online_user_data.append(dict(online_user))
+
+    print(online_user_data)
 
     return http.respond(200, True, 'OK', {
-        'items': online_user_data,
+        'items': online_user_data[page - 1:page + pageSize],
         'pageInfo': {
             'total': len(online_user_data),
             'currentPage': page,
@@ -325,9 +340,9 @@ def user_online(
         }
     })
 
+
 @router.post(path='/user/onlineUser/kick', summary='强退用户')
 def user_kick(online_user: admin.OnlineUser, token_info: str = Depends(http.token)):
-
     """强退用户"""
 
     online_user = dict(online_user)

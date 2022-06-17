@@ -12,28 +12,12 @@ async def admin_login(login_info: admin.AdminLogin, request: Request):
     # 查询登录账户和密码
     admin_info = db.query(admin_account).filter_by(userId=login_info.username, password=login_info.password).first()
 
-    ip_info = {}
+    ip_info = tackle.get_request_ip_info(request.client.host)
 
-    get_ip_info = requests.get(Config.get_ip_url, {'ip': request.client.host, 'token': Config.get_ip_token})
-
-    if get_ip_info.status_code == 200:
-
-        ip_location = get_ip_info.json()['data']
-
-        if request.client.host == '0.0.0.0' or '127.0.0.1':
-            ip_info['ip_location'] = '本地测试'
-        else:
-            ip_info['ip_location'] = '{}-{}-{}-{}:{}' \
-                .format(
-                ip_location[0], ip_location[1],
-                ip_location[2], ip_location[3],
-                ip_location[4]
-            )
-
-        ip_info['username'] = dict(admin_info)['username']
-        ip_info['ip'] = request.client.host
-        ip_info['login_time'] = now_date_time
-        ip_info['status'] = 0
+    ip_info['username'] = dict(admin_info)['username']
+    ip_info['ip'] = request.client.host
+    ip_info['login_time'] = now_date_time
+    ip_info['status'] = 0
 
     if admin_info:
 

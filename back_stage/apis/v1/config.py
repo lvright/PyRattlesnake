@@ -181,7 +181,7 @@ def rely_index(
             ]
 
     return http.respond(200, True, '获取成功', {
-        'items': data[page:page + pageSize],
+        'items': data[page - 1:page + pageSize],
         'pageInfo': {
             'total': len(data),
             'currentPage': page,
@@ -396,15 +396,17 @@ async def dict_type(
             sys_dictionary_data
         ).where(
             sys_dictionary_data.c.code == code
-        ).limit(pageSize) if item
+        ).limit(pageSize).offset((page - 1) * pageSize) if item
     ]
+
+    total = db.query(func.count(sys_oper_log.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': dict_data,
         'pageInfo': {
-            'total': len(dict_data),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(dict_data) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })
 

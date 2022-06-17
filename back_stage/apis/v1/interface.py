@@ -23,19 +23,22 @@ def apis_group_index(
             dict(item) for item in db.query(sys_apis_group).where(
                 sys_apis_group.c.name.like('%' + name + '%'),
                 sys_apis_group.c.status.like('%' + status + '%')
-            ).limit(pageSize).all() if item
+            ).limit(pageSize).offset((page - 1) * pageSize) if item
         ]
     else:
         apis_list = [
-            dict(item) for item in db.query(sys_apis_group).limit(pageSize).all() if item
+            dict(item) for item in db.query(sys_apis_group)
+            .limit(pageSize).offset((page - 1) * pageSize) if item
         ]
+
+    total = db.query(func.count(sys_oper_log.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': apis_list,
         'pageInfo': {
-            'total': len(apis_list),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(apis_list) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })
 
@@ -104,18 +107,21 @@ def apis_column_index(
             dict(item) for item in db.query(sys_apis).where(
                 sys_apis.c.name.like('%' + name + '%'),
                 sys_apis.c.status.like('%' + status + '%')
-            ).limit(pageSize).all() if item
+            ).limit(pageSize).offset((page - 1) * pageSize) if item
         ]
     else:
         apis_list = [
-            dict(item) for item in db.query(sys_apis).limit(pageSize).all() if item
+            dict(item) for item in db.query(sys_apis)
+            .limit(pageSize).offset((page - 1) * pageSize) if item
         ]
+
+    total = db.query(func.count(sys_oper_log.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': apis_list,
         'pageInfo': {
-            'total': len(apis_list),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(apis_list) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })

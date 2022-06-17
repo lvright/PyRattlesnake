@@ -63,26 +63,37 @@ async def get_notice(
                 sys_notification.c.title.like('%' + title + '%'),
                 sys_notification.c.type.like('%' + type + '%')
             )
-        ).limit(pageSize).all()
+        ).limit(pageSize).offset((page - 1) * pageSize)
 
         notice_list = [dict(item) for item in notice if item]
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        notice_list = [dict(item) for item in db.query(sys_notification).order_by(desc(orderBy)).limit(pageSize) if item]
+        notice_list = [
+            dict(item) for item in db.query(sys_notification).order_by(desc(orderBy))
+            .limit(pageSize).offset((page - 1) * pageSize) if item
+        ]
 
     elif orderType == 'ascending':
-        notice_list = [dict(item) for item in db.query(sys_notification).order_by(orderBy).limit(pageSize) if item]
+        notice_list = [
+            dict(item) for item in db.query(sys_notification).order_by(orderBy)
+            .limit(pageSize).offset((page - 1) * pageSize) if item
+        ]
 
     else:
-        notice_list = [dict(item) for item in db.query(sys_notification).limit(pageSize).all() if item]
+        notice_list = [
+            dict(item) for item in db.query(sys_notification)
+            .limit(pageSize).offset((page - 1) * pageSize) if item
+        ]
+
+    total = db.query(func.count(sys_oper_log.c.id)).scalar()
 
     return http.respond(200, True, 'OK', {
         'items': notice_list,
         'pageInfo': {
-            'total': len(notice_list),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(notice_list) / pageSize)
+            'totalPage': math.ceil(total / pageSize)
         }
     })
 

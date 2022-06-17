@@ -20,35 +20,27 @@ async def get_attachment(
 
     if mime_type:
         file_data = [
-            dict(item)
-            for item in db.query(attachment).filter_by(
-                mime_type=mime_type
-            ).limit(pageSize).all()
-            if item
+            dict(item) for item in db.query(attachment)
+            .filter_by(mime_type=mime_type)
+            .limit(pageSize).offset((page - 1) * pageSize) if item
         ]
     elif origin_name:
         file_data = [
-            dict(item)
-            for item in db.query(attachment).where(
-                attachment.c.origin_name.like(
-                    '%' + origin_name + '%'
-                )
-            ).limit(pageSize).all()
-            if item
+            dict(item) for item in db.query(attachment)
+            .where(attachment.c.origin_name.like('%' + origin_name + '%'))
+            .limit(pageSize).offset((page - 1) * pageSize) if item
         ]
     else:
-        file_data = [
-            dict(item)
-            for item in db.query(attachment).limit(pageSize).all()
-            if item
-        ]
+        file_data = [dict(item)for item in db.query(attachment).limit(pageSize).offset((page - 1) * pageSize) if item]
+
+    total = db.query(func.count(sys_oper_log.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': file_data,
         'pageInfo': {
-            'total': len(file_data),
+            'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(len(file_data) / pageSize),
+            'totalPage': math.ceil(total / pageSize),
         }
     })
 
