@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from back_stage import *
+from admin import *
 
 # TODO ----------岗位管理模块----------
 
@@ -77,7 +77,7 @@ async def get_post_list(
             .limit(pageSize).offset((page - 1) * pageSize) if post
         ]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(admin_post.c.id)).scalar()
 
     return http.respond(200, True, 'OK', {
         'items': posts_list,

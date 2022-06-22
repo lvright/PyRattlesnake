@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-from back_stage import *
+from admin import *
 
 @router.websocket(path='/message.io')
 async def message_io(token: str, websocket: WebSocket):
@@ -23,8 +23,7 @@ async def message_io(token: str, websocket: WebSocket):
 
     data = {'event': 'ev_new_message', 'message': '你有一条新的消息', 'data': mess}
     data = json.dumps(data, indent=2)
-
-    print('返回消息：', data)
+    log.log_info(f'callback service data：{data}')
 
     await manager.connect(websocket)
     await manager.broadcast(data)
@@ -32,7 +31,7 @@ async def message_io(token: str, websocket: WebSocket):
     try:
         while True:
             get_mess = await websocket.receive_text()
-            print('接收心跳:' + get_mess)
+            log.log_info('receive websocket service:' + get_mess)
             await manager.send_personal_message(data, websocket)
             await manager.broadcast(data)
 
@@ -86,7 +85,7 @@ async def get_notice(
             .limit(pageSize).offset((page - 1) * pageSize) if item
         ]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(sys_notification.c.id)).scalar()
 
     return http.respond(200, True, 'OK', {
         'items': notice_list,

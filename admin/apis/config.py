@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from back_stage import *
+from admin import *
 
 # TODO ----------config key----------
 
@@ -74,7 +74,7 @@ def server_monitor(token_info: str = Depends(http.token)):
         'fastapi_version': fastapi.__version__,
         'py_rattlesnake_version': '0.0.1',
         'python_version': platform.python_version(),
-        'project_path': os.path.abspath(os.path.join(os.getcwd(), "..")) + '/PyRattlesnake',
+        'project_path': os.path.abspath(os.path.join(os.getcwd(), "")) + '/PyRattlesnake',
         'os': platform.system(),
         'uvicorn_version': uvicorn.__version__,
         'run_time': '已运行{}小时'.format(run_time),
@@ -399,7 +399,7 @@ async def dict_type(
         ).limit(pageSize).offset((page - 1) * pageSize) if item
     ]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(sys_dictionary_data.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': dict_data,

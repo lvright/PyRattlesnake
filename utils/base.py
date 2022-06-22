@@ -8,6 +8,7 @@ import math
 import yagmail
 import markdown
 import jwt
+import json
 import pymysql
 import sqlalchemy
 import logging
@@ -31,10 +32,9 @@ import fastapi
 import requests
 from binascii import hexlify
 from fuzzywuzzy import fuzz
-from sqlalchemy import Table, and_, or_, not_, column, select, insert, update, delete, desc, func
-from sqlalchemy.orm import load_only, sessionmaker, Session, scoped_session
+from sqlmodel import create_engine, SQLModel, Session, select, insert, update, join, union, and_, or_, func, Table, MetaData
 from PIL import Image, ImageDraw, ImageFont
-from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect, Request, FastAPI, Response
+from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect, Request, FastAPI, Response, APIRouter, Depends, Body, Header, Cookie
 from fastapi.responses import JSONResponse, StreamingResponse, UJSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -45,7 +45,6 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from datetime import datetime, timedelta
 from typing import List, Optional, Set, TypeVar
 from logging.handlers import RotatingFileHandler
-from sqlalchemy import create_engine, MetaData
 from config import *
 
 """
@@ -64,11 +63,13 @@ class ParType:
         return url[0:-1]
 
     # AbstractKeyedTuple 对象转字典
-    def dict_zip(self, res):
-        result = [dict(zip(result.keys(), result)) for result in res]
-        if isinstance(result, list) == True and len(result) == 1:
-            return result[0]
-        return result
+    def to_json(self, res):
+        if isinstance(res, list):
+            res = [dict(items) for items in res if res]
+            return res
+        else:
+            res = dict(res)
+        return res
 
 """
 时间设置
@@ -192,18 +193,19 @@ class ResponseMethod:
         return
 
     # 请求响应状态
-    def respond(self, code, success, message, *args):
+    def respond(self, status, success=True, message='请求成功', data=None):
+        if status != 200:
+            success = False
+            message = '请求失败'
         results = {
-            'status': code,
+            'status': status,
             'success': success,
             'message': message,
-            'timestamp': str(int(time.time()))
+            'timestamp': str(int(time.time())),
+            'data': data
         }
-        if args != ():
-            for i in args:
-                results['data'] = i
 
-        return JSONResponse(status_code=code, content=results)
+        return JSONResponse(status_code=status, content=results)
 
     # token 失效响应状态
     def token(self, token: str = Header(None)):
@@ -275,34 +277,7 @@ class Tackle:
         smtp = yagmail.SMTP(user=Config.email, password=Config.email_pawssword, host=Config.email_host)
         subject = ["G-Markdown 您的邮箱验证码"]
         code = Captcha().random_code()
-        contents = ['''
-        <table style="width: 99.8%; height: 95%;">
-            <tbody>
-                <tr>
-                    <td id="QQMAILSTATIONERY" style="background:url(https://rescdn.qqmail.com/bizmail/zh_CN/htmledition/images/xinzhi/bg/a_02.jpg) no-repeat #fffaf6; min-height:550px; padding:100px 55px 200px 100px; ">
-                    <div style="text-align: center;"><font>{},您好！&nbsp;</font></div>
-                    <div style="text-align: center;"><font><br>
-                        </font>
-                    </div>
-                    <div style="text-align: center;"><font>您的 JunJun.Tec 验证码/临时登录密码 为&nbsp;</font></div>
-                    <div style="text-align: center;"><font><br>
-                        </font>
-                    </div>
-                    <div style="text-align: center;"><font color="#ff0000"><b><u>{}</u></b></font></div>
-                    <div style="text-align: center;"><font><br>
-                        </font>
-                    </div>
-                    <div style="text-align: center;"><font>如非您本人操作无需理会。&nbsp;</font></div>
-                    <div style="text-align: center;"><font><br>
-                        </font>
-                    </div>
-                    <div style="text-align: center;"><font>感谢支持。</font></div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div><includetail><!--<![endif]--></includetail></div>
-        '''.format(user_name, code)]
+        contents = ['''[HTML]'''.format(user_name, code)]
         try:
             smtp.send(user_email, subject, contents)
         except EOFError as e:
@@ -324,20 +299,21 @@ class Tackle:
     def get_request_ip_info(self, host):
 
         ip_info = {}
-        get_ip_info = requests.get(Config.get_ip_url, {'ip': host, 'token': Config.get_ip_token})
 
-        if get_ip_info.status_code == 200:
-            ip_location = get_ip_info.json()['data']
-
-            if host == '0.0.0.0' or '127.0.0.1':
-                ip_info['ip_location'] = '本地测试'
-            else:
-                ip_info['ip_location'] = '{}-{}-{}-{}:{}' \
-                    .format(
-                    ip_location[0], ip_location[1],
-                    ip_location[2], ip_location[3],
-                    ip_location[4]
-                )
+        try:
+            get_ip_info = requests.get(
+                Config.get_ip_url, {'ip': host, 'token': Config.get_ip_token})
+            if get_ip_info.status_code == 200:
+                ip_location = get_ip_info.json()['data']
+                if host == '0.0.0.0' or '127.0.0.1':
+                    ip_info['ip_location'] = '本地测试'
+                else:
+                    ip_info['ip_location'] = \
+                        f'{ip_location[0]}-{ip_location[1]}-' \
+                        f'{ip_location[2]}-{ip_location[3]}:' \
+                        f'{ip_location[4]}'
+        except Exception as e:
+            Log().log_error(e)
 
         return ip_info
 
@@ -359,21 +335,13 @@ class DataBase:
         pool_recycle=1000,
         execution_options={
             'isolation_level': 'REPEATABLE READ'
-        },
+        }
     )
+
+    SQLModel.metadata.create_all(engine)
+    session = Session(engine)
+
     metadata = MetaData()
-
-    SessionLocal = sessionmaker(
-        bind=engine,
-        expire_on_commit=False,
-        autoflush=False,
-        autocommit=False,
-    )
-
-    def db_session(self):
-        sess = DataBase.SessionLocal()
-        sess.close()
-        return sess
 
     # redis 链接
     redis = redis.StrictRedis(

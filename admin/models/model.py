@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 from typing import List, Optional, Set, TypeVar, Any
-from fastapi import Path, Query, Body, Header
+from fastapi import Query
 
 # 登录账户信息
 class AdminUpdateInfo(BaseModel):
@@ -196,6 +196,6 @@ class ConfigByKey(BaseModel):
 class OnlineUser(BaseModel):
     id: int = Query(None)
 
-# redis信息
+# redis 信息
 class RedisInfo(BaseModel):
     key: str = Query(None)

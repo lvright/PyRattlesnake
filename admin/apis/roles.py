@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from back_stage import *
+from admin import *
 
 # TODO ----------用户管理模块----------
 
@@ -194,7 +194,7 @@ async def get_roles_list(
             if dict(dept)['userId'] == item['id']
         ]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(admin_dept_account.c.id)).scalar()
 
     return http.respond(200, True, 'OK', {
         'items': account_list,

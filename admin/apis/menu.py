@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from back_stage import *
+from admin import *
 
 @router.get(path='/menu/menuIndex', summary='获取菜单列表')
 async def menu_index(_: int, token_info: str = Depends(http.token)):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from back_stage import *
+from admin import *
 
 # TODO ----------角色管理模块----------
 
@@ -78,7 +78,7 @@ async def get_post_list(
     else:
         roles_list = [dict(role) for role in db.query(admin_roles).limit(pageSize).offset((page - 1) * pageSize) if role]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(admin_roles.c.id)).scalar()
 
     return http.respond(200, True, 'OK', {
         'items': roles_list,

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-import requests
 
-from back_stage import *
+from admin import *
 
 # TODO ----------系统附件管理----------
 
@@ -33,7 +32,7 @@ async def get_attachment(
     else:
         file_data = [dict(item)for item in db.query(attachment).limit(pageSize).offset((page - 1) * pageSize) if item]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(attachment.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': file_data,

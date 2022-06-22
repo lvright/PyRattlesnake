@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from back_stage import *
+from admin import *
 
 # TODO ----------系统日志模块----------
 
 @router.get(path='/logs/getLoginLogPageList', summary='获取登录日志')
-def login_log(
+async def login_log(
         page: int,
         pageSize: int,
         orderBy: Optional[str] = '',
@@ -76,7 +76,7 @@ def login_log(
             .limit(pageSize).offset((page - 1) * pageSize) if logs
         ]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(sys_login_log.c.id)).scalar()
 
     return http.respond(200, True, 'OK', {
         'items': login_logs,
@@ -88,7 +88,7 @@ def login_log(
     })
 
 @router.delete(path='/logs/loginLog/delete/{ids:path}', summary='删除登录日志')
-def login_logs_delete(ids: str, token_info: str = Depends(http.token)):
+async def login_logs_delete(ids: str, token_info: str = Depends(http.token)):
 
     """删除登录日志"""
 
@@ -105,7 +105,7 @@ def login_logs_delete(ids: str, token_info: str = Depends(http.token)):
     return http.respond(200, True, '删除成功')
 
 @router.get(path='/logs/getOperLogPageList', summary='获取操作日志')
-def oper_logs(
+async def oper_logs(
         page: int,
         pageSize: int,
         orderBy: Optional[str] = '',

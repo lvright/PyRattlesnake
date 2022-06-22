@@ -1,13 +1,37 @@
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter, Depends, Body, Header, Cookie
-from back_stage.models import admin_model as admin
+from admin.models import model as admin
 from utils import *
 
-# APIRouter admin模块
-router = APIRouter(prefix='/admin', tags=['back_stage'])
 
-# TODO ------------数据库表连接池------------
+# TODO
+#  ---
+#  APIRouter admin模块
+#  ---
+
+router = APIRouter(prefix='/admin')
+
+tags = [
+    {
+        'name': '登录',
+        'description': '登录模块',
+    }, {
+        'name': '用户',
+        'description': '用户模块',
+    }, {
+        'name': '应用模块',
+        'description': '系统第三方应用模块',
+    }, {
+        'name': '系统附件',
+        'description': '系统附件管理',
+    },
+]
+
+
+# TODO
+#  ---
+#  数据库表连接池
+#  ---
 
 # 账户和菜单管理
 admin_account = data_base.table('admin_account')
@@ -52,8 +76,12 @@ sys_notification = data_base.table('sys_notification')
 sys_login_log = data_base.table('sys_login_log')
 sys_oper_log = data_base.table('sys_oper_log')
 
-# TODO ------------导出接口模块------------
 
-from back_stage.apis.v1 \
-    import account, menu, roles, login, config, message, \
-    dept, post, auth, attachment, interface, app, logger
+# TODO
+#  ---
+#  导出接口模块
+#  ---
+
+from admin.apis import \
+    account, app, attachment, auth, config, dept, \
+    interface, logger, login, menu, message, post, roles

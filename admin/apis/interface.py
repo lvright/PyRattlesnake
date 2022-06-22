@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from back_stage import *
+from admin import *
 
 # TODO ----------系统Api管理----------
 
@@ -31,7 +31,7 @@ def apis_group_index(
             .limit(pageSize).offset((page - 1) * pageSize) if item
         ]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(sys_apis_group.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': apis_list,
@@ -115,7 +115,7 @@ def apis_column_index(
             .limit(pageSize).offset((page - 1) * pageSize) if item
         ]
 
-    total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total = db.query(func.count(sys_apis.c.id)).scalar()
 
     return http.respond(200, True, '请求成功', {
         'items': apis_list,

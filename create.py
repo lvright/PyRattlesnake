@@ -1,26 +1,19 @@
 # -*- coding: utf-8 -*-
-import json
 
-from back_stage import *
+from admin import *
 from utils import *
 
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
-
 # 创建app
 app = FastAPI(
-    title='APIS-LINE',
+    title='PyRattlesnake',
     description="""PyRattlesnake 是基于FASTAPI模块，配备了Web开发过程所需的工具和代码块""",
     version='0.0.1',
-    docs_url='/api/v1/docs',  # 自定义文档地址
-    redoc_url=None,  # 禁用redoc文档
-    openapi_url='/api/v1/openapi.json',
-    openapi_tags=[
-        {
-            'name': 'back_stage',
-            'description': '后台模块API',
-        },
-    ]
+    docs_url='/api/docs',  # 自定义文档地址
+    redoc_url=None,
+    openapi_url='/api/openapi.json',
+    openapi_tags=tags
 )
 
 # fastapi 蓝图
@@ -45,7 +38,12 @@ async def request_info(request: Request, call_next):
     # do something with body ...
 
     if request.method not in ['GET', 'OPTIONS'] \
-            and request.url.path not in ['/admin/getConfigByKey', '/admin/info', '/admin/login']:
+            and request.url.path not in [
+                        '/admin/getConfigByKey',
+                        '/admin/info',
+                        '/admin/login',
+                        '/admin/logout'
+                    ]:
 
         success = True
         message = 'OK'
