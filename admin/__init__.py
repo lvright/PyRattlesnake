@@ -24,7 +24,11 @@ tags = [
     }, {
         'name': '系统附件',
         'description': '系统附件管理',
+    }, {
+        'name': '角色管理',
+        'description': '系统附件管理',
     },
+
 ]
 
 
@@ -83,5 +87,6 @@ sys_oper_log = data_base.table('sys_oper_log')
 #  ---
 
 from admin.apis import \
-    account, app, attachment, auth, config, dept, \
-    interface, logger, login, menu, message, post, roles
+    account, app, attachment, config, dept, \
+    interface, logger, login, menu, message, \
+    post, roles

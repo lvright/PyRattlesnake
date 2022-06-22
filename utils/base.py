@@ -194,7 +194,10 @@ class ResponseMethod:
 
     # 请求响应状态
     def respond(self, status, success=True, message='请求成功', data=None):
-        if status != 200:
+        if status == 500:
+            success = False
+            message = '请求错误'
+        elif status != 200:
             success = False
             message = '请求失败'
         results = {
