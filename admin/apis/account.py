@@ -181,7 +181,7 @@ async def get_user_list(
             admin_account.c.username.like('%' + username + '%'),
             admin_account.c.nickname.like('%' + nickname + '%'),
             admin_account.c.phone.like('%' + phone + '%'),
-            admin_account.c.email.like('%' + email + '%'))).limit(pageSize).offset(offset_page)))
+            admin_account.c.email.like('%' + email + '%'))).limit(pageSize).offset(offset_page)).all())
         # 更新 data 列表数据
         for item in fuzzy_range_data: user_list.append(item)
 
@@ -189,29 +189,27 @@ async def get_user_list(
     elif all([maxDate, minDate]):
         time_range_data = par_type.to_json(db.execute(select(admin_account).where(
             minDate <= admin_account.c.created_at,
-            maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)))
+            maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         for item in time_range_data: user_list.append(item)
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
         user_list = par_type.to_json(db.execute(select(
-            admin_account).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)))
-
+            admin_account).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
     elif orderType == 'ascending':
         user_list = par_type.to_json(db.execute(select(
-            admin_account).order_by(orderBy).limit(pageSize).offset(offset_page)))
-
+            admin_account).order_by(orderBy).limit(pageSize).offset(offset_page)).all())
     # 如果没有查询条件则按分页查询
     else:
         user_list = par_type.to_json(db.execute(select(
-            admin_account).limit(pageSize).offset(offset_page)))
+            admin_account).limit(pageSize).offset(offset_page)).all())
 
     # 根据部门 ID 返回用户
     if dept_id:
         dept_relation = [item for id in dept_id.split(',')
                          for item in par_type.to_json(db.execute(select(
-                         admin_dept_account).where(admin_dept_account.c.deptId == id).all()))]
+                         admin_dept_account).where(admin_dept_account.c.deptId == id)).all())]
 
         user_list = [item for item in user_list
                      for dept in dept_relation
@@ -221,7 +219,7 @@ async def get_user_list(
     if role_id:
         role_relation = [item for id in role_id.split(',')
                          for item in par_type.to_json(db.execute(select(
-                         admin_roles_account).where(admin_roles_account.c.roleId == id).all()))]
+                         admin_roles_account).where(admin_roles_account.c.roleId == id)).all())]
 
         user_list = [item for item in user_list
                      for role in role_relation
@@ -260,7 +258,7 @@ async def get_user_list(_: int = None, token_info: str = Depends(http.token)):
 
     """
 
-    user_dept_list = par_type.to_json(db.execute(select(admin_dept).all()))
+    user_dept_list = par_type.to_json(db.execute(select(admin_dept)).all())
 
     dept_list = []
     # 建立部门树状数据
@@ -287,7 +285,7 @@ async def get_role_list(_: int = None, token_info: str = Depends(http.token)):
 
     """
 
-    roles = par_type.to_json(db.execute(select(admin_roles).all()))
+    roles = par_type.to_json(db.execute(select(admin_roles)).all())
 
     return http.respond(status=200, data=roles)
 
@@ -304,7 +302,7 @@ async def get_post_list(_: Optional[int] = None, token_info: str = Depends(http.
 
     """
 
-    posts = par_type.to_json(db.execute(select(admin_post).all()))
+    posts = par_type.to_json(db.execute(select(admin_post)).all())
 
     return http.respond(status=200, data=posts)
 

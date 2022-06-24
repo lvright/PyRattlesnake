@@ -257,7 +257,8 @@ async def save_system_config(config: admin.SystemConfig, token_info: str = Depen
     """
 
     for key in dict(config):
-        db.execute(update(admin_config).where(admin_config.c.key == key).values(value=dict(config)[key]))
+        db.execute(update(admin_config).where(
+            admin_config.c.key == key).values(value=dict(config)[key]))
         db.commit()
 
     return http.respond(status=200)

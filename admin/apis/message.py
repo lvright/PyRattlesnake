@@ -298,9 +298,10 @@ async def read_status_update(
     user_message = par_type.to_json(db.execute(select(sys_message).where(sys_message.c.id == id)).all())
 
     user_message_list = []
-    for user_id in user_message['users'].split(','):
-        user_message_list = par_type.to_json(db.execute(select(admin_account).where(
-            admin_account.c.id == user_id).limit(pageSize)).all())
+    for item in user_message:
+        for user_id in item['users'].split(','):
+            user_message_list = par_type.to_json(db.execute(select(admin_account).where(
+                admin_account.c.id == user_id).limit(pageSize)).all())
 
     return http.respond(status=200, data=user_message_list)
 
@@ -351,7 +352,7 @@ async def send_message_list(
         else:
             message_data = par_type.to_json(db.execute(select(sys_message).where(
                 where_sql).limit(pageSize).offset(offset_page)).all())
-        return message_list
+        return message_data
 
     if any([content_type, read_status]):
         if read_status == 'all':
