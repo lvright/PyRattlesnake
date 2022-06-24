@@ -33,8 +33,7 @@ async def get_info(token_info: str = Depends(http.token)):
         # 根据 admin_menu_account 关联表查询菜单
         admin_menu_list = par_type.to_json(db.execute(
             select(admin_system_menu, admin_menu_account).where(admin_system_menu.c.status != '1',
-                                                                admin_menu_account.c.role_id == roles_relation[
-                                                                    'roleId'],
+                                                                admin_menu_account.c.role_id == roles_relation['roleId'],
                                                                 admin_system_menu.c.id == admin_menu_account.c.menu_id)).all())
         # 处理返回的路由结构
         if admin_menu_list:
@@ -68,23 +67,32 @@ async def get_info(token_info: str = Depends(http.token)):
     return http.respond(status=500)
 
 
-@router.post(path='/user/updateInfo', summary='修改账号信息')
-async def admin_edit_info(edit_info: admin.AdminUpdateInfo, token_info: str = Depends(http.token)):
-    """修改账号信息"""
+@router.post(path='/user/updateInfo', summary='修改账号信息', tags=['用户'])
+async def admin_edit_info(user_info: admin.AdminUpdateInfo, token_info: str = Depends(http.token)):
+
+    """
+
+    Args:
+        user_info: 用户信息
+        token_info: token 认证
+
+    Returns:
+
+    """
 
     # 格式化
-    edit_data = dict(edit_info)
+    user_info = dict(user_info)
     # 在修改账户接口中删除 AdminUpdateInfo model 的 dept_id
-    del edit_data['dept_id']
+    del user_info['dept_id']
 
     db.execute(update(admin_account).where(
-        admin_account.c.userId == token_info['userId']).values(**edit_data))
+        admin_account.c.userId == token_info['userId']).values(**user_info))
     db.commit()
 
     return http.respond(status=200)
 
 
-@router.post(path='/user/modifyPassword', summary='修改账户密码')
+@router.post(path='/user/modifyPassword', summary='修改账户密码', tags=['用户'])
 async def modify_password(password: admin.ModifyPassword, token_info: str = Depends(http.token)):
     """
 
@@ -180,8 +188,8 @@ async def get_user_list(
     # 如果传日期范围则查询日期范围数据
     elif all([maxDate, minDate]):
         time_range_data = par_type.to_json(db.execute(select(admin_account).where(
-            minDate <= admin_account.c.created_at, maxDate >= admin_account.c.created_at).limit(pageSize).offset(
-            offset_page)))
+            minDate <= admin_account.c.created_at,
+            maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)))
         # 更新data列表数据
         for item in time_range_data: user_list.append(item)
 
@@ -189,6 +197,7 @@ async def get_user_list(
     elif orderType == 'descending':
         user_list = par_type.to_json(db.execute(select(
             admin_account).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)))
+
     elif orderType == 'ascending':
         user_list = par_type.to_json(db.execute(select(
             admin_account).order_by(orderBy).limit(pageSize).offset(offset_page)))
@@ -200,14 +209,24 @@ async def get_user_list(
 
     # 根据部门 ID 返回用户
     if dept_id:
-        dept_relation = [item for id in dept_id.split(',') for item in par_type.to_json(db.execute(select(
-            admin_dept_account).where(admin_dept_account.c.deptId == id).all()))]
-        user_list = [item for item in user_list for dept in dept_relation if dept['userId'] == item['id']]
+        dept_relation = [item for id in dept_id.split(',')
+                         for item in par_type.to_json(db.execute(select(
+                         admin_dept_account).where(admin_dept_account.c.deptId == id).all()))]
+
+        user_list = [item for item in user_list
+                     for dept in dept_relation
+                     if dept['userId'] == item['id']]
+
     # 根据角色 ID 返回用户
     if role_id:
-        role_relation = [item for id in role_id.split(',') for item in par_type.to_json(db.execute(select(
-            admin_roles_account).where(admin_roles_account.c.roleId == id).all()))]
-        user_list = [item for item in user_list for role in role_relation if role['userId'] == item['id']]
+        role_relation = [item for id in role_id.split(',')
+                         for item in par_type.to_json(db.execute(select(
+                         admin_roles_account).where(admin_roles_account.c.roleId == id).all()))]
+
+        user_list = [item for item in user_list
+                     for role in role_relation
+                     if role['userId'] == item['id']]
+
     # 根据岗位 ID 返回用户
     if post_id:
         post_relation = [item for id in post_id.split(',') for item in par_type.to_json(db.execute(select(
@@ -248,6 +267,7 @@ async def get_user_list(_: int = None, token_info: str = Depends(http.token)):
     if user_dept_list:
         user_dept_list = [{'id': dept['id'], 'label': dept['name'],
                            'parent_id': dept['parent_id'], 'value': dept['id']} for dept in user_dept_list]
+
         for items in user_dept_list:
             items['children'] = [dept for dept in user_dept_list if dept['parent_id'] == items['id']]
             if items['parent_id'] == 0: dept_list.append(items)
@@ -319,14 +339,15 @@ def user_online(
         for item in online_user_list:
             username = str(item).split(':')[1]
             online_user = par_type.to_json(db.execute(select(
-                admin_account).where(admin_account.c.username == username).first()))
+                admin_account).where(admin_account.c.username == username)).first())
 
             if online_user:
                 user_dept = par_type.to_json(db.execute(select(admin_dept_account).where(
-                    admin_dept_account.c.userId == online_user['id']).first()))
+                    admin_dept_account.c.userId == online_user['id'])).first())
 
                 dept = par_type.to_json(db.execute(select(admin_dept).where(
-                    admin_dept.c.id == user_dept['deptId']).first()))
+                    admin_dept.c.id == user_dept['deptId'])).first())
+
                 online_user['dept'] = dept['name']
                 online_user_data.append(online_user)
 
@@ -359,11 +380,10 @@ async def user_kick(online_user: admin.OnlineUser, token_info: str = Depends(htt
     """
 
     online_user = dict(online_user)
-    user = par_type.to_json(db.execute(select(admin_account).where(
+    user_info = par_type.to_json(db.execute(select(admin_account).where(
         admin_account.c.id == online_user['id']).first()))
     if user:
-        user_name = user['username']
-        data_base.redis.delete('user_token:' + user_name)
+        data_base.redis.delete('user_token:' + user_info['username'])
 
         return http.respond(status=200)
 
@@ -411,15 +431,24 @@ async def user_import(file: bytes = File(...), token_info: str = Depends(http.to
         f.write(file)
 
     # 使用 pandas 读取导入文件
-    import_file_pd = pd.read_excel(import_file, sheet_name='user', index_col=0)
-
+    import_file_pd = pd.read_excel(import_file,
+                                   sheet_name='user',
+                                   index_col=0)
     # 插入创建时间
-    import_file_pd.insert(loc=7, column='created_by', value=str(now_timestamp))
-    import_file_pd.insert(loc=8, column='created_at', value=now_date_time)
+    import_file_pd.insert(loc=7,
+                          column='created_by',
+                          value=str(now_timestamp))
+    import_file_pd.insert(loc=8,
+                          column='created_at',
+                          value=now_date_time)
     # 插入默认密码
-    import_file_pd.insert(loc=9, column='password', value='123456')
+    import_file_pd.insert(loc=9,
+                          column='password',
+                          value='123456')
     # 插入默认用户状态 0 表示正常
-    import_file_pd.insert(loc=10, column='status', value=0)
+    import_file_pd.insert(loc=10,
+                          column='status',
+                          value=0)
 
     try:
         # 使用 pandas sql io 直接为 admin_account 表插入新的用户数据
@@ -544,7 +573,7 @@ async def get_user_list(
         fuzzy_range_data = par_type.to_json(db.execute(select(admin_account).where(and_(
             admin_account.c.username.like('%' + username + '%'), admin_account.c.nickname.like('%' + nickname + '%'),
             admin_account.c.phone.like('%' + phone + '%'), admin_account.c.email.like('%' + email + '%'),
-            admin_account.c.status.like('%' + status + '%'))).limit(pageSize).offset(offset_page)))
+            admin_account.c.status.like('%' + status + '%'))).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         for item in fuzzy_range_data: user_list.append(item)
 
@@ -552,27 +581,32 @@ async def get_user_list(
     elif all([maxDate, minDate]):
         time_range_data = par_type.to_json(db.execute(select(admin_account).where(
             minDate <= admin_account.c.created_at,
-            maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)))
+            maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         for item in time_range_data: user_list.append(item)
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
         user_list = par_type.to_json(db.execute(select(
-            admin_account).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)))
+            admin_account).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
+
     elif orderType == 'ascending':
         user_list = par_type.to_json(db.execute(select(
-            admin_account).order_by(orderBy).limit(pageSize).offset(offset_page)))
+            admin_account).order_by(orderBy).limit(pageSize).offset(offset_page)).all())
     # 如果没有查询条件则按分页查询
     else:
         user_list = par_type.to_json(db.execute(select(
-            admin_account).limit(pageSize).offset(offset_page)))
+            admin_account).limit(pageSize).offset(offset_page)).all())
 
     # 根据部门ID 返回用户
     if dept_id:
-        dept_relation = [item for id in dept_id.split(',') for item in par_type.to_json(db.execute(select(
-            admin_dept_account).where(admin_dept_account.c.deptId == id).all()))]
-        user_list = [item for item in user_list for dept in dept_relation if dept['userId'] == item['id']]
+        dept_relation = [item for id in dept_id.split(',')
+                         for item in par_type.to_json(db.execute(select(
+                         admin_dept_account).where(admin_dept_account.c.deptId == id)).all())]
+
+        user_list = [item for item in user_list
+                     for dept in dept_relation
+                     if dept['userId'] == item['id']]
 
     total = db.query(func.count(admin_dept_account.c.id)).scalar()
     total_page = math.ceil(total / pageSize)
@@ -628,7 +662,7 @@ async def read_user(userId: int, token_info: str = Depends(http.token)):
         user_info['backend_setting'] = par_type.to_json(db.execute(select(
             backend_setting).where(backend_setting.c.id == 1).first()))
 
-    return http.respond(status=200, data=admin_info)
+    return http.respond(status=200, data=user_info)
 
 
 @router.post(path='/user/userSave', summary='添加用户', tags=['用户'])
@@ -738,8 +772,8 @@ async def update_user(id: int, account: admin.User, token_info: str = Depends(ht
             # 先删除用户关联表中所有关联数据
             db.execute(tabel.delete().where(tabel.c.userId == id))
             # 再重新插入新的关联数据
-            for _id in user_info[ids]:
-                db.execute(tabel.insert().values(**{id_name: _id, 'userId': id}))
+            for user_id in user_info[ids]:
+                db.execute(tabel.insert().values(**{id_name: user_id, 'userId': id}))
                 db.commit()
         except Exception as e:
             # 错误回滚 日志打印

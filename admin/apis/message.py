@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-import json
 
 from admin import *
+
+
+# TODO
+#  ---
+#  系统消息
+#  ---
 
 @router.websocket(path='/message.io')
 async def message_io(token: str, websocket: WebSocket):
 
-    """ WebSocket 系统消息"""
+    """
+    WebSocket
+    """
 
     token_info = jwt_token.decode(token)
 
-    mess = db.query(sys_message).where(
-        and_(
-            sys_message.c.click_num == 0,
-            sys_message.c.users.like('%' + str(token_info['id']) + '%')
-        )
-    ).all()
-
-    mess = [dict(item) for item in mess if item]
+    mess = par_type.to_json(db.execute(select(sys_message).where(and_(
+        sys_message.c.click_num == 0, sys_message.c.users.like('%' + str(token_info['id']) + '%')))).all())
 
     db.flush()
 
@@ -31,7 +32,6 @@ async def message_io(token: str, websocket: WebSocket):
     try:
         while True:
             get_mess = await websocket.receive_text()
-            log.log_info('receive websocket service:' + get_mess)
             await manager.send_personal_message(data, websocket)
             await manager.broadcast(data)
 
@@ -40,7 +40,8 @@ async def message_io(token: str, websocket: WebSocket):
         manager.disconnect(websocket)
         await manager.broadcast('账户登出')
 
-@router.get(path='/user/notice/index', summary='获取系统通知')
+
+@router.get(path='/notice/index', summary='获取系统通知', tags=['系统消息'])
 async def get_notice(
         page: int,
         pageSize: int,
@@ -48,111 +49,144 @@ async def get_notice(
         orderType: Optional[str] = '',
         type: Optional[str] = '',
         title: Optional[str] = '',
-        _: Optional[int] = None,
+        _: int = None,
         token_info: str = Depends(http.token)
 ):
 
-    """获取系统通知"""
+    """
+
+    Args:
+        page: 当前页
+        pageSize: 分页数
+        orderBy: 排序
+        orderType: 排序规则
+        type: 消息类型
+        title: 消息标题
+        _: 时间戳
+        token_info: token 认证
+
+    Returns: notice_list 消息列表 -> list
+
+    """
 
     notice_list = []
 
-    if any([type, title]):
-        notice = db.query(sys_notification).where(
-            and_(
-                sys_notification.c.title.like('%' + title + '%'),
-                sys_notification.c.type.like('%' + type + '%')
-            )
-        ).limit(pageSize).offset((page - 1) * pageSize)
+    offset_page = (page - 1) * pageSize
 
-        notice_list = [dict(item) for item in notice if item]
+    if any([type, title]):
+        notice = par_type.to_json(db.execute(select(sys_notification).where(and_(
+            sys_notification.c.title.like('%' + title + '%'),
+            sys_notification.c.type.like('%' + type + '%'))).limit(pageSize).offset(offset_page)).all())
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        notice_list = [
-            dict(item) for item in db.query(sys_notification).order_by(desc(orderBy))
-            .limit(pageSize).offset((page - 1) * pageSize) if item
-        ]
-
+        notice_list = par_type.to_json(db.execute(select(
+            sys_notification).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
     elif orderType == 'ascending':
-        notice_list = [
-            dict(item) for item in db.query(sys_notification).order_by(orderBy)
-            .limit(pageSize).offset((page - 1) * pageSize) if item
-        ]
-
+        notice_list = par_type.to_json(db.execute(select(
+            sys_notification).order_by(orderBy).limit(pageSize).offset(offset_page)))
     else:
-        notice_list = [
-            dict(item) for item in db.query(sys_notification)
-            .limit(pageSize).offset((page - 1) * pageSize) if item
-        ]
+        notice_list = par_type.to_json(db.execute(select(
+            sys_notification).limit(pageSize).offset(offset_page)).all())
 
     total = db.query(func.count(sys_notification.c.id)).scalar()
+    total_page = math.ceil(total / pageSize)
 
-    return http.respond(200, True, 'OK', {
+    results = {
         'items': notice_list,
         'pageInfo': {
             'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(total / pageSize)
+            'totalPage': total_page
         }
-    })
+    }
 
-@router.post(path='/notice/save', summary='发送通知')
+    return http.respond(status=200, data=results)
+
+
+@router.post(path='/notice/save', summary='发送通知', tags=['系统消息'])
 async def notice_save(notice: admin.SystemNotification, token_info: str = Depends(http.token)):
 
-    """发送通知"""
+    """
+
+    Args:
+        notice: 消息信息
+        token_info: token 认证
+
+    Returns: respond
+
+    """
 
     notice = dict(notice)
-
     notice['created_at'] = now_date_time
     notice['created_by'] = now_timestamp
 
     if notice.users is not None:
         for user_id in notice['users']:
             notice['users'] = str(user_id)
-            db.execute(sys_message.insert().values(**notice))
+            db.execute(insert(sys_message).values(**notice))
             db.commit()
     else:
-        users = [dict(item)['id'] for item in db.query(admin_account).all() if item]
+        users = par_type.to_json(db.execute(select(admin_account)).all())
         for user_id in users:
-            db.execute(sys_message.insert().values(**notice))
+            db.execute(insert(sys_message).values(**notice))
             db.commit()
 
-    return http.respond(200, True, '发送成功')
+    return http.respond(status=200)
 
-@router.put(path='/notice/update/{id:path}', summary='编辑通知')
+
+@router.put(path='/notice/update/{id:path}', summary='编辑通知', tags=['系统消息'])
 async def notice_save(id: int, notice: admin.SystemNotification, token_info: str = Depends(http.token)):
 
-    """发送通知"""
+    """
+
+    Args:
+        id: 通知ID
+        notice: 通知信息
+        token_info: token 认证
+
+    Returns: respond
+
+    """
 
     notice = dict(notice)
-
     del notice['users']
-
     notice['updated_at'] = now_date_time
     notice['updated_by'] = now_timestamp
 
-    db.execute(sys_notification.update().where(sys_notification.c.id == id).values(**notice))
+    db.execute(update(sys_notification).where(sys_notification.c.id == id).values(**notice))
     db.commit()
 
-    return http.respond(200, True, '发送成功')
+    return http.respond(status=200)
 
-@router.delete(path='/notice/delete/{ids:path}', summary='删除消息')
+
+@router.delete(path='/notice/delete/{ids:path}', summary='删除消息', tags=['系统消息'])
 async def delete_dept(ids: str, token_info: str = Depends(http.token)):
 
-    """删除消息"""
+    """
+
+    Args:
+        ids: 消息ID
+        token_info: token 认证
+
+    Returns: respond
+
+    """
 
     try:
         for id in ids.split(','):
-            db.execute(sys_message.delete().where(sys_message.c.id == id))
+            db.execute(delete(sys_message).where(sys_message.c.id == id))
             db.commit()
     except Exception as e:
         # 错误回滚 日志打印
         log.log_error(e)
         db.rollback()
+        return http.respond(status=500)
 
-    return http.respond(200, True, '已删除')
+    return http.respond(status=200)
 
-@router.get(path='/queueMessage/sendList', summary='获取已发送信息')
+
+@router.get(path='/queueMessage/sendList', summary='获取已发送信息', tags=['系统消息'])
 async def send_message_list(
         page: int,
         pageSize: int,
@@ -162,59 +196,69 @@ async def send_message_list(
         token_info: str = Depends(http.token)
 ):
 
-    """获取已发送信息"""
+    """
+
+    Args:
+        page: 当前页
+        pageSize: 分页数
+        orderBy: 排序
+        orderType: 排序规则
+        _: 时间戳
+        token_info: token 认证
+
+    Returns: send_message 已发送信息列表 -> list
+
+    """
 
     if orderType == 'descending':
-
-        send_message = [
-            dict(item) for item in db.query(sys_message).where(
-                sys_message.c.send_by == token_info['id']
-            ).order_by(desc(orderBy)).limit(pageSize).all() if item
-        ]
-
+        send_message = par_type.to_json(db.execute(select(sys_message).where(
+            sys_message.c.send_by == token_info['id']).order_by(desc(orderBy)).limit(pageSize)).all())
     elif orderType == 'ascending':
-
-        send_message = [
-            dict(item) for item in db.query(sys_message).where(
-                sys_message.c.send_by == token_info['id']
-            ).order_by(orderBy).limit(pageSize).all() if item
-        ]
-
+        send_message = par_type.to_json(db.execute(select(sys_message).where(
+            sys_message.c.send_by == token_info['id']).order_by(orderBy).limit(pageSize)).all())
     else:
+        send_message = par_type.to_json(db.execute(select(sys_message).where(
+            sys_message.c.send_by == token_info['id']).limit(pageSize)).all())
 
-        send_message = [
-            dict(item) for item in db.query(sys_message).where(
-                sys_message.c.send_by == token_info['id']
-            ).limit(pageSize).all() if item
-        ]
+    return http.respond(status=200, data=send_message)
 
-    return http.respond(200, True, '获取成功', send_message)
 
-@router.get(path='/queueMessage/readMessage/{id:path}', summary='获取消息详情')
-async def read_status_update(id: int, token_infi: str = Depends(http.token)):
+@router.get(path='/queueMessage/readMessage/{id:path}', summary='获取消息详情', tags=['系统消息'])
+async def read_status_update(id: int, token_info: str = Depends(http.token)):
 
-    """获取消息详情"""
+    """
 
-    read_message = db.query(sys_message).where(sys_message.c.id == id).first()
+    Args:
+        id: 消息ID
+        token_info: token 认证
+
+    Returns: read_message 已读消息 -> dict
+
+    """
+
+    read_message = par_type.to_json(db.execute(select(
+        sys_message).where(sys_message.c.id == id)).first())
 
     if read_message:
-
-        read_message = dict(read_message)
-
-        db.execute(sys_message.update().where(sys_message.c.id == id).values(
-            **{
-                'click_num': read_message['click_num'] + 1,
-                'read_status': 1,
-            }
-        ))
+        db.execute(update(sys_message).where(sys_message.c.id == id).values(
+            **{'click_num': read_message['click_num'] + 1, 'read_status': 1}))
         db.commit()
 
-    return http.respond(200, True, '获取成功', dict(read_message))
+    return http.respond(status=200, data=read_message)
 
-@router.delete(path='/queueMessage/delete/{ids:path}', summary='删除消息')
+
+@router.delete(path='/queueMessage/delete/{ids:path}', summary='删除消息', tags=['系统消息'])
 async def message_delete(ids: str, token_info: str = Depends(http.token)):
 
-    """删除消息"""
+    """
+
+    Args:
+        ids: 消息ID
+        token_info: token 认证
+
+    Returns: respond
+
+    """
 
     try:
         for id in ids.split(','):
@@ -224,10 +268,12 @@ async def message_delete(ids: str, token_info: str = Depends(http.token)):
         # 错误回滚 日志打印
         log.log_error(e)
         db.rollback()
+        http.respond(status=500)
 
-    return http.respond(200, True, '已删除')
+    return http.respond(status=200)
 
-@router.get(path='/queueMessage/getReceiveUser', summary='获取消息接收人')
+
+@router.get(path='/queueMessage/getReceiveUser', summary='获取消息接收人', tags=['系统消息'])
 async def read_status_update(
         page: int,
         pageSize: int,
@@ -236,20 +282,30 @@ async def read_status_update(
         token_info: str = Depends(http.token)
 ):
 
-    """获取消息详情"""
+    """
 
-    user_message = db.query(sys_message).where(sys_message.c.id == id).all()
+    Args:
+        page: 当前页
+        pageSize: 分页数
+        id: 消息ID
+        _: 时间戳
+        token_info: token 认证
 
-    users = []
+    Returns: user_message 用户消息列表 -> list
 
-    for user_id in dict(user_message)['users'].split(','):
-        users = db.query(admin_account).where(admin_account.c.id == user_id).limit(pageSize).all()
+    """
 
-    users = [dict(item) for item in users if item]
+    user_message = par_type.to_json(db.execute(select(sys_message).where(sys_message.c.id == id)).all())
 
-    return http.respond(200, True, '获取成功', users)
+    user_message_list = []
+    for user_id in user_message['users'].split(','):
+        user_message_list = par_type.to_json(db.execute(select(admin_account).where(
+            admin_account.c.id == user_id).limit(pageSize)).all())
 
-@router.get(path='/queueMessage/receiveList', summary='获取接收信息')
+    return http.respond(status=200, data=user_message_list)
+
+
+@router.get(path='/queueMessage/receiveList', summary='获取接收信息', tags=['系统消息'])
 async def send_message_list(
         page: int,
         pageSize: int,
@@ -261,87 +317,77 @@ async def send_message_list(
         token_info: str = Depends(http.token)
 ):
 
-    """获取接收信息"""
+    """
+
+    Args:
+        page: 当前页
+        pageSize: 分页数
+        orderBy: 排序
+        orderType: 排序规则
+        content_type: 消息类型
+        read_status: 阅读状态
+        _: 时间戳
+        token_info: token 认证
+
+    Returns: receive_message 接收消息列表 -> list
+
+    """
 
     receive_message = []
 
     # 定义 orderBy 参数
     orderBy = orderBy.split('.')[0] or 'created_at'
 
+    offset_page = (page - 1) * pageSize
+
     # orderBy 方法
     def message_order_by(where_sql, order_by_sql):
-
-        """
-
-        Args:
-            where_sql: where 条件 sql
-            order_by_sql:  升降序 desc
-
-        Returns: message_list
-
-        """
-
         if orderType == 'descending':
-
-            message_data = db.query(sys_message).where(where_sql)\
-                .order_by(desc(order_by_sql)).limit(pageSize).all()
-
+            message_data = par_type.to_json(db.execute(select(sys_message).where(
+                where_sql).order_by(desc(order_by_sql)).limit(pageSize).offset(offset_page)).all())
         elif orderType == 'ascending':
-
-            message_data = db.query(sys_message).where(where_sql)\
-                .order_by(order_by_sql).limit(pageSize).all()
-
+            message_data = par_type.to_json(db.execute(select(sys_message).where(
+                where_sql).order_by(order_by_sql).limit(pageSize).offset(offset_page)).all())
         else:
-
-            message_data = db.query(sys_message).where(where_sql)\
-                .limit(pageSize).all()
-
-        message_list = [dict(item) for item in message_data if item]
-
+            message_data = par_type.to_json(db.execute(select(sys_message).where(
+                where_sql).limit(pageSize).offset(offset_page)).all())
         return message_list
 
     if any([content_type, read_status]):
-
         if read_status == 'all':
-
-            receive_message = message_order_by(
-                and_(
-                    sys_message.c.content_type.like('%' + content_type + '%'),
-                    sys_message.c.send_by == token_info['id']
-                ), orderBy
-            )
-
+            receive_message = message_order_by(and_(
+                sys_message.c.content_type.like('%' + content_type + '%'),
+                sys_message.c.send_by == token_info['id']), orderBy)
         else:
-
-            receive_message = message_order_by(
-                and_(
-                    sys_message.c.content_type.like('%' + content_type + '%'),
-                    sys_message.c.read_status.like('%' + read_status + '%'),
-                    sys_message.c.send_by == token_info['id']
-                ), orderBy
-            )
-
+            receive_message = message_order_by(and_(
+                sys_message.c.content_type.like('%' + content_type + '%'),
+                sys_message.c.read_status.like('%' + read_status + '%'),
+                sys_message.c.send_by == token_info['id']), orderBy)
     else:
-
-        receive_message = [
-            dict(item) for item in db.query(sys_message).where(
-                sys_message.c.send_by == token_info['id']
-            ).limit(pageSize).all() if item
-        ]
+        receive_message = par_type.to_json(db.execute(select(sys_message).where(
+            sys_message.c.send_by == token_info['id']).limit(pageSize).offset(offset_page)).all())
 
     if receive_message:
         for item in receive_message:
             item['send_user'] = {'nickname': item['send_user']}
 
-    return http.respond(200, True, '获取成功', receive_message)
+    return http.respond(status=200, data=receive_message)
 
-@router.post(path='/queueMessage/sendPrivateMessage', summary='发送通知')
+
+@router.post(path='/queueMessage/sendPrivateMessage', summary='发送通知', tags=['系统消息'])
 async def notice_save(message: admin.SystemMessage, token_info: str = Depends(http.token)):
 
-    """发送通知"""
+    """
+
+    Args:
+        message: 消息信息
+        token_info: token 认证
+
+    Returns: respond
+
+    """
 
     message = dict(message)
-
     # 插入消息内容
     message['created_at'] = now_date_time
     message['created_by'] = now_timestamp
@@ -361,4 +407,4 @@ async def notice_save(message: admin.SystemMessage, token_info: str = Depends(ht
             db.execute(sys_message.insert().values(**message))
             db.commit()
 
-    return http.respond(200, True, '发送成功')
+    return http.respond(status=200)

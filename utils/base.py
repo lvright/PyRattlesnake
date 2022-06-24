@@ -193,13 +193,10 @@ class ResponseMethod:
         return
 
     # 请求响应状态
-    def respond(self, status, success=True, message='请求成功', data=None):
-        if status == 500:
+    def respond(self, status, success=True, message='OK', data=None):
+        if status != 200:
             success = False
-            message = '请求错误'
-        elif status != 200:
-            success = False
-            message = '请求失败'
+            message = 'ERROR'
         results = {
             'status': status,
             'success': success,
@@ -207,7 +204,6 @@ class ResponseMethod:
             'timestamp': str(int(time.time())),
             'data': data
         }
-
         return JSONResponse(status_code=status, content=results)
 
     # token 失效响应状态
@@ -301,24 +297,20 @@ class Tackle:
     # 拦截请求用户 ip 并查询地区
     def get_request_ip_info(self, host):
 
-        ip_info = {}
+        info = {}
 
         try:
-            get_ip_info = requests.get(
-                Config.get_ip_url, {'ip': host, 'token': Config.get_ip_token})
+            get_ip_info = requests.get(Config.get_ip_url, {'ip': host, 'token': Config.get_ip_token})
             if get_ip_info.status_code == 200:
-                ip_location = get_ip_info.json()['data']
-                if host == '0.0.0.0' or '127.0.0.1':
-                    ip_info['ip_location'] = '本地测试'
+                location = get_ip_info.json()['data']
+                if host in ['0.0.0.0', '127.0.0.1']:
+                    info['ip_location'] = '本地测试'
                 else:
-                    ip_info['ip_location'] = \
-                        f'{ip_location[0]}-{ip_location[1]}-' \
-                        f'{ip_location[2]}-{ip_location[3]}:' \
-                        f'{ip_location[4]}'
+                    info['ip_location'] = f'{location[0]}-{location[1]}-{location[2]}-{location[3]}'
         except Exception as e:
             Log().log_error(e)
 
-        return ip_info
+        return info
 
 """
 数据库类 SQLAlchemy

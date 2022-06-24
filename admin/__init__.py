@@ -11,6 +11,12 @@ from utils import *
 
 router = APIRouter(prefix='/admin')
 
+
+# TODO
+#  ---
+#  接口文档分类
+#  ---
+
 tags = [
     {
         'name': '登录',
@@ -26,7 +32,37 @@ tags = [
         'description': '系统附件管理',
     }, {
         'name': '角色管理',
-        'description': '系统附件管理',
+        'description': '系统角色管理',
+    }, {
+        'name': '系统服务',
+        'description': '系统服务配置和服务信息',
+    }, {
+        'name': '系统配置',
+        'description': '系统配置管理',
+    }, {
+        'name': '数据字典',
+        'description': '系统数据字典',
+    }, {
+        'name': '部门管理',
+        'description': '组织部门管理',
+    }, {
+        'name': 'Api应用管理',
+        'description': '应用的api管理',
+    }, {
+        'name': '系统日志',
+        'description': '系统日志管理',
+    }, {
+        'name': '菜单管理',
+        'description': '系统功能菜单管理',
+    }, {
+        'name': '岗位管理',
+        'description': '组织岗位管理',
+    }, {
+        'name': '角色管理',
+        'description': '组织角色管理',
+    }, {
+        'name': '系统消息',
+        'description': '系统消息管理',
     },
 
 ]

@@ -38,12 +38,8 @@ async def request_info(request: Request, call_next):
     # do something with body ...
 
     if request.method not in ['GET', 'OPTIONS'] \
-            and request.url.path not in [
-                        '/admin/getConfigByKey',
-                        '/admin/info',
-                        '/admin/login',
-                        '/admin/logout'
-                    ]:
+            and request.url.path not in ['/admin/getConfigByKey', '/admin/info',
+                                         '/admin/login', '/admin/logout']:
 
         success = True
         message = 'OK'

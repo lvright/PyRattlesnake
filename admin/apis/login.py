@@ -37,6 +37,7 @@ async def login(form: admin.AdminLogin, request: Request):
         db.execute(
             update(admin_account).where(admin_account.c.id == user_info['id']).values(
                 **{'login_ip': request.client.host, 'login_time': now_date_time}))
+
         data_base.redis.set('user_token:' + user_info['username'], token, ex=3000)
 
         db.execute(insert(sys_login_log).values(**ip_config))
@@ -48,7 +49,7 @@ async def login(form: admin.AdminLogin, request: Request):
     db.execute(insert(sys_login_log).values(**ip_config))
     db.commit()
 
-    return http.respond(500, False, '账户或密码错误')
+    return http.respond(status=200)
 
 
 @router.post(path='/logout', summary='退出登录', tags=['登录'])

@@ -2,9 +2,13 @@
 
 from admin import *
 
-# TODO ----------系统日志模块----------
 
-@router.get(path='/logs/getLoginLogPageList', summary='获取登录日志')
+# TODO
+#  ----------
+#  系统日志
+#  ----------
+
+@router.get(path='/logs/getLoginLogPageList', summary='获取登录日志', tags=['系统日志'])
 async def login_log(
         page: int,
         pageSize: int,
@@ -19,92 +23,106 @@ async def login_log(
         token_info: str = Depends(http.token)
 ):
 
-    """获取登录日志"""
+    """
+
+    Args:
+        page: 当前页
+        pageSize: 分页数
+        orderBy: 排序
+        orderType: 培训规则
+        username: 用户名称
+        ip: 登录IP
+        status: 登录状态
+        maxDate: 最大时间
+        minDate: 最小时间
+        _: 时间戳
+        token_info: token 认证
+
+    Returns: login_logs 登录日志列表 -> list
+
+    """
 
     login_logs = []
 
+    offset_page = (page - 1) * pageSize
+
     # 筛选式查询 any判断传参有值时 介入查询条件
     if any([username, ip]):
-
         # 按传参条件查询
-        fuzzy_range_data = db.query(sys_login_log).filter(
+        fuzzy_range_data = par_type.to_json(db.execute(select(sys_login_log).where(
             sys_login_log.c.username.like('%' + username + '%'),
-            sys_login_log.c.ip.like('%' + ip + '%')
-        ).limit(pageSize).offset((page - 1) * pageSize)
-
+            sys_login_log.c.ip.like('%' + ip + '%')).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
-        for item in fuzzy_range_data:
-            login_logs.append(dict(item))
+        for item in fuzzy_range_data: login_logs.append(item)
 
     # 如果传日期范围则查询日期范围数据
     elif all([maxDate, minDate]):
-        time_range_data = db.query(sys_login_log).filter(
+        time_range_data = par_type.to_json(db.execute(select(sys_login_log).where(
             minDate <= sys_login_log.c.created_at,
-            maxDate >= sys_login_log.c.created_at
-        ).limit(pageSize).offset((page - 1) * pageSize)
-
+            maxDate >= sys_login_log.c.created_at).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
-        for item in time_range_data:
-            login_logs.append(dict(item))
+        for item in time_range_data: login_logs.append(item)
 
     elif status:
-        status_range_data = db.query(sys_login_log).filter(
-            sys_login_log.c.status == status,
-        ).limit(pageSize)
-
+        status_range_data = par_type.to_json(db.execute(select(sys_login_log).where(
+            sys_login_log.c.status == status).limit(pageSize)).all())
         # 更新data列表数据
-        for item in status_range_data:
-            login_logs.append(dict(item))
+        for item in status_range_data: login_logs.append(dict(item))
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        login_logs = [
-            dict(logs) for logs in db.query(sys_login_log).order_by(desc(orderBy))
-            .limit(pageSize).offset((page - 1) * pageSize) if logs
-        ]
-
+        login_logs = par_type.to_json(db.execute(select(
+            sys_login_log).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
     elif orderType == 'ascending':
-        login_logs = [
-            dict(logs) for logs in db.query(sys_login_log).order_by(orderBy)
-            .limit(pageSize).offset((page - 1) * pageSize) if logs
-        ]
+        login_logs = par_type.to_json(db.execute(select(
+            sys_login_log).order_by(orderBy).limit(pageSize).offset(offset_page)).all())
 
     # 如果没有查询条件则按分页查询
     else:
-        login_logs = [
-            dict(logs) for logs in db.query(sys_login_log)
-            .limit(pageSize).offset((page - 1) * pageSize) if logs
-        ]
+        login_logs = par_type.to_json(db.execute(select(
+            sys_login_log).limit(pageSize).offset(offset_page)).all())
 
     total = db.query(func.count(sys_login_log.c.id)).scalar()
+    total_page = math.ceil(total / pageSize)
 
-    return http.respond(200, True, 'OK', {
+    results = {
         'items': login_logs,
         'pageInfo': {
             'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(total / pageSize)
+            'totalPage': total_page
         }
-    })
+    }
 
-@router.delete(path='/logs/loginLog/delete/{ids:path}', summary='删除登录日志')
+    return http.respond(status=200, data=results)
+
+
+@router.delete(path='/logs/loginLog/delete/{ids:path}', summary='删除登录日志', tags=['系统日志'])
 async def login_logs_delete(ids: str, token_info: str = Depends(http.token)):
 
-    """删除登录日志"""
+    """
+
+    Args:
+        ids: 日志ID
+        token_info: token 认证
+
+    Returns: respond
+
+    """
 
     try:
         for id in ids.split(','):
-            db.execute(sys_login_log.delete().where(sys_login_log.c.id == id))
+            db.execute(delete(sys_login_log).where(sys_login_log.c.id == id))
             db.commit()
     except Exception as e:
         log.log_error(e)
         db.rollback()
+        return http.respond(status=500)
 
-        return http.respond(500, False, '删除失败')
+    return http.respond(status=200)
 
-    return http.respond(200, True, '删除成功')
 
-@router.get(path='/logs/getOperLogPageList', summary='获取操作日志')
+@router.get(path='/logs/getOperLogPageList', summary='获取操作日志', tags=['系统日志'])
 async def oper_logs(
         page: int,
         pageSize: int,
@@ -118,66 +136,68 @@ async def oper_logs(
         token_info: str = Depends(http.token)
 ):
 
-    """获取操作日志"""
+    """
+
+    Args:
+        page: 当前页
+        pageSize: 分页数
+        orderBy: 排序
+        orderType: 排序桂香斋
+        username: 用户名
+        ip: 访问IP
+        maxDate: 最大时间
+        minDate: 最小时间
+        _: 时间戳
+        token_info: token 认证
+
+    Returns: oper_logs 操作日志列表 -> list
+
+    """
 
     oper_logs = []
 
+    offset_page = (page - 1) * pageSize
+
     # 筛选式查询 any判断传参有值时 介入查询条件
     if any([username, ip]):
-
         # 按传参条件查询
-        fuzzy_range_data = db.query(sys_oper_log).filter(
+        fuzzy_range_data = par_type.to_json(db.execute(select(sys_oper_log).where(
             sys_oper_log.c.username.like('%' + username + '%'),
-            sys_oper_log.c.ip.like('%' + ip + '%')
-        ).limit(pageSize).offset((page - 1) * pageSize)
-
+            sys_oper_log.c.ip.like('%' + ip + '%')).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
-        for item in fuzzy_range_data:
-            oper_logs.append(dict(item))
+        for item in fuzzy_range_data: oper_logs.append(item)
 
     # 如果传日期范围则查询日期范围数据
     elif all([maxDate, minDate]):
-        time_range_data = db.query(sys_oper_log).filter(
+        time_range_data = par_type.to_json(db.execute(select(sys_oper_log).where(
             minDate <= sys_oper_log.c.created_at,
-            maxDate >= sys_oper_log.c.created_at
-        ).limit(pageSize).offset((page - 1) * pageSize)
-
+            maxDate >= sys_oper_log.c.created_at).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
-        for item in time_range_data:
-            oper_logs.append(dict(item))
-
-        # 更新data列表数据
-        for item in status_range_data:
-            oper_logs.append(dict(item))
+        for item in time_range_data: oper_logs.append(item)
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        oper_logs = [
-            dict(logs) for logs in db.query(sys_oper_log)
-            .order_by(desc(orderBy))
-            .limit(pageSize).offset((page - 1) * pageSize) if logs
-        ]
-
+        oper_logs = par_type.to_json(db.execute(select(
+            sys_oper_log).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
     elif orderType == 'ascending':
-        oper_logs = [
-            dict(logs) for logs in db.query(sys_oper_log).order_by(orderBy)
-            .limit(pageSize).offset((page - 1) * pageSize) if logs
-        ]
+        oper_logs = par_type.to_json(db.execute(select(
+            sys_oper_log).order_by(orderBy).limit(pageSize).offset(offset_page)).all())
 
     # 如果没有查询条件则按分页查询
     else:
-        oper_logs = [
-            dict(logs) for logs in db.query(sys_oper_log)
-            .limit(pageSize).offset((page - 1) * pageSize) if logs
-        ]
+        oper_logs = par_type.to_json(db.execute(select(
+            sys_oper_log).limit(pageSize).offset(offset_page)).all())
 
     total = db.query(func.count(sys_oper_log.c.id)).scalar()
+    total_page = math.ceil(total / pageSize)
 
-    return http.respond(200, True, 'OK', {
+    results = {
         'items': oper_logs,
         'pageInfo': {
             'total': total,
             'currentPage': page,
-            'totalPage': math.ceil(total / pageSize)
+            'totalPage': total_page
         }
-    })
+    }
+
+    return http.respond(status=200, data=results)

@@ -34,12 +34,13 @@ async def get_attachment(
 
     if mime_type:
         file_list = par_type.to_json(db.execute(select(attachment).where(
-            attachment.c.mime_type == mime_type).limit(pageSize).offset(offset_page)))
+            attachment.c.mime_type == mime_type).limit(pageSize).offset(offset_page)).all())
     elif origin_name:
         file_list = par_type.to_json(db.execute(select(attachment).where(
-            attachment.c.origin_name.like('%' + origin_name + '%')).limit(pageSize).offset(offset_page)))
+            attachment.c.origin_name.like('%' + origin_name + '%')).limit(pageSize).offset(offset_page)).all())
     else:
-        file_list = db.execute(select(attachment).limit(pageSize).offset(offset_page))
+        file_list = par_type.to_json(db.execute(select(
+            attachment).limit(pageSize).offset(offset_page)).all())
 
     total = db.query(func.count(attachment.c.id)).scalar()
     total_page = math.ceil(total / pageSize)
@@ -55,7 +56,8 @@ async def get_attachment(
 
     return http.respond(status=200, data=results)
 
-@router.post(path='/attachment/uploadImage', summary='上传图片附件')
+
+@router.post(path='/attachment/uploadImage', summary='上传图片附件', tags=['系统附件'])
 async def upload_image(image: UploadFile = File(...), token_info: str = Depends(http.token)):
 
     """
