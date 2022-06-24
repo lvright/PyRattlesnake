@@ -59,7 +59,7 @@ def logout(token_info: str = Depends(http.token)):
 
     Args:
         token_info: token auth
-    Returns: respond 200
+    Returns: respond
 
     """
 
