@@ -44,7 +44,6 @@ router.beforeEach(async (to, from, next) => {
 		if(to.meta.fullpage) {
 			to.matched = [to.matched[to.matched.length-1]]
 		}
-
 		if (tool.data.get('lockScreen') && to.name !== 'lockScreen') {
 			next({ name: 'lockScreen' })
 		} else if (! tool.data.get('lockScreen') && to.name === 'lockScreen' ) {
@@ -52,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
 		} else if (to.name === 'login') {
 			next({ path: defaultRoutePath })
 		} else if (! store.state.user.routers) {
-			await store.dispatch('getUserInfo').then( res => {
+			await store.dispatch('getUserInfo').then(res => {
 				if (res.routers.length !== 0) {
 					let routers = res.routers
 					const apiRouter = flatAsyncRoutes(routers)

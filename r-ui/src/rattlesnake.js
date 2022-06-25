@@ -111,9 +111,7 @@ export default {
     app.config.errorHandler = errorHandler
 
     tool.capsule('PyRattlesnake', `v${config.APP_VER}`)
-    // console.log('MineAdmin 官网  https://www..com')
-    // console.log(' 文档  https://doc.mineadmin.com')
-    console.log('PyRattlesnake Gitee https://gitee.com/lvright/PyRattlesnake')
-    console.log('群蛇乱舞~')
+    console.log('PyRattlesnake Github https://github.com/lvright/PyRattlesnake')
+    console.log('人生苦短，我写Python')
   }
 }

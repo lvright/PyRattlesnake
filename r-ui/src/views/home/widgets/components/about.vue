@@ -1,11 +1,6 @@
 <template>
 	<el-card shadow="hover" header="关于项目" class="item-background">
 		<p>PyRattlesnake 后端是基于FastAPI框架，是高性能、易于学习、高效编码、前后分离的Web框架</p>
-		<p>
-			<a href='https://gitee.com/lvright/PyRattlesnake' target="_blank">
-				<img src='https://gitee.com/xmo/MineAdmin/badge/star.svg?theme=dark' alt='star' style="vertical-align: middle">
-			</a>
-		</p>
 	</el-card>
 </template>
 

@@ -4,7 +4,7 @@
 			<div class="mask">
 				<span class="del" @click.stop="del"><el-icon><el-icon-delete /></el-icon></span>
 			</div>
-			<el-image v-if="fileIsImg" class="image" :src="tempImg || img" :preview-src-list="[img]" fit="cover" hide-on-click-modal preview-teleported :z-index="9999"></el-image>
+			<el-image v-if="fileIsImg || img" class="image" :src="tempImg || img" :preview-src-list="[img]" fit="cover" hide-on-click-modal preview-teleported :z-index="9999" :style="{borderRadius: '4px'}"></el-image>
 			<a v-else :href="img" class="file" target="_blank"><el-icon><el-icon-document /></el-icon></a>
 		</div>
 		<div v-else class="sc-upload-uploader" @click="fileSelect && showfileSelect()">
@@ -210,7 +210,7 @@
 	.sc-upload-file .mask {display: none;position: absolute;top:0px;right:0px;line-height: 1;z-index: 1;}
 	.sc-upload-file .mask span {display: inline-block;width: 25px;height:25px;line-height: 23px;text-align: center;cursor: pointer;color: #fff;}
 	.sc-upload-file .mask span i {font-size: 12px;}
-	.sc-upload-file .mask .del {background: #F56C6C;}
+	.sc-upload-file .mask .del {line-height: 28px;background: #F56C6C;border-top-right-radius: 3px;border-bottom-left-radius: 3px;}
 	.sc-upload-file .image {width: 100%;height: 100%;}
 	.sc-upload-file .image img {vertical-align: bottom;}
 	.sc-upload-file .file {width: 100%;height: 100%;display: flex;flex-direction: column;align-items: center;justify-content: center;border: 1px solid #DCDFE6;}

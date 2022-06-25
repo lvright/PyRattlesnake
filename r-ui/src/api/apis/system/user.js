@@ -8,7 +8,7 @@ export default {
      */
     getPageList (params = {}) {
         return request({
-            url: 'admin/role/pageIndex',
+            url: 'admin/user/pageIndex',
             method: 'get',
             params
         })
@@ -32,7 +32,7 @@ export default {
      */
     read (id) {
         return request({
-            url: 'admin/role/userRead/' + id,
+            url: 'admin/user/userRead/' + id,
             method: 'get'
         })
     },
@@ -43,7 +43,7 @@ export default {
      */
     save (params = {}) {
         return request({
-            url: 'admin/role/userSave',
+            url: 'admin/user/userSave',
             method: 'post',
             data: params
         })
@@ -55,7 +55,7 @@ export default {
      */
     deletes (ids) {
         return request({
-            url: 'admin/role/userDelete/' + ids,
+            url: 'admin/user/userDelete/' + ids,
             method: 'delete'
         })
     },
@@ -88,7 +88,7 @@ export default {
      */
     update (id, params = {}) {
         return request({
-            url: 'admin/role/userUpdate/' + id,
+            url: 'admin/user/userUpdate/' + id,
             method: 'put',
             data: params
         })
@@ -100,7 +100,7 @@ export default {
      */
     changeStatus (params = {}) {
         return request({
-            url: 'admin/role/changeStatus',
+            url: 'admin/user/changeStatus',
             method: 'put',
             data: params
         })
@@ -112,7 +112,7 @@ export default {
      */
     clearCache (params = {}) {
         return request({
-            url: 'admin/role/clearCache',
+            url: 'admin/user/clearCache',
             method: 'post',
             data: params
         })
@@ -124,7 +124,7 @@ export default {
      */
     setHomePage (params = {}) {
         return request({
-            url: 'admin/role/setHomePage',
+            url: 'admin/user/setHomePage',
             method: 'post',
             data: params
         })
@@ -183,7 +183,7 @@ export default {
      */
     exportExcel (params = {}) {
         return request({
-            url: 'admin/role/userExport',
+            url: 'admin/user/userExport',
             method: 'post',
             responseType: 'blob',
             data: params
@@ -196,7 +196,7 @@ export default {
      */
     importExcel (data = {}) {
         return request({
-            url: 'admin/role/import',
+            url: 'admin/user/import',
             method: 'post',
             data
         })
@@ -208,7 +208,7 @@ export default {
      */
     downloadTemplate () {
         return request({
-            url: 'admin/role/downloadTemplate',
+            url: 'admin/user/downloadTemplate',
             method: 'post',
             responseType: 'blob'
         })

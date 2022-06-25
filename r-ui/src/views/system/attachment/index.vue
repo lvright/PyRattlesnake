@@ -159,7 +159,7 @@
               layout="prev, pager, next, jumper"
               :total="pageInfo.total"
               :page-size="queryParams.pageSize"
-              v-model:currentPage="queryParams.page"
+              v-model:current-page="queryParams.page"
               @current-change="getList"
             ></el-pagination>
           </div>

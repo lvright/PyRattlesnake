@@ -261,7 +261,7 @@ async def save_system_config(config: admin.SystemConfig, token_info: str = Depen
             admin_config.c.key == key).values(value=dict(config)[key]))
         db.commit()
 
-    return http.respond(status=200)
+    return http.respond(status=200, message='已保存')
 
 
 @router.get(path='/config/getExtendConfig', summary='扩展配置', tags=['系统配置'])
@@ -305,9 +305,10 @@ async def save_extend(extend: admin.ExtendConfig, token_info: str = Depends(http
     if extend_all is None:
         # 若 key 不存在则插入数据
         db.execute(insert(admin_extend).values(**dict(extend)))
-        return http.respond(status=200)
+        db.commit()
+        return http.respond(status=200, message='添加成功')
 
-    return http.respond(status=500)
+    return http.respond(status=500, message='扩展配置key已存在，请重新添加')
 
 
 @router.post(path='/config/update/updateExtendConfig', summary='更新扩展配置', tags=['系统配置'])
@@ -323,14 +324,15 @@ async def update_extend(extend: admin.ExtendConfig, token_info: str = Depends(ht
 
     """
 
-    db.execute(update(admin_extend).where(admin_extend.c.name == extend.name).values(**dict(extend)))
+    db.execute(update(admin_extend).where(
+        admin_extend.c.name == extend.name).values(**dict(extend)))
     db.commit()
 
-    return http.respond(status=200)
+    return http.respond(status=200, message='已保存')
 
 
-@router.delete(path='/config/update/deleteExtendConfig', summary='删除扩展配置', tags=['系统配置'])
-async def del_extend(name: str, token_info: str = Depends(http.token)):
+@router.delete(path='/config/delete/deleteExtendConfig/{key:path}', summary='删除扩展配置', tags=['系统配置'])
+async def del_extend(key: str, token_info: str = Depends(http.token)):
 
     """
 
@@ -342,10 +344,11 @@ async def del_extend(name: str, token_info: str = Depends(http.token)):
 
     """
 
-    db.execute(delete(admin_extend).where(admin_extend.c.name == name))
+    db.execute(delete(admin_extend).where(admin_extend.c.key == key))
     db.commit()
 
     return http.respond(status=200)
+
 
 @router.post(path='/config/clearCache', summary='清除系统配置缓存', tags=['系统配置'])
 async def conf_clear_cache(token_info: str = Depends(http.token)):
@@ -361,6 +364,7 @@ async def conf_clear_cache(token_info: str = Depends(http.token)):
 
     return http.respond(status=200)
 
+
 @router.post(path='/user/clearSelfCache', summary='清除浏览器缓存', tags=['系统配置'])
 async def conf_clear_cache(token_info: str = Depends(http.token)):
 
@@ -374,6 +378,7 @@ async def conf_clear_cache(token_info: str = Depends(http.token)):
     """
 
     return http.respond(status=200)
+
 
 @router.post(path='/user/updateSetting', summary='修改系统设置', tags=['系统配置'])
 async def update_setting(setting: admin.BackendSetting, token_info: str = Depends(http.token)):

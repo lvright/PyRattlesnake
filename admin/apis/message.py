@@ -18,7 +18,10 @@ async def message_io(token: str, websocket: WebSocket):
     token_info = jwt_token.decode(token)
 
     mess = par_type.to_json(db.execute(select(sys_message).where(and_(
-        sys_message.c.click_num == 0, sys_message.c.users.like('%' + str(token_info['id']) + '%')))).all())
+        sys_message.c.click_num == 0,
+        sys_message.c.users.like('%' + str(token_info['id']) + '%')))).all())
+
+    print(mess)
 
     db.flush()
 
@@ -262,7 +265,7 @@ async def message_delete(ids: str, token_info: str = Depends(http.token)):
 
     try:
         for id in ids.split(','):
-            db.execute(sys_message.delete().where(sys_message.c.id == id))
+            db.execute(delete(sys_message).where(sys_message.c.id == id))
             db.commit()
     except Exception as e:
         # 错误回滚 日志打印
@@ -342,13 +345,13 @@ async def send_message_list(
     offset_page = (page - 1) * pageSize
 
     # orderBy 方法
-    def message_order_by(where_sql, order_by_sql):
+    def message_order_by(where_sql):
         if orderType == 'descending':
             message_data = par_type.to_json(db.execute(select(sys_message).where(
-                where_sql).order_by(desc(order_by_sql)).limit(pageSize).offset(offset_page)).all())
+                where_sql).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
         elif orderType == 'ascending':
             message_data = par_type.to_json(db.execute(select(sys_message).where(
-                where_sql).order_by(order_by_sql).limit(pageSize).offset(offset_page)).all())
+                where_sql).order_by(orderBy).limit(pageSize).offset(offset_page)).all())
         else:
             message_data = par_type.to_json(db.execute(select(sys_message).where(
                 where_sql).limit(pageSize).offset(offset_page)).all())
@@ -358,12 +361,12 @@ async def send_message_list(
         if read_status == 'all':
             receive_message = message_order_by(and_(
                 sys_message.c.content_type.like('%' + content_type + '%'),
-                sys_message.c.send_by == token_info['id']), orderBy)
+                sys_message.c.send_by == token_info['id']))
         else:
             receive_message = message_order_by(and_(
                 sys_message.c.content_type.like('%' + content_type + '%'),
-                sys_message.c.read_status.like('%' + read_status + '%'),
-                sys_message.c.send_by == token_info['id']), orderBy)
+                sys_message.c.read_status == read_status,
+                sys_message.c.send_by == token_info['id']))
     else:
         receive_message = par_type.to_json(db.execute(select(sys_message).where(
             sys_message.c.send_by == token_info['id']).limit(pageSize).offset(offset_page)).all())
@@ -400,12 +403,13 @@ async def notice_save(message: admin.SystemMessage, token_info: str = Depends(ht
     if message['users']:
         for user_id in message['users']:
             message['users'] = str(user_id)
-            db.execute(sys_message.insert().values(**message))
+            db.execute(insert(sys_message).values(**message))
             db.commit()
     else:
-        users = [dict(item)['id'] for item in db.query(admin_account).all() if item]
+        users = [item['id'] for item in par_type.to_json(db.execute(select(
+            admin_account)).all()) if item]
         for user_id in users:
-            db.execute(sys_message.insert().values(**message))
+            db.execute(insert(sys_message).values(**message))
             db.commit()
 
     return http.respond(status=200)

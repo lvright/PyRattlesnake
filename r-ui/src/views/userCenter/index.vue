@@ -146,7 +146,6 @@ export default {
     return {
 
       uploadShow: false,
-
       infoLoading: false,
       passwordLoading: false,
       settingLoading: false,

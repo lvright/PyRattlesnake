@@ -12,7 +12,7 @@ export default {
    */
   getList (params = {}) {
     return request({
-      url: 'admin/user/notice/index',
+      url: 'admin/notice/index',
       method: 'get',
       params
     })

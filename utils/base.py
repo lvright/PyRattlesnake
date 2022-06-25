@@ -32,7 +32,7 @@ import fastapi
 import requests
 from binascii import hexlify
 from fuzzywuzzy import fuzz
-from sqlmodel import create_engine, SQLModel, Session, select, insert, update, join, union, and_, or_, func, Table, MetaData
+from sqlmodel import create_engine, SQLModel, Session, select, insert, update, delete, join, union, and_, or_, func, Table, MetaData
 from PIL import Image, ImageDraw, ImageFont
 from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect, Request, FastAPI, Response, APIRouter, Depends, Body, Header, Cookie
 from fastapi.responses import JSONResponse, StreamingResponse, UJSONResponse, FileResponse
@@ -196,7 +196,8 @@ class ResponseMethod:
     def respond(self, status, success=True, message='OK', data=None):
         if status != 200:
             success = False
-            message = 'ERROR'
+            if message == 'OK':
+                message = 'ERROR'
         results = {
             'status': status,
             'success': success,

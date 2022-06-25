@@ -14,18 +14,6 @@ export default {
   },
 
   /**
-   * 获取依赖包列表
-   * @returns
-   */
-  getPackagePageList (params = {}) {
-    return request({
-      url: 'admin/config/rely/index',
-      method: 'get',
-      params
-    })
-  },
-
-  /**
    * 获取在线用户列表
    * @param {*} params 
    * @returns 

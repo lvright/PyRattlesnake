@@ -68,7 +68,7 @@
 				</el-scrollbar>
 			</div>
 			<div class="sc-file-select__pagination">
-				<el-pagination small background layout="prev, pager, next" :total="total" :page-size="pageSize" v-model:currentPage="currentPage" @current-change="reload"></el-pagination>
+				<el-pagination small background layout="prev, pager, next" :total="total" :page-size="pageSize" v-model:current-page="currentPage" @current-change="reload"></el-pagination>
 			</div>
 			<div class="sc-file-select__do">
 				<slot name="do"></slot>

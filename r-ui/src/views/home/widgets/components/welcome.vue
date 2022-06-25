@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="actions">
-				<el-button type="primary" icon="el-icon-check" @click="godoc">Gitee</el-button>
+				<el-button type="primary" icon="el-icon-check" @click="godoc">Github</el-button>
 			</div>
 		</div>
 	</el-card>
@@ -38,7 +38,7 @@
 		},
 		methods: {
 			godoc(){
-				window.open("https://gitee.com/lvright/PyRattlesnake")
+				window.open("https://github.com/lvright/PyRattlesnake")
 			}
 		}
 	}

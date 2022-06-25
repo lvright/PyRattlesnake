@@ -65,7 +65,7 @@ export default {
    */
   delete (key) {
     return request({
-      url: 'admin/config/update/deleteExtendConfig/' + key,
+      url: 'admin/config/delete/deleteExtendConfig/' + key,
       method: 'delete',
     })
   },

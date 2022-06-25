@@ -31,9 +31,9 @@
 				</template>
 			</el-table>
 		</div>
-		<div class="scTable-page" v-if="!hideDo">
+		<div class="scTable-page" v-if="!hideDo && !hidePagination">
 			<div class="scTable-pagination">
-				<el-pagination v-if="!hidePagination" background :small="true" :layout="paginationLayout" :total="total" :page-size="pageSize" v-model:currentPage="currentPage" @current-change="paginationChange"></el-pagination>
+				<el-pagination background :small="true" :layout="paginationLayout" :hide-on-single-page="hidePagination" :total="total" :page-size="pageSize" v-model:current-page="currentPage" @current-change="paginationChange"></el-pagination>
 			</div>
 			<div class="scTable-do" v-if="!hideDo">
 

@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref } from 'vue'
-const url = ref(process.env.VUE_APP_URL + '/api/v1/docs')
+const url = ref(process.env.VUE_APP_URL + '/api/docs')
 </script>
 
 <style scoped>

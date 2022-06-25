@@ -59,10 +59,12 @@ async def get_info(token_info: str = Depends(http.token)):
             user_setting['layoutTags'] = bool(user_setting['layoutTags'])
             user_info['backend_setting'] = user_setting
 
-            return http.respond(status=200, data={
+            results = {
                 'codes': codes, 'roles': [token_info['userId']],
                 'routers': menu_list, 'user': user_info
-            })
+            }
+
+            return http.respond(status=200, data=results)
 
     return http.respond(status=500)
 
@@ -89,7 +91,7 @@ async def admin_edit_info(user_info: admin.AdminUpdateInfo, token_info: str = De
         admin_account.c.userId == token_info['userId']).values(**user_info))
     db.commit()
 
-    return http.respond(status=200)
+    return http.respond(status=200, message='修改成功')
 
 
 @router.post(path='/user/modifyPassword', summary='修改账户密码', tags=['用户'])

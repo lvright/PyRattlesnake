@@ -7,7 +7,7 @@
 		</div>
 		<div style="margin-top: 20px;">
 			<el-button type="success" @click="golog">更新日志</el-button>
-			<el-button type="danger" @click="gogit">Gitee</el-button>
+			<el-button type="danger" @click="gogit">Github</el-button>
 		</div>
 	</el-card>
 </template>
@@ -27,10 +27,10 @@
 			async getVer(){
 			},
 			golog(){
-				window.open("https://gitee.com/lvright/PyRattlesnake")
+				window.open("https://github.com/lvright/PyRattlesnake")
 			},
 			gogit(){
-				window.open("https://gitee.com/lvright/PyRattlesnake")
+				window.open("https://github.com/lvright/PyRattlesnake")
 			}
 		}
 	}

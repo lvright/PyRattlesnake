@@ -44,16 +44,7 @@
             <el-radio-button label="1">已读</el-radio-button>
           </el-radio-group>
         </div>
-        <div class="right-panel">
-          <el-input placeholder="搜索标题" />
-          <el-tooltip class="item" effect="dark" content="搜索" placement="top">
-            <el-button type="primary" icon="el-icon-search" @click="handlerSearch"></el-button>
-          </el-tooltip>
 
-          <el-tooltip class="item" effect="dark" content="清空条件" placement="top">
-            <el-button icon="el-icon-refresh" @click="resetSearch"></el-button>
-          </el-tooltip>
-        </div>
       </el-header>
       <el-main class="nopadding">
         <maTable
@@ -61,6 +52,7 @@
           :api="api"
           @selection-change="selectionChange"
           :autoLoad="false"
+          :hidePagination="true"
           stripe
           remoteSort
           remoteFilter

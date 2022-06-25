@@ -27,9 +27,9 @@
 				</template>
 			</el-table>
 		</div>
-		<div class="scTable-page" v-if="!hidePagination&&!hideDo">
-			<div class="scTable-pagination">
-				<el-pagination v-if="!hidePagination" background :small="true" :layout="paginationLayout" :total="total" :page-size="pageSize" v-model:currentPage="currentPage" @current-change="paginationChange"></el-pagination>
+		<div class="scTable-page" v-if="!hidePagination && !hideDo">
+			<div class="scTable-pagination" v-if="!hidePagination">
+				<el-pagination background :small="true" :layout="paginationLayout" :hide-on-single-page="hidePagination" :total="total" :page-size="pageSize" v-model:currentPage="currentPage" @current-change="paginationChange"></el-pagination>
 			</div>
 			<div class="scTable-do" v-if="!hideDo">
 				<el-button v-if="!hideRefresh" @click="refresh" icon="el-icon-refresh" circle style="margin-left:15px"></el-button>

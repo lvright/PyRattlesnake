@@ -71,7 +71,7 @@ export default {
 	},
 	watch:{
 		modelValue(){
-			this.$refs.upload.uploadFiles=this.modelValuetoArr
+			this.$refs.upload.uploadFiles = this.modelValuetoArr
 			this.fileList = this.modelValuetoArr
 			this.value = this.modelValue
 		},
@@ -229,6 +229,5 @@ export default {
 .sc-upload-uploader .file-empty {width: 100%;height: 100%;line-height: 1;display: flex;flex-direction: column;align-items: center;justify-content: center;}
 .sc-upload-uploader .file-empty i {font-size: 28px;color: #8c939d;}
 .sc-upload-uploader .file-empty h4 {font-size: 12px;font-weight: normal;color: #8c939d;margin-top: 10px;}
-
 
 </style>

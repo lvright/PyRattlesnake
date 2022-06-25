@@ -118,14 +118,14 @@ export default {
   },
   watch: {
     url(value) {
-      this.form.url = '/api/v1/' + value
+      this.form.url = '/api/' + value
     }
   },
   created () {
     if (this.$TOOL.session.get('globalParams')) {
       this.globalParams = this.$TOOL.session.get('globalParams')
     }
-    this.form.url = '/api/v1/' + this.url
+    this.form.url = '/api/' + this.url
   },
 
   data () {
