@@ -792,7 +792,7 @@ async def update_user(id: int, account: admin.User, token_info: str = Depends(ht
     return http.respond(status=200)
 
 
-@router.put(path='/role/changeStatus', summary='更改用户状态', tags=['用户'])
+@router.put(path='/user/changeStatus', summary='更改用户状态', tags=['用户'])
 async def change_status(
         id: int = Body(...),
         status: str = Body(...),
