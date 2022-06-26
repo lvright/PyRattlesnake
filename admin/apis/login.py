@@ -21,9 +21,9 @@ async def login(form: admin.AdminLogin, request: Request):
     """
 
     # 查询登录账户和密码
-    user_info = par_type.to_json(db.execute(
-        select(admin_account).where(admin_account.c.userId == form.username,
-                                    admin_account.c.password == form.password)).first())
+    user_info = par_type.to_json(db.execute(select(
+        admin_account).where(admin_account.c.userId == form.username,
+                             admin_account.c.password == form.password)).first())
 
     ip_config = {
         'username': user_info['username'], 'ip': request.client.host,

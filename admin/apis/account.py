@@ -8,8 +8,10 @@ from admin import *
 #  用户账户模块
 #  ---
 
+
 @router.post(path='/info', summary='获取账号信息', tags=['用户'])
 async def get_info(token_info: str = Depends(http.token)):
+
     """
 
     Args:
@@ -19,6 +21,7 @@ async def get_info(token_info: str = Depends(http.token)):
         roles: 角色名称
         routers: 路由
         user: 当前登录用户信息
+
     """
 
     # 根据返回的 token 解密后获得当前账户 userid 查询 userid 账户信息
@@ -266,10 +269,12 @@ async def get_user_list(_: int = None, token_info: str = Depends(http.token)):
     # 建立部门树状数据
     if user_dept_list:
         user_dept_list = [{'id': dept['id'], 'label': dept['name'],
-                           'parent_id': dept['parent_id'], 'value': dept['id']} for dept in user_dept_list]
+                          'parent_id': dept['parent_id'], 'value': dept['id']}
+                          for dept in user_dept_list]
 
         for items in user_dept_list:
-            items['children'] = [dept for dept in user_dept_list if dept['parent_id'] == items['id']]
+            items['children'] = [dept for dept in user_dept_list
+                                 if dept['parent_id'] == items['id']]
             if items['parent_id'] == 0: dept_list.append(items)
 
     return http.respond(status=200, data=dept_list)
@@ -310,7 +315,7 @@ async def get_post_list(_: Optional[int] = None, token_info: str = Depends(http.
 
 
 @router.get(path='/user/onlineUser/index', summary='获取在线用户', tags=['用户'])
-def user_online(
+async def user_online(
         page: int,
         pageSize: int,
         orderBy: Optional[str] = '',

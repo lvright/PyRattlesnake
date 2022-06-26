@@ -116,7 +116,6 @@ sys_notification = data_base.table('sys_notification')
 sys_login_log = data_base.table('sys_login_log')
 sys_oper_log = data_base.table('sys_oper_log')
 
-
 # TODO
 #  ---
 #  导出接口模块
