@@ -105,7 +105,7 @@ class JsonWebToken:
         try:
             data = jwt.decode(token, Config.secret_key, algorithms='HS256')
         except Exception as e:
-            return Log().log_error(e)
+            return Log().error(e)
         return data['massage']
 
 """
@@ -281,7 +281,7 @@ class Tackle:
         try:
             smtp.send(user_email, subject, contents)
         except EOFError as e:
-            Log().log_error('邮箱发送失败：' + str(e))
+            Log().error('邮箱发送失败：' + str(e))
         return code
 
     # markdown 模块
@@ -297,20 +297,20 @@ class Tackle:
 
     # 拦截请求用户 ip 并查询地区
     def get_request_ip_info(self, host):
-
         info = {}
-
         try:
-            get_ip_info = requests.get(Config.get_ip_url, {'ip': host, 'token': Config.get_ip_token})
-            if get_ip_info.status_code == 200:
-                location = get_ip_info.json()['data']
-                if host in ['0.0.0.0', '127.0.0.1']:
-                    info['ip_location'] = '本地测试'
-                else:
-                    info['ip_location'] = f'{location[0]}-{location[1]}-{location[2]}-{location[3]}'
+            ipconfig = requests.get(
+                Config.get_ip_url,
+                {'ip': host, 'token': Config.get_ip_token})
+            if ipconfig.status_code == 200:
+                ip_location = ipconfig.json()['data']
+                if host not in ['0.0.0.0', '127.0.0.1']:
+                    info['ip_location'] = \
+                        f'{location[0]}-{location[1]}-' \
+                        f'{location[2]}-{location[3]}'
+                else: info['ip_location'] = '本地测试'
         except Exception as e:
-            Log().log_error(e)
-
+            Log().error(e)
         return info
 
 """
@@ -336,7 +336,6 @@ class DataBase:
 
     SQLModel.metadata.create_all(engine)
     session = Session(engine)
-
     metadata = MetaData()
 
     # redis 链接
@@ -367,46 +366,53 @@ class Log:
         return
 
     # INFO：处理请求或者状态变化等日常事务
-    def log_info(self, text):
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def info(self, text):
+        logging.basicConfig(level=logging.INFO,
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         logger = logging.getLogger(__name__)
         logger.info(text)
-        return
+        return logger
 
     # DEBUG：调试过程中使用DEBUG等级，如算法中每个循环的中间状态
-    def log_debug(self, text):
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def debug(self, text):
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         logger = logging.getLogger(__name__)
         logger.debug(text)
-        return
+        return logger
 
     # WARNING：发生很重要的事件，但是并不是错误时，如用户登录密码错误
-    def log_warning(self, text):
-        logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def warning(self, text):
+        logging.basicConfig(level=logging.WARNING,
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         logger = logging.getLogger(__name__)
         logger.warning(text)
-        return
+        return logger
 
     # ERROR：数据库连接、IO等操作失败或者连接问题
-    def log_error(self, text):
-        logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def error(self, text):
+        logging.basicConfig(level=logging.ERROR,
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         logger = logging.getLogger(__name__)
         logger.error(text)
-        return
+        return logger
 
     # FATAL：对业务造成致命错误
-    def log_fatal(self):
-        logging.basicConfig(level=logging.FATAL, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def fatal(self):
+        logging.basicConfig(level=logging.FATAL,
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         logger = logging.getLogger(__name__)
         logger.fatal(self.text)
-        return
+        return logger
 
     # CRITICAL：特别糟糕的事情，如内存耗尽、磁盘空间为空，较少使用
-    def log_critical(self):
-        logging.basicConfig(level=logging.CRITICAL, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def critical(self):
+        logging.basicConfig(level=logging.CRITICAL,
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         logger = logging.getLogger(__name__)
         logger.critical(self.text)
-        return
+        return logger
+
 
 """
 baseCodeKey 64位加密工具
@@ -417,5 +423,7 @@ class BaseCode:
         return
 
     app_id = str(hexlify(os.urandom(12)), 'utf-8')
-    app_secret = base64.b64encode(app_id.encode(encoding='utf-8')).decode('utf-8')
-    app_key_decode = base64.b64decode(app_secret.encode(encoding='utf-8'))
+    app_secret = base64.b64encode(
+        app_id.encode(encoding='utf-8')).decode('utf-8')
+    app_key_decode = base64.b64decode(
+        app_secret.encode(encoding='utf-8'))
