@@ -467,7 +467,7 @@ async def user_import(file: bytes = File(...), token_info: str = Depends(http.to
         # 保存提交数据
         data_base.engine.dispose()
     except Exception as e:
-        log.log_error(e)
+        log.error(e)
         return http.respond(status=500)
 
     return http.respond(status=200)
@@ -737,7 +737,7 @@ async def delete_user(userId: str, token_token: str = Depends(http.token)):
             db.commit()
     except Exception as e:
         # 报错时生成日志并回滚
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         return http.respond(status=500)
 
@@ -782,7 +782,7 @@ async def update_user(id: int, account: admin.User, token_info: str = Depends(ht
                 db.commit()
         except Exception as e:
             # 错误回滚 日志打印
-            log.log_error(e)
+            log.error(e)
             db.rollback()
             return http.respond(status=500)
 

@@ -155,7 +155,7 @@ async def delete_dept(deptId: str, token_info: str = Depends(http.token)):
             db.commit()
     except Exception as e:
         # 错误回滚 日志打印
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         return http.respond(status=200)
 

@@ -126,7 +126,7 @@ async def app_group_save(ids: str, token_info: str = Depends(http.token)):
             db.execute(delete(sys_apis_group).where(sys_apis_group.c.id == id))
             db.commit()
     except Exception as e:
-        log.log_error(e)
+        log.error(e)
         db.rollbackl()
         return http.respond(status=500)
 

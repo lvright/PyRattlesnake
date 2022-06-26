@@ -176,7 +176,7 @@ def post_save(postId: str, token_info: str = Depends(http.token)):
             db.commit()
     except Exception as e:
         # 报错时生成日志并回滚
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         return http.respond(status=500)
 

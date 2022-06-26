@@ -25,7 +25,7 @@ async def message_io(token: str, websocket: WebSocket):
 
     data = {'event': 'ev_new_message', 'message': '你有一条新的消息', 'data': mess}
     data = json.dumps(data, indent=2)
-    log.log_info(f'callback service data：{data}')
+    log.info(f'callback service data：{data}')
 
     await manager.connect(websocket)
     await manager.broadcast(data)
@@ -37,7 +37,7 @@ async def message_io(token: str, websocket: WebSocket):
             await manager.broadcast(data)
 
     except WebSocketDisconnect as e:
-        log.log_error(e)
+        log.error(e)
         manager.disconnect(websocket)
         await manager.broadcast('账户登出')
 
@@ -180,7 +180,7 @@ async def delete_dept(ids: str, token_info: str = Depends(http.token)):
             db.commit()
     except Exception as e:
         # 错误回滚 日志打印
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         return http.respond(status=500)
 
@@ -267,7 +267,7 @@ async def message_delete(ids: str, token_info: str = Depends(http.token)):
             db.commit()
     except Exception as e:
         # 错误回滚 日志打印
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         http.respond(status=500)
 

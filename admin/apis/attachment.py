@@ -218,7 +218,7 @@ async def attachment_delete(ids: str, token_info: str = Depends(http.token)):
             db.commit()
     except Exception as e:
         # 错误回滚
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         return http.respond(500, False, '删除失败')
 

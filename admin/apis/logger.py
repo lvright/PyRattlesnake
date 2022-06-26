@@ -115,7 +115,7 @@ async def login_logs_delete(ids: str, token_info: str = Depends(http.token)):
             db.execute(delete(sys_login_log).where(sys_login_log.c.id == id))
             db.commit()
     except Exception as e:
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         return http.respond(status=500)
 

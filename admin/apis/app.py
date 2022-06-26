@@ -135,7 +135,7 @@ async def app_group_save(ids: str, token_info: str = Depends(http.token)):
             db.execute(sys_app_group.delete().where(sys_app_group.c.id == id))
             db.commit()
     except Exception as e:
-        log.log_error(e)
+        log.error(e)
         db.rollbackl()
         return http.respond(500, False, '删除失败')
 
@@ -263,7 +263,7 @@ async def app_delete(ids: str, token_info: str = Depends(http.token)):
             db.execute(delete(sys_app).where(sys_app.c.id == id))
             db.commit()
     except Exception as e:
-        log.log_error(e)
+        log.error(e)
         db.rollback()
         return http.respond(status=500)
 

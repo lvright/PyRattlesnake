@@ -496,7 +496,7 @@ async def dict_type(id: int, token_info: str = Depends(http.token)):
         db.commit()
     except Exception as e:
         # 错误回滚 打印日志
-        log.log_error(e)
+        log.error(e)
         return http.respond(status=500)
 
     return http.respond(status=200)
@@ -646,7 +646,7 @@ async def dict_type(id: Any, token_info: str = Depends(http.token)):
             db.commit()
     except Exception as e:
         # 错误回滚 打印日志
-        log.log_error(e)
+        log.error(e)
         return http.respond(status=500)
 
     return http.respond(status=200)
