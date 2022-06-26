@@ -21,8 +21,6 @@ async def message_io(token: str, websocket: WebSocket):
         sys_message.c.click_num == 0,
         sys_message.c.users.like('%' + str(token_info['id']) + '%')))).all())
 
-    print(mess)
-
     db.flush()
 
     data = {'event': 'ev_new_message', 'message': '你有一条新的消息', 'data': mess}
