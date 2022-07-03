@@ -339,7 +339,6 @@ async def send_message_list(
 
     # 定义 orderBy 参数
     orderBy = orderBy.split('.')[0] or 'created_at'
-
     offset_page = (page - 1) * pageSize
 
     # orderBy 方法
@@ -389,7 +388,7 @@ async def notice_save(message: admin.SystemMessage, token_info: str = Depends(ht
 
     """
 
-    message = dict(message)
+    message = par_type.to_json(message)
     # 插入消息内容
     message['created_at'] = now_date_time
     message['created_by'] = now_timestamp

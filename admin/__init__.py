@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from admin.models import model as admin
+from admin.core.celery import celery
+from celery.result import AsyncResult
 from utils import *
 
 
@@ -115,6 +117,7 @@ sys_notification = data_base.table('sys_notification')
 # 系统日志
 sys_login_log = data_base.table('sys_login_log')
 sys_oper_log = data_base.table('sys_oper_log')
+
 
 # TODO
 #  ---

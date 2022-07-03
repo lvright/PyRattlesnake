@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from admin import *
+from admin.tasks.user.login import to_login, login_out
 
 
 # TODO
@@ -20,40 +21,19 @@ async def login(form: admin.AdminLogin, request: Request):
 
     """
 
-    # 查询登录账户和密码
-    user_info = par_type.to_json(db.execute(select(
-        admin_account).where(admin_account.c.userId == form.username,
-                             admin_account.c.password == form.password)).first())
+    login_form = par_type.to_json(form)
+    token_result = to_login.delay(login_form, request.client.host)
+    result = AsyncResult(token_result.id)
 
-    ip_config = {
-        'username': user_info['username'], 'ip': request.client.host,
-        'login_time': now_date_time, 'status': 0, 'message': '登陆成功'
-    }
+    if result.get():
+        user_token = result.get()
+        return http.respond(status=200, data=user_token)
 
-    if user_info:
-        del user_info['password']
-        # token
-        token = jwt_token.encode(user_info)
-        db.execute(
-            update(admin_account).where(admin_account.c.id == user_info['id']).values(
-                **{'login_ip': request.client.host, 'login_time': now_date_time}))
-
-        data_base.redis.set('user_token:' + user_info['username'], token, ex=3000)
-
-        db.execute(insert(sys_login_log).values(**ip_config))
-        db.commit()
-
-        return http.respond(status=200, data={'token': token})
-
-    ip_config['message'] = '账户或密码错误'
-    db.execute(insert(sys_login_log).values(**ip_config))
-    db.commit()
-
-    return http.respond(status=200)
+    return http.respond(status=500, message='账户或密码错误')
 
 
 @router.post(path='/logout', summary='退出登录', tags=['登录'])
-def logout(token_info: str = Depends(http.token)):
+async def logout(token_info: str = Depends(http.token)):
 
     """
 
@@ -63,6 +43,10 @@ def logout(token_info: str = Depends(http.token)):
 
     """
 
-    data_base.redis.delete(token_info['username'])
+    login_out_result = login_out.delay(token_info['username'])
+    result = AsyncResult(login_out_result.id)
 
-    return http.respond(status=200)
+    if result.get():
+        return http.respond(status=200)
+
+    return http.respond(status=500)

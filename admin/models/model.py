@@ -98,6 +98,7 @@ class Post(BaseModel):
 # 用户
 class User(BaseModel):
     status: Optional[str] = Query(None)
+    avatar: Optional[str] = Query(None)
     phone: Optional[str] = Query(None)
     nickname: Optional[str] = Query(None)
     email: Optional[str] = Query(None)
