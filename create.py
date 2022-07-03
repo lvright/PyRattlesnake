@@ -5,6 +5,7 @@ from utils import *
 
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
+
 # 创建app
 app = FastAPI(
     title='PyRattlesnake',
