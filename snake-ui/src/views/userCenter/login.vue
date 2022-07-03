@@ -1,6 +1,6 @@
 <template>
   <div class="login_bg">
-    <div class="login_adv" style="background-image: url(https://api.dujin.org/bing/1920.php)">
+    <div class="login_adv" style="background-image: url(https://bing.biturl.top/?resolution=1920&format=image&index=0&mkt=zh-CN)">
       <div class="login_adv__title">
         <h2>PyRattlesnake</h2>
         <h4>{{ $t("login.slogan") }}</h4>
