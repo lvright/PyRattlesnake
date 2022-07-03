@@ -1,6 +1,6 @@
 from .base import *
 
-# TODO 初始化工具类
+# TODO 实例化工具类
 par_type = ParType()
 wide_time = WideTime()
 jwt_token = JsonWebToken()
@@ -13,7 +13,7 @@ log = Log()
 manager = ConnectionManager()
 base_code = BaseCode()
 
-# TODO 项目路径
+# TODO 获取项目目录
 project_file_path = os.path.abspath(os.path.join(os.getcwd(), "..")) + '/PyRattlesnake'
 
 # TODO 当前时间和时间戳

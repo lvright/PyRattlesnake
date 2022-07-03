@@ -32,7 +32,8 @@ import fastapi
 import requests
 from binascii import hexlify
 from fuzzywuzzy import fuzz
-from sqlmodel import create_engine, SQLModel, Session, select, insert, update, delete, join, union, and_, or_, func, Table, MetaData
+from sqlmodel import create_engine, SQLModel, Session, insert, update, delete, join, union, and_, or_, func, desc, Table, MetaData
+from sqlalchemy import select
 from PIL import Image, ImageDraw, ImageFont
 from fastapi import HTTPException, Header, UploadFile, File, WebSocket, WebSocketDisconnect, Request, FastAPI, Response, APIRouter, Depends, Body, Header, Cookie
 from fastapi.responses import JSONResponse, StreamingResponse, UJSONResponse, FileResponse
@@ -64,11 +65,14 @@ class ParType:
 
     # AbstractKeyedTuple 对象转字典
     def to_json(self, res):
-        if isinstance(res, list):
-            res = [dict(items) for items in res if res]
-            return res
+        if res:
+            if isinstance(res, list):
+                res = [dict(items) for items in res if res]
+                return res
+            else:
+                res = dict(res)
         else:
-            res = dict(res)
+            return None
         return res
 
 """
@@ -193,7 +197,9 @@ class ResponseMethod:
         return
 
     # 请求响应状态
-    def respond(self, status, success=True, message='OK', data=None):
+    def respond(self, status=200, success=True, message='OK', data=None):
+        if data is None:
+            data = []
         if status != 200:
             success = False
             if message == 'OK':
@@ -423,7 +429,9 @@ class BaseCode:
         return
 
     app_id = str(hexlify(os.urandom(12)), 'utf-8')
+
     app_secret = base64.b64encode(
         app_id.encode(encoding='utf-8')).decode('utf-8')
+
     app_key_decode = base64.b64decode(
         app_secret.encode(encoding='utf-8'))
