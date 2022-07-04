@@ -21,14 +21,9 @@ async def login(form: admin.AdminLogin, request: Request):
 
     """
 
-    login_form = par_type.to_json(form)
-    token_result = to_login.delay(login_form, request.client.host)
-    result = AsyncResult(token_result.id)
-
-    if result.get():
-        user_token = result.get()
+    user_token = celery.AsyncResult(to_login.delay(par_type.to_json(form), request.client.host).id).get()
+    if user_token:
         return http.respond(status=200, data=user_token)
-
     return http.respond(status=500, message='账户或密码错误')
 
 
@@ -43,10 +38,5 @@ async def logout(token_info: str = Depends(http.token)):
 
     """
 
-    login_out_result = login_out.delay(token_info['username'])
-    result = AsyncResult(login_out_result.id)
-
-    if result.get():
-        return http.respond(status=200)
-
+    celery.AsyncResult(login_out.delay(token_info['username']).id).get()
     return http.respond(status=500)

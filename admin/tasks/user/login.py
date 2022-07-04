@@ -46,5 +46,4 @@ def login_out(username):
         data_base.redis.delete(username)
     except Exception as e:
         return False
-
     return True
