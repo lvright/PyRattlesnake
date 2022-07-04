@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import celery
-
 from admin import *
 from admin.tasks import *
 
@@ -8,12 +6,11 @@ from admin.tasks import *
 @celery.task
 def get_user_info(token_info):
     # 根据返回的 token 解密后获得当前账户 userid 查询 userid 账户信息
-    user_info = par_type.to_json(db.execute(
-        select(admin_account).where(admin_account.c.id == token_info['id'])).first())
+    user_info = par_type.to_json(db.execute(select(admin_account).where(
+                                            admin_account.c.id == token_info['id'])).first())
     # 获取当前账户关联菜单权限
-    roles_relation = par_type.to_json(db.execute(
-        select(admin_roles_account).where(admin_roles_account.c.userId == token_info['id'])).first())
-
+    roles_relation = par_type.to_json(db.execute(select(admin_roles_account).where(
+                                            admin_roles_account.c.userId == token_info['id'])).first())
     if user_info and roles_relation:
         # 根据 admin_menu_account 关联表查询菜单
         admin_menu_list = par_type.to_json(db.execute(
@@ -25,31 +22,31 @@ def get_user_info(token_info):
         if admin_menu_list:
             menu_list = []
             codes = []
-
             for items in admin_menu_list:
                 # superAdmin 拥有所有权限
                 if token_info['username'] == 'superAdmin': codes = ['*'] or codes.append(items['title'])
                 items['meta'] = {
-                    'hidden': bool(int(items['hidden'])), 'hiddenBreadcrumb': bool(items['hiddenBreadcrumb']),
-                    'icon': items['icon'], 'title': items['title'], 'type': items['type']
+                    'icon': items['icon'],
+                    'title': items['title'],
+                    'type': items['type'],
+                    'hidden': bool(int(items['hidden'])),
+                    'hiddenBreadcrumb': bool(items['hiddenBreadcrumb']),
                 }
                 del items['hidden'], items['hiddenBreadcrumb'], items['icon'], items['title'], items['type']
                 items['children'] = [menu for menu in admin_menu_list if menu['parent_id'] == items['menu_id']]
                 if items['parent_id'] == 0: menu_list.append(items)
-
-            # 插入 backend_setting 系统设置
-            user_setting = par_type.to_json(db.execute(
-                select(backend_setting).where(backend_setting.c.user_id == token_info['id'])).first())
-
+            # 查询 backend_setting 系统设置
+            user_setting = par_type.to_json(db.execute(select(
+                backend_setting).where(backend_setting.c.user_id == token_info['id'])).first())
             del user_info['password']
             user_setting['layoutTags'] = bool(user_setting['layoutTags'])
             user_info['backend_setting'] = user_setting
-
             return {
-                'codes': codes, 'roles': [token_info['userId']],
-                'routers': menu_list, 'user': user_info
+                'codes': codes,
+                'roles': [token_info['userId']],
+                'routers': menu_list,
+                'user': user_info
             }
-
     return False
 
 
@@ -62,33 +59,38 @@ def user_update_info(user_info, token_info):
             admin_account.c.userId == token_info['userId']).values(**user_info))
         db.commit()
     except Exception as e:
-        log.error(str(e))
+        log.error(e)
         return False
     return True
 
 
 @celery.task
 def update_user_password(password, token_info):
-    user_password = par_type.to_json(db.execute(select(admin_account).where(
-        admin_account.c.password == password['oldPassword'])).first())
+
+    user_password = par_type.to_json(db.execute(
+        select(admin_account).where(
+               admin_account.c.password == password['oldPassword'])).first())
+
     if password['newPassword'] == password['newPassword_confirmation']:
-        if user_password:
-            try:
-                db.execute(update(admin_account).where(
-                    admin_account.c.userId == token_info['userId']).values(password=password['newPassword']))
-                db.commit()
-            except Exception as e:
-                log.error(e)
-                return False
-            return True
-        return {'status': 500, 'message': '旧密码错误'}
-    return {'status': 500, 'message': '新密码与确认密码不一致'}
+        return {'status': 500, 'message': '新密码与确认密码不一致'}
+
+    if user_password:
+        try:
+            db.execute(update(admin_account).where(
+                admin_account.c.userId == token_info['userId']).values(
+                password=password['newPassword']))
+            db.commit()
+        except Exception as e:
+            log.error(e)
+            return False
+        return True
+    return {'status': 500, 'message': '旧密码错误'}
 
 
 @celery.task
 def into_user_password(userId, token_info):
     try:
-        db.execute(admin_account.update().where(
+        db.execute(update(admin_account).where(
             admin_account.c.id == userId).values(password='123456'))
         db.commit()
     except Exception as e:
@@ -98,28 +100,29 @@ def into_user_password(userId, token_info):
 
 
 @celery.task
-def get_all_user_list(page, pageSize, orderBy, orderType, dept_id,
-                      role_id, post_id, username, nickname, phone,
-                      email, maxDate, minDate, token_info):
+def get_all_user_list(page, pageSize, orderBy, orderType, dept_id, role_id, post_id,
+                      username, nickname, phone, email, maxDate, minDate, token_info):
+
     user_list = []
     offset_page = (page - 1) * pageSize
 
     # 筛选式查询 any判断传参有值时 介入查询条件
     if any([phone, email, nickname, username]):
         # 按传参条件查询
-        fuzzy_range_data = par_type.to_json(db.execute(select(admin_account).where(and_(
-            admin_account.c.username.like('%' + username + '%'),
-            admin_account.c.nickname.like('%' + nickname + '%'),
-            admin_account.c.phone.like('%' + phone + '%'),
-            admin_account.c.email.like('%' + email + '%'))).limit(pageSize).offset(offset_page)).all())
+        fuzzy_range_data = par_type.to_json(db.execute(
+            select(admin_account).where(and_(admin_account.c.username.like('%' + username + '%'),
+                                             admin_account.c.nickname.like('%' + nickname + '%'),
+                                             admin_account.c.phone.like('%' + phone + '%'),
+                                             admin_account.c.email.like('%' + email + '%'))
+                                        ).limit(pageSize).offset(offset_page)).all())
         # 更新 data 列表数据
         for item in fuzzy_range_data: user_list.append(item)
 
     # 如果传日期范围则查询日期范围数据
     elif all([maxDate, minDate]):
-        time_range_data = par_type.to_json(db.execute(select(admin_account).where(
-            minDate <= admin_account.c.created_at,
-            maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)).all())
+        time_range_data = par_type.to_json(db.execute(select(
+            admin_account).where(minDate <= admin_account.c.created_at,
+                                 maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         for item in time_range_data: user_list.append(item)
 
@@ -127,9 +130,11 @@ def get_all_user_list(page, pageSize, orderBy, orderType, dept_id,
     elif orderType == 'descending':
         user_list = par_type.to_json(db.execute(select(
             admin_account).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
+
     elif orderType == 'ascending':
         user_list = par_type.to_json(db.execute(select(
             admin_account).order_by(orderBy).limit(pageSize).offset(offset_page)).all())
+
     # 如果没有查询条件则按分页查询
     else:
         user_list = par_type.to_json(db.execute(select(
@@ -137,29 +142,30 @@ def get_all_user_list(page, pageSize, orderBy, orderType, dept_id,
 
     # 根据部门 ID 返回用户
     if dept_id:
-        dept_relation = [item for id in dept_id.split(',')
-                         for item in par_type.to_json(db.execute(select(
-                admin_dept_account).where(admin_dept_account.c.deptId == id)).all())]
-
-        user_list = [item for item in user_list
-                     for dept in dept_relation
-                     if dept['userId'] == item['id']]
+        relation = []
+        for id in dept_id.split(','):
+            user_relation = par_type.to_json(db.execute(select(
+                admin_dept_account).where(admin_dept_account.c.deptId == id)).first())
+            if user_relation: relation.append(user_relation)
+        if relation: user_list = [item for item in user_list for dept in relation if dept['userId'] == item['id']]
 
     # 根据角色 ID 返回用户
     if role_id:
-        role_relation = [item for id in role_id.split(',')
-                         for item in par_type.to_json(db.execute(select(
-                         admin_roles_account).where(admin_roles_account.c.roleId == id)).all())]
-
-        user_list = [item for item in user_list
-                     for role in role_relation
-                     if role['userId'] == item['id']]
+        relation = []
+        for id in role_id.split(','):
+            user_relation = par_type.to_json(db.execute(select(
+                admin_roles_account).where(admin_roles_account.c.roleId == id)).first())
+            if user_relation: relation.append(user_relation)
+        if relation: user_list = [item for item in user_list for role in relation if role['roleId'] == item['id']]
 
     # 根据岗位 ID 返回用户
     if post_id:
-        post_relation = [item for id in post_id.split(',') for item in par_type.to_json(db.execute(select(
-                         admin_post_account).where(admin_post_account.c.postId == id)).all())]
-        user_list = [item for item in user_list for post in post_relation if post['userId'] == item['id']]
+        relation = []
+        for id in post_id.split(','):
+            user_relation = par_type.to_json(db.execute(select(
+                admin_post_account).where(admin_post_account.c.postId == id)).first())
+            if user_relation: relation.append(user_relation)
+        if relation: user_list = [item for item in user_list for post in relation if post['postId'] == item['id']]
 
     total = db.query(func.count(admin_post_account.c.id)).scalar()
     total_page = math.ceil(total / pageSize)
@@ -196,24 +202,18 @@ def get_dept_user_list(token_info):
 
 @celery.task
 def get_role_user_list(token_info):
-    return par_type.to_json(
-        db.execute(select(admin_roles)).all()
-    )
+    return par_type.to_json(db.execute(select(admin_roles)).all())
 
 
 @celery.task
 def get_post_user_list(token_info):
-    return par_type.to_json(
-        db.execute(select(admin_post)).all()
-    )
+    return par_type.to_json(db.execute(select(admin_post)).all())
 
 
 @celery.task
-def get_user_online_list(page, pageSize, username,
-                         orderBy, orderType, token_info):
+def get_user_online_list(page, pageSize, username, orderBy, orderType, token_info):
     online_user_list = data_base.redis.keys()
     online_user_data = []
-
     if online_user_list:
         for item in online_user_list:
             name = str(item).split(':')[1]
@@ -224,14 +224,11 @@ def get_user_online_list(page, pageSize, username,
             else:
                 online_user = par_type.to_json(db.execute(select(
                     admin_account).where(admin_account.c.username == name)).first())
-
             if online_user:
-                user_dept = par_type.to_json(db.execute(select(admin_dept_account).where(
-                    admin_dept_account.c.userId == online_user['id'])).first())
-
-                dept = par_type.to_json(db.execute(select(admin_dept).where(
-                    admin_dept.c.id == user_dept['deptId'])).first())
-
+                user_dept = par_type.to_json(db.execute(select(
+                    admin_dept_account).where(admin_dept_account.c.userId == online_user['id'])).first())
+                dept = par_type.to_json(db.execute(select(
+                    admin_dept).where(admin_dept.c.id == user_dept['deptId'])).first())
                 online_user['dept'] = dept['name']
                 online_user_data.append(online_user)
 
@@ -253,9 +250,8 @@ def get_user_online_list(page, pageSize, username,
 
 @celery.task
 def take_user_kick(online_user, token_info):
-    user_info = par_type.to_json(db.execute(select(admin_account).where(
-        admin_account.c.id == online_user['id']).first()))
-
+    user_info = par_type.to_json(db.execute(select(
+        admin_account).where(admin_account.c.id == online_user['id']).first()))
     if user_info:
         data_base.redis.delete('user_token:' + user_info['username'])
         return True
@@ -269,7 +265,6 @@ def get_user_template(token_info):
 
     def template_user():
         with open(template_user_file, 'rb') as f: yield from f
-
     return template_user_file
 
 
@@ -280,10 +275,8 @@ def user_import_file(file: bytes, token_info):
     # 导入文件路径
     import_file = project_file_path + '/static/user_file_export/{}.xls'.format(time_now)
     # 保存导入文件
-
     with open(import_file, 'wb') as f:
         f.write(file)
-
     # 使用 pandas 读取导入文件
     import_file_pd = pd.read_excel(import_file,
                                    sheet_name='user',
@@ -303,7 +296,6 @@ def user_import_file(file: bytes, token_info):
     import_file_pd.insert(loc=10,
                           column='status',
                           value=0)
-
     try:
         # 使用 pandas sql io 直接为 admin_account 表插入新的用户数据
         pd.io.sql.to_sql(import_file_pd,
@@ -334,7 +326,6 @@ def user_export_file(ids, token_info):
     for item in user_list:
         set = [item[k] for k in item]
         data.append(set)
-
     # pandas 模块转化 excel .xls格式
     user_pd_frame = pd.DataFrame(data=data,
                                  columns=[str(k) for k in user_list[0].keys()])
@@ -342,10 +333,8 @@ def user_export_file(ids, token_info):
     wb = Workbook()
     ws = wb.active
     ws.title = 'user'
-
     # 循环数据
     for i in dataframe_to_rows(user_pd_frame): ws.append(i)
-
     # 使用当前时间戳命名文件
     time_now = str(int(time.time()))
     # 文件存储路径
@@ -357,32 +346,30 @@ def user_export_file(ids, token_info):
 
 
 @celery.task
-def get_user_data(page, pageSize, orderBy, orderType, dept_id, username,
-                  nickname, phone, email, status, maxDate, minDate, token_info):
+def get_user_data(page, pageSize, orderBy, orderType, dept_id, username, nickname, phone, email, status, maxDate, minDate, token_info):
     user_list = []
     offset_page = (page - 1) * pageSize
 
     # 筛选式查询 any判断传参有值时 介入查询条件
     if any([phone, email, nickname, username, status]):
-
         # 按传参条件查询
-        fuzzy_range_data = par_type.to_json(db.execute(select(admin_account).where(and_(
-            admin_account.c.username.like('%' + username + '%'), admin_account.c.nickname.like('%' + nickname + '%'),
-            admin_account.c.phone.like('%' + phone + '%'), admin_account.c.email.like('%' + email + '%'),
-            admin_account.c.status.like('%' + status + '%'))).limit(pageSize).offset(offset_page)).all())
+        fuzzy_range_data = par_type.to_json(db.execute(select(
+            admin_account).where(and_(admin_account.c.username.like('%' + username + '%'),
+                                      admin_account.c.nickname.like('%' + nickname + '%'),
+                                      admin_account.c.phone.like('%' + phone + '%'),
+                                      admin_account.c.email.like('%' + email + '%'),
+                                      admin_account.c.status.like('%' + status + '%'))).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         if fuzzy_range_data:
             for item in fuzzy_range_data: user_list.append(item)
-
     # 如果传日期范围则查询日期范围数据
     elif all([maxDate, minDate]):
-        time_range_data = par_type.to_json(db.execute(select(admin_account).where(
-            minDate <= admin_account.c.created_at,
-            maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)).all())
+        time_range_data = par_type.to_json(db.execute(select(
+            admin_account).where(minDate <= admin_account.c.created_at,
+                                 maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         if time_range_data:
             for item in time_range_data: user_list.append(item)
-
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
         user_list = par_type.to_json(db.execute(select(
@@ -395,14 +382,12 @@ def get_user_data(page, pageSize, orderBy, orderType, dept_id, username,
     else:
         user_list = par_type.to_json(db.execute(select(
             admin_account).limit(pageSize).offset(offset_page)).all())
-
     # 根据部门ID 返回用户
     if dept_id:
         dept_relation = par_type.to_json(db.execute(select(
             admin_dept_account).where(admin_dept_account.c.deptId == int(dept_id))).all())
         if dept_relation:
-            user_list = [item for item in user_list for dept in dept_relation
-                         if dept['userId'] == item['id']]
+            user_list = [item for item in user_list for dept in dept_relation if dept['userId'] == item['id']]
 
     total = db.query(func.count(admin_dept_account.c.id)).scalar()
     total_page = math.ceil(total / pageSize)
@@ -487,35 +472,38 @@ def del_user(userId, token_token):
         for id in userId.split(','):
             db.execute(delete(admin_account).where(admin_account.c.id == id))
             # 删除关联表
-            db.execute(delete(admin_post_account).where(admin_post_account.c.userId == id))
-            db.execute(delete(admin_dept_account).where(admin_dept_account.c.userId == id))
-            db.execute(delete(admin_roles_account).where(admin_roles_account.c.userId == id))
+            db.execute(delete(admin_post_account).where(
+                admin_post_account.c.userId == id))
+            db.execute(delete(admin_dept_account).where(
+                admin_dept_account.c.userId == id))
+            db.execute(delete(admin_roles_account).where(
+                admin_roles_account.c.userId == id))
             db.commit()
     except Exception as e:
         # 报错时生成日志并回滚
         log.error(e)
         db.rollback()
         return False
-
     return True
 
 
 @celery.task
 def update_user_data(id, account, token_info):
     # 更新数据公共方法关联表 用户关联部门、角色、岗位
-    def up_relation(tabel, ids, id_name):
+    def update_user_relation(tabel, ids, id_name):
         try:
             db.execute(delete(tabel).where(tabel.c.userId == id))
             for up_id in account[ids]:
-                db.execute(tabel.insert().values(**{id_name: up_id, 'userId': id}))
+                db.execute(tabel.insert().values(
+                    **{id_name: up_id, 'userId': id}))
                 db.commit()
         except Exception as e:
             log.error(e)
             db.rollback()
 
-    up_relation(admin_dept_account, 'dept_id', 'deptId')
-    up_relation(admin_roles_account, 'role_ids', 'roleId')
-    up_relation(admin_post_account, 'post_ids', 'postId')
+    update_user_relation(admin_dept_account, 'dept_id', 'deptId')
+    update_user_relation(admin_roles_account, 'role_ids', 'roleId')
+    update_user_relation(admin_post_account, 'post_ids', 'postId')
 
     # 过滤用户表以外的参数
     del account['dept_id'], account['role_ids'], account['post_ids']
@@ -523,7 +511,6 @@ def update_user_data(id, account, token_info):
     account['updated_at'] = now_date_time
     account['updated_by'] = now_timestamp
     # 更新用户
-    print(account)
     db.execute(update(admin_account).where(admin_account.c.id == account['id']).values(**account))
     db.commit()
 

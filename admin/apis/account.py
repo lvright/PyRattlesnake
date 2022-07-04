@@ -63,7 +63,10 @@ async def modify_password(password: admin.ModifyPassword, token_info: str = Depe
     if update_password is True:
         return http.respond(status=200, message='已修改密码')
     elif update_password['status'] == 500:
-        return http.respond(status=500, message=update_password['message'])
+        return http.respond(
+            status=500,
+            message=update_password['message']
+        )
 
 
 @router.put(path='/user/initUserPassword/{userId:path}', summary='初始化账户密码', tags=['用户'])
@@ -126,10 +129,10 @@ async def get_user_list(
 
     """
 
-    get_user_list = celery.AsyncResult(get_all_user_list.delay(page, pageSize, orderBy, orderType,
-                                                               dept_id, role_id, post_id, username,
-                                                               nickname, phone, email, maxDate,
-                                                               minDate, token_info).id).get()
+    user_list = celery.AsyncResult(get_all_user_list.delay(page, pageSize, orderBy, orderType,
+                                                           dept_id, role_id, post_id, username,
+                                                           nickname, phone, email, maxDate,
+                                                           minDate, token_info).id).get()
     return http.respond(status=200, data=user_list)
 
 
@@ -265,9 +268,7 @@ async def user_import(file: bytes = File(...), token_info: str = Depends(http.to
 
     """
 
-    get_import_user_file = celery.AsyncResult(user_import_file.delay(file, token_info).id).get()
-    if get_import_user_file:
-        return http.respond(status=200)
+    celery.AsyncResult(user_import_file.delay(file, token_info).id).get()
     return http.respond(status=200)
 
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import celery
 from admin.models import model as admin
 from admin.core.celery import celery
-from celery.result import AsyncResult
 from utils import *
 
 
