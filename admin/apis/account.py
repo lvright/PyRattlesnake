@@ -375,7 +375,7 @@ async def create_user(account: admin.User, token_info: str = Depends(http.token)
 
 
 @router.delete(path='/user/userDelete/{userId:path}', summary='删除用户', tags=['用户'])
-async def delete_user(userId: str, token_token: str = Depends(http.token)):
+async def delete_user(userId: str, token_info: str = Depends(http.token)):
 
     """
 
@@ -387,8 +387,8 @@ async def delete_user(userId: str, token_token: str = Depends(http.token)):
 
     """
 
-    del_then_user = celery.AsyncResult(del_user.delay(userId, token_info).id).get()
-    if del_then_user:
+    delete_user_profile = celery.AsyncResult(delete_user_data.delay(userId, token_info).id).get()
+    if delete_user_profile:
         return http.respond(status=200, message='已删除')
     return http.respond(status=500, message='删除失败')
 
@@ -407,8 +407,7 @@ async def update_user(id: int, account: admin.User, token_info: str = Depends(ht
 
     """
 
-    update_user = celery.AsyncResult(update_user_data.delay(
-        id, par_type.to_json(account), token_info).id).get()
+    update_user = celery.AsyncResult(update_user_data.delay(id, par_type.to_json(account), token_info).id).get()
     if update_user:
         return http.respond(status=200, message='更新成功')
     return http.respond(status=500, message='更新失败')
