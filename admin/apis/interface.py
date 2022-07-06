@@ -129,7 +129,6 @@ async def app_group_save(ids: str, token_info: str = Depends(http.token)):
         log.error(e)
         db.rollbackl()
         return http.respond(status=500)
-
     return http.respond(status=200)
 
 
@@ -173,7 +172,6 @@ def apis_column_index(
 
     total = db.query(func.count(sys_apis.c.id)).scalar()
     total_page = math.ceil(total / pageSize)
-
     results = {
         'items': apis_list,
         'pageInfo': {
@@ -182,5 +180,4 @@ def apis_column_index(
             'totalPage': total_page
         }
     }
-
     return http.respond(status=200, data=results)

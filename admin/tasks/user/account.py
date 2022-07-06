@@ -7,10 +7,10 @@ from admin.tasks import *
 def get_user_info(token_info):
     # 根据返回的 token 解密后获得当前账户 userid 查询 userid 账户信息
     user_info = par_type.to_json(db.execute(select(admin_account).where(
-                                            admin_account.c.id == token_info['id'])).first())
+        admin_account.c.id == token_info['id'])).first())
     # 获取当前账户关联菜单权限
     roles_relation = par_type.to_json(db.execute(select(admin_roles_account).where(
-                                            admin_roles_account.c.userId == token_info['id'])).first())
+        admin_roles_account.c.userId == token_info['id'])).first())
     if user_info and roles_relation:
         # 根据 admin_menu_account 关联表查询菜单
         admin_menu_list = par_type.to_json(db.execute(
@@ -108,8 +108,8 @@ def get_all_user_list(page, pageSize, orderBy, orderType, dept_id, role_id, post
             select(admin_account).where(and_(admin_account.c.username.like('%' + username + '%'),
                                              admin_account.c.nickname.like('%' + nickname + '%'),
                                              admin_account.c.phone.like('%' + phone + '%'),
-                                             admin_account.c.email.like('%' + email + '%'))
-                                        ).limit(pageSize).offset(offset_page)).all())
+                                             admin_account.c.email.like('%' + email + '%')))
+            .limit(pageSize).offset(offset_page)).all())
         # 更新 data 列表数据
         for item in fuzzy_range_data: user_list.append(item)
 
@@ -366,7 +366,8 @@ def get_user_data(page, pageSize, orderBy, orderType, dept_id, username,
                                       admin_account.c.nickname.like('%' + nickname + '%'),
                                       admin_account.c.phone.like('%' + phone + '%'),
                                       admin_account.c.email.like('%' + email + '%'),
-                                      admin_account.c.status.like('%' + status + '%'))).limit(pageSize).offset(offset_page)).all())
+                                      admin_account.c.status.like('%' + status + '%')))
+                                                       .limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         if fuzzy_range_data:
             for item in fuzzy_range_data: user_list.append(item)
@@ -374,7 +375,8 @@ def get_user_data(page, pageSize, orderBy, orderType, dept_id, username,
     elif all([maxDate, minDate]):
         time_range_data = par_type.to_json(db.execute(select(
             admin_account).where(minDate <= admin_account.c.created_at,
-                                 maxDate >= admin_account.c.created_at).limit(pageSize).offset(offset_page)).all())
+                                 maxDate >= admin_account.c.created_at)
+                                                      .limit(pageSize).offset(offset_page)).all())
         # 更新data列表数据
         if time_range_data:
             for item in time_range_data: user_list.append(item)

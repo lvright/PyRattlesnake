@@ -11,9 +11,9 @@ imports = (
 
 enable_utc = True
 
-TASK_SERIALIZER = 'json'
+task_serializer = 'json'
 
-RESULT_SERIALIZER = 'json'
+result_serializer = 'json'
 
 IGNORE_RESULT = True
 

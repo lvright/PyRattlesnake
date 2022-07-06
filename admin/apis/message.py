@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from admin import *
+from admin.tasks.message.sysmsg import *
 
 
 # TODO
@@ -16,26 +17,20 @@ async def message_io(token: str, websocket: WebSocket):
     """
 
     token_info = jwt_token.decode(token)
-
-    mess = par_type.to_json(db.execute(select(sys_message).where(and_(
-        sys_message.c.click_num == 0,
-        sys_message.c.users.like('%' + str(token_info['id']) + '%')))).all())
-
+    mess = par_type.to_json(db.execute(select(
+        sys_message).where(sys_message.c.click_num == 0,
+                           sys_message.c.users.like('%' + str(token_info['id']) + '%'))).all())
     db.flush()
-
-    data = {'event': 'ev_new_message', 'message': '你有一条新的消息', 'data': mess}
+    data = {'event': 'ev_new_message', 'message': '你有一条新的消息', 'data': mess or []}
     data = json.dumps(data, indent=2)
     log.info(f'callback service data：{data}')
-
     await manager.connect(websocket)
     await manager.broadcast(data)
-
     try:
         while True:
             get_mess = await websocket.receive_text()
             await manager.send_personal_message(data, websocket)
             await manager.broadcast(data)
-
     except WebSocketDisconnect as e:
         log.error(e)
         manager.disconnect(websocket)
@@ -71,28 +66,34 @@ async def get_notice(
     """
 
     notice_list = []
-
     offset_page = (page - 1) * pageSize
 
     if any([type, title]):
-        notice = par_type.to_json(db.execute(select(sys_notification).where(and_(
-            sys_notification.c.title.like('%' + title + '%'),
-            sys_notification.c.type.like('%' + type + '%'))).limit(pageSize).offset(offset_page)).all())
+        notice = par_type.to_json(
+            db.execute(select(sys_notification).where(
+                and_(
+                    sys_notification.c.title.like('%' + title + '%'),
+                    sys_notification.c.type.like('%' + type + '%')
+                )
+            ).limit(pageSize).offset(offset_page)).all()
+        )
 
     # 升降序筛选 根据 orderBy 字段决定筛选的字段，desc 表示升序
     elif orderType == 'descending':
-        notice_list = par_type.to_json(db.execute(select(
-            sys_notification).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all())
+        notice_list = par_type.to_json(
+            db.execute(select(sys_notification).order_by(desc(orderBy)).limit(pageSize).offset(offset_page)).all()
+        )
     elif orderType == 'ascending':
-        notice_list = par_type.to_json(db.execute(select(
-            sys_notification).order_by(orderBy).limit(pageSize).offset(offset_page)))
+        notice_list = par_type.to_json(
+            db.execute(select(sys_notification).order_by(orderBy).limit(pageSize).offset(offset_page)).all()
+        )
     else:
-        notice_list = par_type.to_json(db.execute(select(
-            sys_notification).limit(pageSize).offset(offset_page)).all())
+        notice_list = par_type.to_json(
+            db.execute(select(sys_notification).limit(pageSize).offset(offset_page)).all()
+        )
 
     total = db.query(func.count(sys_notification.c.id)).scalar()
     total_page = math.ceil(total / pageSize)
-
     results = {
         'items': notice_list,
         'pageInfo': {

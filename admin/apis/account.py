@@ -58,8 +58,7 @@ async def modify_password(password: admin.ModifyPassword, token_info: str = Depe
 
     """
 
-    update_password = celery.AsyncResult(update_user_password.delay(
-        par_type.to_json(password), token_info).id).get()
+    update_password = celery.AsyncResult(update_user_password.delay(par_type.to_json(password), token_info).id).get()
     if update_password is True:
         return http.respond(status=200, message='已修改密码')
     elif update_password['status'] == 500:
@@ -129,9 +128,8 @@ async def get_user_list(
 
     """
 
-    user_list = celery.AsyncResult(get_all_user_list.delay(page, pageSize, orderBy, orderType,
-                                                           dept_id, role_id, post_id, username,
-                                                           nickname, phone, email, maxDate,
+    user_list = celery.AsyncResult(get_all_user_list.delay(page, pageSize, orderBy, orderType, dept_id, role_id,
+                                                           post_id, username, nickname, phone, email, maxDate,
                                                            minDate, token_info).id).get()
     return http.respond(status=200, data=user_list)
 
@@ -350,7 +348,6 @@ async def read_user(userId: int, token_info: str = Depends(http.token)):
     """
 
     user_info = celery.AsyncResult(read_user_info.delay(userId, token_info).id).get()
-    print(user_info)
     return http.respond(status=200, data=user_info)
 
 
@@ -455,7 +452,7 @@ def set_home_page(
 
     """
 
-    set_home = celery.AsyncResult(set_home_view.delay(id, dashboard, token_info).id).get()
-    if set_home:
+    setting_home = celery.AsyncResult(set_home_view.delay(id, dashboard, token_info).id).get()
+    if setting_home:
         return http.respond(status=200)
     return http.respond(status=500)
