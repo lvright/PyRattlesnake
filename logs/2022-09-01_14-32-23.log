@@ -1,0 +1,24 @@
+2022-09-01 14:32:24.537 | INFO     | main:create_app:26 - 日志初始化成功！
+2022-09-01 14:32:24.683 | INFO     | db.init_db:drop_db:40 - 删除表成功!!!
+2022-09-01 14:32:24.908 | INFO     | db.init_db:init_db:28 - 创建表成功!!!
+2022-09-01 14:32:24.958 | INFO     | db.init_db:init_data:65 - 成功初始化表数据!!!
+2022-09-01 14:32:51.733 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/system/getInfo
+2022-09-01 14:33:03.891 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:POST-url:http://127.0.0.1:8082/system/login
+2022-09-01 14:34:31.755 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/
+2022-09-01 14:34:38.862 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:POST-url:http://127.0.0.1:8082/system/login
+2022-09-01 14:36:41.354 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:POST-url:http://127.0.0.1:8082/api/system/login
+2022-09-01 14:36:41.360 | ERROR    | register.exception:request_validation_exception_handler:83 - 请求参数格式错误
+URL:POST-http://127.0.0.1:8082/api/system/login
+Headers:Headers({'cookie': 'Hm_lvt_9d1e524198ede8205ac7c938c243344c=1660705580,1660819326', 'accept-encoding': 'gzip, deflate, br', 'referer': 'http://localhost:2888/', 'sec-fetch-dest': 'empty', 'sec-fetch-mode': 'cors', 'sec-fetch-site': 'same-origin', 'origin': 'http://localhost:2888', 'sec-ch-ua-platform': '"macOS"', 'token': 'null', 'accept': 'application/json, text/plain, */*', 'content-type': 'application/json;charset=UTF-8', 'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36', 'sec-ch-ua-mobile': '?0', 'accept-language': 'zh_CN', 'sec-ch-ua': '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"', 'content-length': '59', 'connection': 'close', 'host': '127.0.0.1:8082'})
+error:[{'loc': ('body', 'username'), 'msg': 'field required', 'type': 'value_error.missing'}, {'loc': ('body', 'password'), 'msg': 'field required', 'type': 'value_error.missing'}]
+2022-09-01 14:39:33.391 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:POST-url:http://127.0.0.1:8082/api/system/login
+2022-09-01 14:39:33.504 | INFO     | utils.resp_code:resp_200:10 - 登录成功
+2022-09-01 14:39:33.520 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/getInfo
+2022-09-01 14:39:33.569 | INFO     | utils.resp_code:resp_200:10 - OK
+2022-09-01 14:39:34.783 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/common/getNoticeList?pageSize=5&orderBy=id&orderType=desc
+2022-09-01 14:40:02.994 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/common/getLoginLogList?username=superAdmin&pageSize=5&orderBy=login_time&orderType=desc
+2022-09-01 14:40:02.996 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/common/getOperationLogList?username=superAdmin&pageSize=5&orderBy=created_at&orderType=desc
+2022-09-01 14:40:09.619 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/getInfo
+2022-09-01 14:40:09.657 | INFO     | utils.resp_code:resp_200:10 - OK
+2022-09-01 14:40:10.669 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/common/getLoginLogList?username=superAdmin&pageSize=5&orderBy=login_time&orderType=desc
+2022-09-01 14:40:10.670 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/common/getOperationLogList?username=superAdmin&pageSize=5&orderBy=created_at&orderType=desc

@@ -1,0 +1,240 @@
+<template>
+  <div class="ma-content-block lg:flex justify-between p-4">
+    <div class="lg:w-2/12 w-full h-full p-2 shadow">
+      <ma-tree-slider
+        v-model="depts"
+        searchPlaceholder="搜索部门"
+        :field-names="{ title: 'label', key: 'value' }"
+        :selectedKeys="['all']"
+        @click="switchDept"
+      />
+    </div>
+
+    <div class="lg:w-10/12 w-full lg:ml-4 mt-5 lg:mt-0">
+      <!-- CRUD 组件 -->
+      <ma-crud :crud="crud" :columns="columns" ref="crudRef">
+        <!-- 状态列 -->
+        <template #status="{ record }">
+          <a-switch
+            :checked-value="1"
+            unchecked-value="2"
+            @change="changeStatus($event, record.id)"
+            :default-checked="record.status == 1"
+          />
+        </template>
+        <!-- 头像列 -->
+        <template #avatar="{ record }">
+          <a-avatar>
+            <img :src="record.avatar || '/avatar.jpg'" style="object-fit: cover" />
+          </a-avatar>
+        </template>
+        <!-- 操作列 -->
+        <template #operationCell="{ record }">
+          <div v-if="record.id == 1">
+            <a-link @click="updateCache(record.id)"><icon-refresh /> 更新缓存</a-link>
+          </div>
+        </template>
+        <!-- 操作列扩展 -->
+        <template #operationAfterExtend="{ record }">
+          <a-dropdown
+            trigger="hover"
+            v-if="record.id != 1 && ! isRecovery"
+            @select="selectOperation($event, record.id)"
+          >
+
+            <a-link><icon-double-right /> 更多</a-link>
+            <template #content>
+              <a-doption value="updateCache">更新缓存</a-doption>
+              <a-doption value="setHomePage">设置首页</a-doption>
+              <a-doption value="resetPassword">重置密码</a-doption>
+            </template>
+          </a-dropdown>
+        </template>
+      </ma-crud>
+    </div>
+
+    <a-modal v-model:visible="setHomeVisible" @before-ok="saveHomePage">
+      <template #title>设置用户后台首页</template>
+      <a-form-item label="用户首页">
+        <a-select v-model="homePage" placeholder="请选择用户首页">
+          <a-option v-for="(item, index) in homePageList" :key="index" :value="item.key">
+            {{ item.title }}
+          </a-option>
+        </a-select>
+      </a-form-item>
+    </a-modal>
+  </div>
+</template>
+
+<script setup>
+  import { ref, onMounted, reactive, computed } from 'vue'
+  import dept from '@/api/system/dept'
+  import user from '@/api/system/user'
+  import commonApi from '@/api/common'
+  import { Message, Modal } from '@arco-design/web-vue'
+
+  const depts = ref([])
+  const homePageList = ref([])
+  const crudRef = ref()
+
+  const setHomeVisible = ref(false)
+  const userid = ref()
+  const homePage = ref('')
+
+  onMounted(() => {
+    dept.tree().then(res => {
+      depts.value = res.data
+      depts.value.unshift({ label: '所有部门', value: 'all' })
+    })
+    commonApi.getDict('dashboard').then(res => homePageList.value = res.data )
+  })
+
+  let isRecovery = computed(() => crudRef.value ? crudRef.value.isRecovery : false )
+
+  const switchDept = (id) => {
+    crud.requestParams = id[0] === 'all' ? { dept_id: undefined } : { dept_id: id[0] }
+    crudRef.value.requestData()
+  }
+
+  const changeStatus = async (status, id) => {
+    const response = await user.changeStatus({ id, status })
+    if (response.code === 200) {
+      Message.success(response.msg)
+    }
+  }
+
+  const updateCache = id => {
+    user.clearCache(id).then(res => {
+      if (res.code === 200) Message.success(res.msg)
+    })
+  }
+
+  const resetPassword = (id) => {
+    user.initUserPassword({ id }).then(res => res.code === 200 && Message.success(res.msg) )
+  }
+
+  const saveHomePage = (done) => {
+    user.setHomePage({ id: userid.value, dashboard: homePage.value }).then(res => {
+      res.code === 200 && Message.success(res.msg)
+    })
+    done(true)
+  }
+
+  const selectOperation = (value, id) => {
+    if (value === 'resetPassword') {
+      Modal.info({
+        title: '提示',
+        content: '确定将该用户密码重置为 123456 吗？',
+        simple: false,
+        onBeforeOk: (done) => {
+          resetPassword(id)
+          done(true)
+        }
+      })
+      return
+    }
+
+    if (value === 'updateCache') {
+      updateCache(id)
+      return
+    }
+
+    if (value === 'setHomePage') {
+      setHomeVisible.value = true
+      userid.value = id
+      return
+    }
+  }
+
+  const crud = reactive({
+    api: user.getPageList,
+    recycleApi: user.getRecyclePageList,
+    showIndex: false,
+    searchLabelWidth: '75px',
+    rowSelection: { showCheckedAll: true },
+    operationColumn: true,
+    operationWidth: 200,
+    add: { show: true, api: user.save, auth: ['system:user:add'] },
+    edit: { show: true, api: user.update, auth: ['system:user:update'] },
+    delete: {
+      show: true,
+      api: user.deletes, auth: ['system:user:delete'],
+      realApi: user.realDeletes, realAuth: ['system:user:realDeletes']
+    },
+    recovery: { show: true, api: user.recoverys, auth: ['system:user:recovery']},
+    import: { show: true, url: 'system/user/import', templateUrl: 'system/user/downloadTemplate' },
+    export: { show: true, url: 'system/user/export' },
+    viewLayoutSetting: { layout: 'customer', width: 800 },
+    isDbClickEdit: false
+  })
+
+  const columns = reactive([
+    { title: 'ID', dataIndex: 'id', addDisplay: false, editDisplay: false, width: 50, hide: true },
+    {
+      title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload',
+      type: 'image', rounded: true, span: 24, labelWidth: '86px'
+    },
+    {
+      title: '账户', dataIndex: 'username', width: 130, search: true,
+      rules: [{ required: true, message: '账户必填' }], span: 12
+    },
+    {
+      title: '所属部门', dataIndex: 'dept_id', hide: true, formType: 'tree-select', span: 12,
+      dict: { url: 'system/dept/tree' }, rules: [{ required: true, message: '所属部门必选' }]
+    },
+    {
+      title: '密码', dataIndex: 'password', hide: true, autocomplete: 'off',
+      addDefaultValue: '123456', editDefaultValue: '', type: 'password',
+      span: 12, addRules: [{ required: true, message: '密码必填' }],
+    },
+    { title: '昵称', dataIndex: 'nickname', width: 120, span: 12 },
+    {
+      title: '角色', dataIndex: 'role_ids', width: 120, span: 12, formType: 'select', multiple: true,
+      dict: { url: 'system/role/list', props: { label: 'name', value: 'id' } }, hide: true,
+      rules: [{ required: true, message: '角色必选' }],
+      editDefaultValue: async (record) => {
+        const response = await user.read(record.id)
+        const ids = response.data.roleList.map(item => item.id )
+        return ids
+      }
+    },
+    {
+      title: '手机', dataIndex: 'phone', width: 150, search: true, span: 12,
+      addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
+    },
+    {
+      title: '岗位', dataIndex: 'post_ids', width: 120, span: 12, formType: 'select', multiple: true,
+      dict: { url: 'system/post/list', props: { label: 'name', value: 'id' } }, hide: true,
+      editDefaultValue: async (record) => {
+        const response = await user.read(record.id)
+        const ids = response.data.postList.map(item => item.id )
+        return ids
+      }
+    },
+    {
+      title: '邮箱', dataIndex: 'email', width: 200, search: true, span: 12,
+      addRules: [{ type: 'email', message: '请输入正确的邮箱' }]
+    },
+    {
+      title: '状态', dataIndex: 'status', width: 100, search: true, formType: 'radio',
+      dict: { name: 'data_status', props: { label: 'title', value: 'key' } },
+      addDefaultValue: '1', labelWidth: '86px'
+    },
+    {
+      title: '备注', dataIndex: 'remark', width: 180, hide: true,
+      formType: 'textarea', labelWidth: '86px'
+    },
+    {
+      title: '注册时间', dataIndex: 'created_at', width: 180, addDisplay: false, editDisplay: false,
+      search: true, formType: 'range'
+    },
+  ])
+</script>
+
+<script>
+export default { name: 'system:user' }
+</script>
+
+<style scoped>
+
+</style>

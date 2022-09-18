@@ -1,0 +1,119 @@
+
+
+<template>
+  <a-drawer
+    class="backend-setting"
+    v-model:visible="visible"
+    :on-before-ok="save"
+    width="350px"
+    :ok-text="$t('sys.saveToBackend')"
+    @cancel="close"
+    unmountOnClose
+  >
+    <template #title>{{ $t('sys.backendSettingTitle') }}</template>
+    <a-form :model="form" :auto-label-width="true">
+      <a-form-item :label="$t('sys.skin')" :help="$t('sys.skinHelp')">
+        {{ currentSkin }} 
+        <a-button type="primary" status="success" size="mini" class="ml-2" @click="skin.open()">
+          {{ $t('sys.changeSkin')}}
+        </a-button>
+      </a-form-item>
+      <a-form-item :label="$t('sys.layouts')" :help="$t('sys.layoutsHelp')">
+        <a-select v-model="form.layout" @change="handleLayout">
+          <a-option value="classic">{{ $t('sys.layout.classic') }}</a-option>
+          <a-option value="columns">{{ $t('sys.layout.columns') }}</a-option>
+          <a-option value="banner">{{ $t('sys.layout.banner') }}</a-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item :label="$t('sys.language')" :help="$t('sys.languageHelp')">
+        <a-select v-model="form.language" @change="handleLanguage">
+          <a-option value="zh_CN">{{ $t('sys.chinese') }}</a-option>
+          <a-option value="en">{{ $t('sys.english') }}</a-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item :label="$t('sys.dark')" :help="$t('sys.darkHelp')" v-if="currentSkin === 'Mine'">
+        <a-switch v-model="form.mode" @change="handleSettingMode" />
+      </a-form-item>
+      <a-form-item :label="$t('sys.tag')" :help="$t('sys.tagHelp')">
+        <a-switch v-model="form.tag" @change="handleSettingTag" />
+      </a-form-item>
+      <a-form-item v-if="form.layout !== 'banner'" :label="$t('sys.menuFold')" :help="$t('sys.menuFoldHelp')">
+        <a-switch v-model="form.menuCollapse" @change="handleMenuCollapse" />
+      </a-form-item>
+      <a-form-item v-if="form.layout !== 'banner'" :label="$t('sys.menuWidth')" :help="$t('sys.menuWidthHelp')">
+        <a-input-number v-model="form.menuWidth" mode="button" @change="handleMenuWidth" />
+      </a-form-item>
+    </a-form>
+  </a-drawer>
+
+  <Skin ref="skin" />
+</template>
+
+<script setup>
+import { ref, reactive, watch } from 'vue'
+import { useAppStore, useUserStore } from '@/store'
+import { Message } from '@arco-design/web-vue'
+import common from '@/api/common'
+import Skin from './skin.vue'
+import skins from '@/config/skins'
+import { useI18n } from 'vue-i18n'
+
+const userStore = useUserStore()
+const appStore  = useAppStore()
+const { t } = useI18n()
+
+const skin = ref(null)
+const visible = ref(false)
+const okLoading = ref(false)
+const currentSkin = ref('')
+const form = reactive({
+  mode: appStore.mode === 'dark',
+  tag: appStore.tag,
+  menuCollapse: appStore.menuCollapse,
+  menuWidth: appStore.menuWidth,
+  layout: appStore.layout,
+  language: appStore.language
+})
+
+skins.map(item => {
+  if (item.name === appStore.skin) currentSkin.value = t('skin.' + item.name)
+})
+
+watch(() => appStore.skin, v => {
+  skins.map(item => {
+    if (item.name === v) currentSkin.value = t('skin.' + item.name)
+  })
+})
+
+const open = () => visible.value = true
+const close = () => visible.value = false
+
+const handleLayout = (val) => appStore.changeLayout(val)
+const handleLanguage = (val) => appStore.changeLanguage(val)
+const handleSettingMode = (val) => appStore.toggleMode(val ? 'dark' : 'light')
+const handleSettingTag = (val) => appStore.toggleTag(val)
+const handleMenuCollapse = (val) => appStore.toggleMenu(val)
+const handleMenuWidth = (val) => appStore.changeMenuWidth(val)
+
+watch(() => appStore.menuCollapse, val => form.menuCollapse = val)
+
+const save = async (done) => {
+  const data = {
+    mode: appStore.mode,
+    tag: !appStore.tag ? '0' : '1',
+    menuCollapse: !appStore.menuCollapse ? '0' : '1',
+    menuWidth: appStore.menuWidth,
+    layout: appStore.layout,
+    skin: appStore.skin,
+    language: appStore.language,
+    user_id: userStore.user.id
+  }
+
+  common.updateBackendSetting(data).then(res => { res.code === 200 && Message.success(res.msg) })
+  done(true)
+}
+
+defineExpose({ open })
+</script>
+
+

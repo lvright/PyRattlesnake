@@ -1,0 +1,7 @@
+2022-09-05 15:47:39.669 | INFO     | main:create_app:26 - 日志初始化成功！
+2022-09-05 15:47:39.816 | INFO     | db.init_db:drop_db:40 - 删除表成功!!!
+2022-09-05 15:47:40.030 | INFO     | db.init_db:init_db:28 - 创建表成功!!!
+2022-09-05 15:47:40.068 | INFO     | db.init_db:init_data:65 - 成功初始化表数据!!!
+2022-09-05 15:47:42.958 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/dept/tree
+2022-09-05 15:47:42.961 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:GET-url:http://127.0.0.1:8082/api/system/role/getDeptByRole/2
+2022-09-05 15:47:42.997 | INFO     | utils.resp_code:resp_200:10 - OK
