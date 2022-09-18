@@ -21,7 +21,7 @@ from utils import resp_200
 router = APIRouter()
 
 @router.get(path="/system/role/list", response_model=Result, summary="获取角色列表")
-async def get_post_list(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def get_role_list(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     return resp_200(data=await getRole.userRole(db, user_id=token["id"]))
 
 @router.get(path="/system/role/index", response_model=Result, summary="获取角色分页列表")
@@ -32,7 +32,7 @@ async def get_role_page(
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     total = await getRole.get_number(db)
-    result = await getRole.getQueryRole(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status})
+    result = await getRole.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.get(path="/system/role/recycle", response_model=Result, summary="获取被删除角色分页列表")
@@ -43,7 +43,7 @@ async def get_role_page(
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     total = await getRole.get_number(db)
-    result = await getRole.getQueryReclcleRole(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status})
+    result = await getRole.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.post(path="/system/role/save", response_model=Result, summary="添加角色")

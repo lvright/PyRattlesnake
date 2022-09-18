@@ -15,6 +15,8 @@ class Post(Base):
 
     code = Column(String(20), comment='部门标识')
 
+    sort = Column(Integer, comment='排序')
+
     status = check_or_enum(name="status", enumList=["0", "1"], comment="状态: 0->正常 1->禁用")
 
     remark = Column(String(300), comment='备注')

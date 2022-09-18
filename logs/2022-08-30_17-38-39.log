@@ -1,5 +1,0 @@
-2022-08-30 17:38:40.778 | INFO     | main:create_app:26 - 日志初始化成功！
-2022-08-30 17:38:40.931 | INFO     | db.init_db:drop_db:40 - 删除表成功!!!
-2022-08-30 17:38:41.126 | INFO     | db.init_db:init_db:28 - 创建表成功!!!
-2022-08-30 17:38:41.164 | INFO     | db.init_db:init_data:65 - 成功初始化表数据!!!
-2022-08-30 17:38:45.806 | INFO     | register.middleware:intercept:17 - 访问记录:IP:127.0.0.1-method:POST-url:http://127.0.0.1:8082/api/system/user/export

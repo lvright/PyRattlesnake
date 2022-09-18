@@ -19,7 +19,7 @@ from backend.db import MyRedis
 
 class SystmDictData(CRUDBase[Dict, DictDate]):
 
-    async def getByCode(self, db: AsyncSession, code: str):
+    async def getByCode(self, db: AsyncSession, code: str) -> list:
         sql = select(self.model).where(self.model.code == code)
         dict_data = await db.scalars(sql)
         reslut = jsonable_encoder(dict_data.all())

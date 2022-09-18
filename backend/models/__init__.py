@@ -13,7 +13,7 @@ from .dict import Dict
 from .dictType import DictType
 from .extend import Extend
 from .loginLog import LoginLog
-from .menu import Menu
+from .menu import UserMenu
 from .message import Message
 from .notification import Notification
 from .operLog import OperLog

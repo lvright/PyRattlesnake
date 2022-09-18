@@ -13,7 +13,7 @@ from backend.models import (
     Base, Admin, Api, App, ApiGroup,
     AppGroup, Attachment, Config, UserDept,
     Dict, DictType, Extend, LoginLog,
-    Menu, MenuRelation, Message, Notification,
+    UserMenu, MenuRelation, Message, Notification,
     OperLog, Post, Role, Setting, RoleRelation,
     DeptRelation, PostRelation
 )
@@ -49,7 +49,7 @@ async def init_data():
     try:
         async with engine.begin() as conn:
             await conn.execute(Admin.__table__.insert(), [account for account in accountData])
-            await conn.execute(Menu.__table__.insert(), [router for router in routerData])
+            await conn.execute(UserMenu.__table__.insert(), [router for router in routerData])
             await conn.execute(MenuRelation.__table__.insert(), [relation for relation in menuRelationData])
             await conn.execute(Role.__table__.insert(), [role for role in roleData])
             await conn.execute(Post.__table__.insert(), [post for post in postData])

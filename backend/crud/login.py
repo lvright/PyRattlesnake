@@ -42,7 +42,7 @@ class CRUBLogin(CRUDBase[Admin, Account]):
             result = {"token": token}
             return result
 
-    async def out(self, request: Request, db: AsyncSession, redis: MyRedis = Depends(get_redis)):
+    async def out(self, request: Request, db: AsyncSession, redis: MyRedis = Depends(get_redis)) -> bool:
         if 'authorization' in request.headers.keys():
             token = request.headers.get('authorization')[7:]  # 去除token前面的 Bearer
             await redis.delete(token)

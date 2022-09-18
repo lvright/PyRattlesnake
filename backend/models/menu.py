@@ -6,7 +6,7 @@ from backend.models import Base
 from utils import check_or_enum
 
 
-class Menu(Base):
+class UserMenu(Base):
     """ 系统路由 """
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment="ID")
@@ -24,8 +24,6 @@ class Menu(Base):
     title = Column(String(15), comment="菜单标题")
 
     hidden = check_or_enum(name="hidden", enumList=["0", "1"], comment="是否隐藏: 0->是 1->否")
-
-    hiddenBreadcrumb = check_or_enum(name="hiddenBreadcrumb", enumList=["0", "1"], comment="是否隐藏面包屑: 0->是 1->否")
 
     type = Column(String(5), comment="菜单类型")
 

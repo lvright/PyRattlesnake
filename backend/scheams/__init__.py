@@ -14,3 +14,4 @@ from .system import BackendSetting, ExtendConfig, SystemConfig, MenuForm, Config
 from .account import Account, AccountUpdate, Login, ModifyPassword, UserIDList, QueryUser, UserHome, UserId
 from .log import Loginlogger, Operlogger
 from .base import ChangeSort, ChangeStatus, DeleteIds
+from .menu import Menu

@@ -53,7 +53,7 @@ async def get_user_page(
 ):
     total = await getUser.get_number(db)
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getUser.getQueryUser(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
+    result = await getUser.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.get(path="/system/user/recycle", response_model=Result, summary="展示回收站用户")
@@ -66,7 +66,7 @@ async def recycle_user(
 ):
     total = await getUser.get_number(db)
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getUser.getQueryReclcleUser(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
+    result = await getUser.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.get(path="/user/userDetail/{user_id:path}", response_model=Result, summary="获取用户详情")

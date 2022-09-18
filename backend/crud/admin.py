@@ -12,7 +12,7 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
 from backend.scheams import Result, Token, Account, Login, AccountUpdate, ModifyPassword
-from backend.models import Admin, MenuRelation, Menu, Role, UserDept, RoleRelation, DeptRelation, Setting, PostRelation
+from backend.models import Admin, MenuRelation, UserMenu, Role, UserDept, RoleRelation, DeptRelation, Setting, PostRelation
 from backend.crud import CRUDBase
 from backend.apis.deps import get_db, get_current_user, get_redis
 from backend.db import MyRedis
@@ -30,11 +30,11 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
 
     async def getUserRouters(self, db: AsyncSession, user: dict) -> list:
         """ 获取用户权限理由 """
-        fields = [Menu.id, Menu.title, Menu.type, Menu.hidden, Menu.hiddenBreadcrumb, Menu.parent_id,
-                  Menu.redirect, Menu.path, Menu.icon, Menu.component, Menu.status, Menu.name]
+        fields = [UserMenu.id, UserMenu.title, UserMenu.type, UserMenu.hidden, UserMenu.parent_id, UserMenu.redirect,
+                  UserMenu.path, UserMenu.icon, UserMenu.component, UserMenu.status, UserMenu.name]
         sql = select(*fields) \
-            .where(Menu.status == "0", Menu.hidden == "0") \
-            .where(Menu.id == MenuRelation.menu_id, MenuRelation.role_id == RoleRelation.role_id) \
+            .where(UserMenu.status == "0", UserMenu.hidden == "0") \
+            .where(UserMenu.id == MenuRelation.menu_id, MenuRelation.role_id == RoleRelation.role_id) \
             .where(user['id'] == RoleRelation.user_id)
         menu_data = await db.execute(sql)
         routers = jsonable_encoder(menu_data.all())
@@ -48,9 +48,8 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
                 item["meta"] = {
                     "icon": item["icon"], "title": item["title"],
                     "type": item["type"], "hidden": bool(int(item["hidden"])),
-                    "hiddenBreadcrumb": bool(int(item["hiddenBreadcrumb"])),
                 }
-                del item["hidden"], item["hiddenBreadcrumb"], item["icon"], item["title"], item["type"]
+                del item["hidden"], item["icon"], item["title"], item["type"]
                 item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
                 if item["parent_id"] == 0: menus.append(item)
             result = {"codes": codes, "menus": menus}
@@ -86,7 +85,7 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         await db.close()  # 释放会话
         return result.rowcount
 
-    async def getQueryUser(
+    async def getQuery(
         self, db: AsyncSession,
         query_obj: dict,
         dept_id: int,
@@ -169,7 +168,7 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         await db.close()  # 释放会话
         return result
 
-    async def getQueryReclcleUser(
+    async def getQueryReclcle(
         self, db: AsyncSession,
         query_obj: dict,
         dept_id: int,

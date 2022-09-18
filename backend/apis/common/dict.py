@@ -17,33 +17,17 @@ from backend.db import MyRedis
 router = APIRouter()
 
 @router.get(path="/system/dataDict/list", summary="获取数据字典值")
-async def get_dict_type(
-        code: Optional[str] = None,
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
-):
+async def get_dict_type(code: Optional[str] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     return resp_200(data=await getDict.getByCode(db, code=code))
 
 @router.get(path="/system/dataDict/index", summary="分页获取数据字典数据")
-async def get_dict_type(
-        page: int,
-        pageSize: int,
-        type_id: Optional[int] = None,
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
-):
+async def get_dict_type(page: int, pageSize: int, type_id: Optional[int] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     data = await getDict.get_multi(db, pageIndex=page, pageSize=pageSize)
     total = await getDict.get_number(db)
     return resp_200(data={"items": data, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.get(path="/system/dictType/index", summary="分页获取数据字典类型")
-async def get_dict_type(
-        page: int,
-        pageSize: int,
-        type_id: Optional[int] = None,
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
-):
+async def get_dict_type(page: int, pageSize: int, type_id: Optional[int] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     data = await getDictType.get_multi(db, pageIndex=page, pageSize=pageSize)
     total = await getDictType.get_number(db)
     return resp_200(data={"items": data, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})

@@ -18,7 +18,7 @@ from backend.db import MyRedis
 
 class SystemRole(CRUDBase[Role, Role]):
 
-    async def userRole(self, db: AsyncSession, user_id: int):
+    async def userRole(self, db: AsyncSession, user_id: int) -> list:
         """ 根据用户ID获取关联角色 """
         sql = select(RoleRelation).where(RoleRelation.user_id == user_id)
         relation_data = await db.scalars(sql)
@@ -45,14 +45,15 @@ class SystemRole(CRUDBase[Role, Role]):
         await db.commit()
         return result.rowcount
 
-    async def getQueryRole(
+    async def getQuery(
         self, db: AsyncSession,
         query_obj: dict,
         orderBy: str = None,
         orderType: str = "ascending",
         pageIndex: int = 1,
         pageSize: int = 10
-    ) -> dict:
+    ) -> list:
+        """ 按条件查询 """
         if any([query_obj["name"], query_obj["code"]]):
             if orderType == "descending":
                 sql = select(self.model) \
@@ -70,6 +71,21 @@ class SystemRole(CRUDBase[Role, Role]):
                     .offset((pageIndex - 1) * pageSize) \
                     .order_by(orderBy) \
                     .limit(pageSize)
+        elif any([query_obj["minDate"], query_obj["maxDate"]]):
+            if orderType == "descending":
+                sql = select(self.model) \
+                    .where(self.model.created_at >= query_obj["minDate"],
+                           self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete != "1") \
+                    .offset((pageIndex - 1) * pageSize) \
+                    .order_by(desc(orderBy)).limit(pageSize)
+            else:
+                sql = select(self.model) \
+                    .where(self.model.created_at >= query_obj["minDate"],
+                           self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete != "1") \
+                    .offset((pageIndex - 1) * pageSize) \
+                    .order_by(orderBy).limit(pageSize)
         elif query_obj["status"]:
             if orderType == "descending":
                 sql = select(self.model) \
@@ -94,14 +110,15 @@ class SystemRole(CRUDBase[Role, Role]):
         await db.close()  # 释放会话
         return result
 
-    async def getQueryReclcleRole(
+    async def getQueryReclcle(
         self, db: AsyncSession,
         query_obj: dict,
         orderBy: str = None,
         orderType: str = "ascending",
         pageIndex: int = 1,
         pageSize: int = 10
-    ) -> dict:
+    ) -> list:
+        """ 按条件查询逻辑删除数据 """
         if any([query_obj["name"], query_obj["code"]]):
             if orderType == "descending":
                 sql = select(self.model) \
@@ -119,6 +136,21 @@ class SystemRole(CRUDBase[Role, Role]):
                     .offset((pageIndex - 1) * pageSize) \
                     .order_by(orderBy) \
                     .limit(pageSize)
+        elif any([query_obj["minDate"], query_obj["maxDate"]]):
+            if orderType == "descending":
+                sql = select(self.model) \
+                    .where(self.model.created_at >= query_obj["minDate"],
+                           self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete == "1") \
+                    .offset((pageIndex - 1) * pageSize) \
+                    .order_by(desc(orderBy)).limit(pageSize)
+            else:
+                sql = select(self.model) \
+                    .where(self.model.created_at >= query_obj["minDate"],
+                           self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete == "1") \
+                    .offset((pageIndex - 1) * pageSize) \
+                    .order_by(orderBy).limit(pageSize)
         elif query_obj["status"]:
             if orderType == "descending":
                 sql = select(self.model) \

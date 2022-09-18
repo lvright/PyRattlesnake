@@ -33,7 +33,7 @@ async def get_page_dept(
 ):
     total = await getDept.get_number(db)
     query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getDept.getQueryDept(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    result = await getDept.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.get(path="/system/dept/recycle", response_model=Result, summary="获取被删除部门分页列表")
@@ -45,7 +45,7 @@ async def get_page_dept(
 ):
     total = await getDept.get_number(db)
     query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getDept.getQueryReclcleDept(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    result = await getDept.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.post(path="/system/dept/save", response_model=Result, summary="添加部门")
@@ -59,7 +59,7 @@ async def update_dept(id: int, dept: Dept, db: AsyncSession = Depends(get_db), t
     return resp_200(msg="保存成功")
 
 @router.put(path="/system/dept/changeStatus", response_model=Result, summary="修改部门状态")
-async def change_status_dept(dept: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def change_status_dept(dept: ChangeStatus, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDept.update(db, id=dept.id, obj_in={"status": dept.status})
     return resp_200(msg="修改成功")
 

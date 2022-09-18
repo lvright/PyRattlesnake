@@ -3,7 +3,6 @@
 from pydantic import BaseModel
 from typing import Optional
 
-
 class Post(BaseModel):
     """ 岗位模型 """
     name: Optional[str] = None
@@ -11,3 +10,4 @@ class Post(BaseModel):
     status: Optional[str] = None
     sort: Optional[int] = None
     remark: Optional[str] = None
+    delete: Optional[str] = None

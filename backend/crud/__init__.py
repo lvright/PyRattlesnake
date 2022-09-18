@@ -10,3 +10,4 @@ from .loginlog import getLoginLog
 from .operlog import getOperLog
 from .backendsetting import getBackendSetting
 from .dict import getDict, getDictType
+from .menu import getMenu

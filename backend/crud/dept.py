@@ -18,7 +18,7 @@ from backend.db import MyRedis
 
 class SystemDept(CRUDBase[UserDept, Dept]):
 
-    async def deptTree(self, db: AsyncSession):
+    async def deptTree(self, db: AsyncSession) -> list:
         """ 获取树状部门结构数据 """
         fields = [self.model.id, self.model.name.label("label"), self.model.parent_id, self.model.id.label("value")]
         sql = select(*fields)
@@ -31,7 +31,7 @@ class SystemDept(CRUDBase[UserDept, Dept]):
                 if item["parent_id"] == 0: result.append(item)
             return result
 
-    async def userDept(self, db: AsyncSession, user_id: int):
+    async def userDept(self, db: AsyncSession, user_id: int) -> list:
         """ 根据用户ID查询关联部门 """
         sql = select(DeptRelation).where(DeptRelation.user_id == user_id)
         relation_data = await db.scalars(sql)
@@ -55,7 +55,7 @@ class SystemDept(CRUDBase[UserDept, Dept]):
         await db.commit()
         return result.rowcount
 
-    async def getQueryDept(
+    async def getQuery(
         self, db: AsyncSession,
         query_obj: dict,
         orderBy: str = None,
@@ -94,8 +94,8 @@ class SystemDept(CRUDBase[UserDept, Dept]):
                     .order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model) \
-                    .where(self.model.created_at >= query_obj["created_at[0]"],
-                           self.model.created_at <= query_obj["created_at[1]"]) \
+                    .where(self.model.created_at >= query_obj["minDate"],
+                           self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete != "1") \
                     .offset((pageIndex - 1) * pageSize) \
                     .order_by(orderBy).limit(pageSize)
@@ -122,7 +122,7 @@ class SystemDept(CRUDBase[UserDept, Dept]):
         await db.close()  # 释放会话
         return result
 
-    async def getQueryReclcleDept(
+    async def getQueryReclcle(
             self, db: AsyncSession,
             query_obj: dict,
             orderBy: str = None,
@@ -161,8 +161,8 @@ class SystemDept(CRUDBase[UserDept, Dept]):
                     .order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model) \
-                    .where(self.model.created_at >= query_obj["created_at[0]"],
-                           self.model.created_at <= query_obj["created_at[1]"]) \
+                    .where(self.model.created_at >= query_obj["minDate"],
+                           self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete == "1") \
                     .offset((pageIndex - 1) * pageSize) \
                     .order_by(orderBy).limit(pageSize)
