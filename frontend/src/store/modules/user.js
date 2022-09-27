@@ -60,7 +60,7 @@ const useUserStore = defineStore('user', {
           this.setMenu(this.routers)
           this.routers = removeButtonMenu(this.routers)
           this.routers.unshift(homePage)
-          await this.setApp()
+          this.setApp()
           resolve(response.data)
         }).catch(error => {
           this.clearToken()
@@ -70,12 +70,12 @@ const useUserStore = defineStore('user', {
         this.clearToken()
         reject(error)
       })
-
+      
     },
 
     login(form) {
       return loginApi.login(form).then(r => {
-        if (r.code === 200) {
+        if (r.success) {
           this.setToken(r.data.token)
           return true
         } else {
@@ -103,6 +103,7 @@ const useUserStore = defineStore('user', {
         appStore.changeMenuWidth(setting.menuWidth)
         appStore.changeLayout(setting.layout)
         appStore.useSkin(setting.skin)
+        appStore.changeColor(setting.color)
       }
     }
   }
@@ -136,6 +137,7 @@ const flatAsyncRoutes = (routes, breadcrumb=[]) => {
 }
 
 const views = import.meta.glob('../../views/**/**.vue')
+const empty = import.meta.glob('../../layout/empty.vue')
 
 // 菜单转换路由
 const filterAsyncRouter = (routerMap) => {
@@ -143,15 +145,15 @@ const filterAsyncRouter = (routerMap) => {
   routerMap.forEach(item => {
     if (item.meta.type !== 'B') {
 
-      if(item.meta.type === 'I'){
+      if (item.meta.type === 'I') {
         item.meta.url = item.path
-        item.path = `iframe/${item.name}`
+        item.path = `/maIframe/${item.name}`
       }
 
       const route = {
         path: item.path,
         name: item.name,
-        hidden: item.hidden === 1,
+        hidden: item.hidden == 1,
         meta: item.meta,
         children: item.children ? filterAsyncRouter(item.children) : null,
         component: views[`../../views/${item.component}.vue`]

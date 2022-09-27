@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-layout-content class="layout flex justify-between">
     <div id="layout-columns-left-panel" class="layout-columns-left-panel hidden lg:flex justify-between">
@@ -16,10 +24,10 @@
 <script setup>
   import { onMounted, ref } from 'vue'
   import ResizeObserver from 'resize-observer-polyfill'
-  import MaColumnsHeader from './sk-columns-header.vue'
-  import MaColumnsMenu from './sk-columns-menu.vue'
+  import MaColumnsHeader from './ma-columns-header.vue'
+  import MaColumnsMenu from './ma-columns-menu.vue'
 
-  import MaWorkerArea from '../sk-workerArea.vue'
+  import MaWorkerArea from '../ma-workerArea.vue'
 
   const containerWidth = ref(0)
 

@@ -9,19 +9,19 @@ import {
   GraphicComponent,
 } from 'echarts/components'
 
-import MaCrud from './sk-crud/index.vue'
-import MaForm from './sk-form/index.vue'
-import MaChart from './sk-charts/index.vue'
-import MaUpload from './sk-upload/index.vue'
-import MaTreeSlider from './sk-treeSlider/index.vue'
-import MaResource from './sk-resource/index.vue'
-import MaResourceButton from './sk-resource/button.vue'
-import MaUser from './sk-user/index.vue'
-import MaEditor from './sk-editor/index.vue'
-import MaIcon from './sk-icon/index.vue'
-import MaCodeEditor from './sk-codeEditor/index.vue'
-import MaUserInfo from './sk-userInfo/index.vue'
-import MaCityLinkage from './sk-cityLinkage/index.vue'
+import MaCrud from './ma-crud/index.vue'
+import MaForm from './ma-form/index.vue'
+import MaChart from './ma-charts/index.vue'
+import MaUpload from './ma-upload/index.vue'
+import MaTreeSlider from './ma-treeSlider/index.vue'
+import MaResource from './ma-resource/index.vue'
+import MaResourceButton from './ma-resource/button.vue'
+import MaUser from './ma-user/index.vue'
+import MaEditor from './ma-editor/index.vue'
+import MaIcon from './ma-icon/index.vue'
+import MaCodeEditor from './ma-codeEditor/index.vue'
+import MaUserInfo from './ma-userInfo/index.vue'
+import MaCityLinkage from './ma-cityLinkage/index.vue'
 
 use([
   CanvasRenderer,

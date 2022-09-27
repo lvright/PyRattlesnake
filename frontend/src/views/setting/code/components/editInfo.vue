@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-modal v-model:visible="visible" :on-before-ok="save" fullscreen unmount-on-close>
     <template #title>编辑生成信息 - {{ record?.table_comment }}</template>
@@ -498,6 +506,7 @@ import SettingComponent from './settingComponent.vue'
 
 // 导入变量
 import * as vars from '../js/vars.js'
+import { findProp } from '@vue/compiler-core'
 
 const record = ref({})
 const loading = ref(true)
@@ -576,6 +585,12 @@ const init = () => {
     } else {
       form.value[name] = record.value[name]
     }
+  }
+
+  if (record.value.options && record.value.options.relations) {
+    formOptions.value.relations = record.value.options.relations
+  } else {
+    formOptions.value.relations = []
   }
 
   // 请求表字段

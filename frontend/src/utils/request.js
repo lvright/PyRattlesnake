@@ -12,7 +12,7 @@ function createService () {
 
   // HTTP request 拦截器
   service.interceptors.request.use(
-    config => config,
+    config => config, 
     error => {
       // 失败
       return Promise.reject(error);
@@ -26,31 +26,32 @@ function createService () {
         return response
       } else if (response.data.size) {
         response.data.code = 500
-        response.data.msg = '服务器内部错误'
+        response.data.message = '服务器内部错误'
+        response.data.success = false
       } else if (response.data.code && response.data.code !== 200) {
         Message.error({
-          content: response.data.msg,
+          content: response.data.message,
           icon: () => h( IconFaceFrownFill )
         })
       }
       return response.data;
     },
     error => {
-      const err = (text) => {
+      const err = (text) => { 
         Message.error({
-          content: ( error.response && error.response.data && error.response.data.msg )
-          ? error.response.data.msg
+          content: ( error.response && error.response.data && error.response.data.message )
+          ? error.response.data.message
           : text,
           icon: () => h( IconFaceFrownFill )
-        })
+        }) 
       }
       if (error.response && error.response.data) {
-        switch (error.response.code) {
+        switch (error.response.status) {
           case 404:
             err('服务器资源不存在')
             break
           case 500:
-            err(error.response.msg || '服务器内部错误')
+            err('服务器内部错误')
             break
           case 401:
             err('登录状态已过期，需要重新登录')
@@ -60,7 +61,7 @@ function createService () {
           case 403:
             err('没有权限访问该资源')
             break
-          default:
+          default: 
             err('未知错误！')
         }
       } else {
@@ -68,7 +69,7 @@ function createService () {
       }
       return Promise.reject(error.response && error.response.data ? error.response.data : null)
     }
-
+  
   )
   return service
 }
@@ -88,13 +89,14 @@ function createRequest (service) {
     const setting = tool.local.get('setting')
     const configDefault = {
       headers: {
+        // Authorization: "Bearer " + token,
         token: token,
-        Authorization: "Bearer " + token,
         'Accept-Language': setting.language || 'zh_CN',
         'Content-Type': get(config, 'headers.Content-Type', 'application/json;charset=UTF-8')
       },
+
       timeout: 10000,
-      baseURL: env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX : env.VITE_APP_BASE_URL + env.VITE_APP_PROXY_PREFIX,
+      baseURL: env.VITE_APP_OPEN_PROXY === 'true' ? env.VITE_APP_PROXY_PREFIX + '/api' : env.VITE_APP_BASE_URL + '/api',
       data: {}
     }
     const option = Object.assign(configDefault, config)
@@ -108,7 +110,7 @@ function createRequest (service) {
     return service(option)
   }
 }
-
+  
 // 用于真实网络请求的实例和请求方法
 export const service = createService()
 export const request = createRequest(service)

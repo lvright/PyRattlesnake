@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-form class="w-full md:w-full mt-3" :model="userInfo" @submit="modifyInfo">
     <a-form-item label="账户名" label-col-flex="80px">
@@ -35,12 +43,13 @@
   })
 
   const modifyInfo = async (data) => {
+    data.values.avatar = userStore.user.avatar
     const response = await user.updateInfo(data.values)
-    if (response.code === 200) {
-      Message.success(response.msg)
+    if (response.success) {
+      Message.success(response.message)
       userStore.user = data.values
       return
     }
-    Message.error(response.msg)
+    Message.error(response.message)
   }
 </script>

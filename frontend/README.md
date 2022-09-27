@@ -1,60 +1,78 @@
-
-<div align="center">
-
-![logo](https://lolicode.gitee.io/scui-doc/logo.png)
-
 <p align="center">
-	<a href="https://v3.vuejs.org/" target="_blank">
-		<img src="https://img.shields.io/badge/vue.js-3.x-green" alt="vue">
-	</a>
-	<a href="https://element-plus.gitee.io/#/zh-CN/component/changelog" target="_blank">
-		<img src="https://img.shields.io/badge/element--plus-latest-blue" alt="element plus">
-	</a>
+  <img src="https://doc.mineadmin.com/logo.svg" width="120" />
+</p>
+<p align="center">
+  <img src="https://svg.hamm.cn/badge.svg?key=License&value=MIT" />
+  <img src="https://svg.hamm.cn/badge.svg?key=Version&value=1.0.0" />
 </p>
 
-<h1>SCUI Admin</h1>
+## 简介
+`MineAdmin Vue` 是一个开源免费专门适配于 `MineAdmin` 后台权限管理系统的前端中后台模板，使用了 `vue3`, `vite3`, `pinia`, `arco design`, `javascript` 等主流开发技术，未使用`Typescript`，我们选择了简单。
 
-</div>
+## 特性
 
-## 介绍
-SCUI 是一个中后台前端解决方案，基于VUE3和elementPlus实现。
-使用最新的前端技术栈，提供各类实用的组件方便在业务开发时的调用，并且持续性的提供丰富的业务模板帮助你快速搭建企业级中后台前端任务。
+- 最新技术栈：vue3, vite3, pinia
+- UI库：arco design
+- 国际化：完善的多语言解决方案
+- 权限：由于适配 `MineAdmin` 系统，内置完善的权限、动/静态路由解决方案
+- 主题：可扩展主题
+- 布局：支持三种布局方式
+- 组件：内置大量基于日常开发锤炼出的组件。
+- 指令：封装了常用指令，如权限控制、角色控制等
+- CRUD表格系统：基于json方式配置，快速对接后台接口，实现增删改查
+- FROM表单系统：基于json方式配置，快速搭建出想要的表单系统，快速完成需求。
 
-SCUI的宗旨是 让一切复杂的东西傻瓜化。
+## 安装使用
 
-## 特点
-- **组件** 多个独家组件、业务模板和代码生成器
-- **权限** 完整的鉴权体系和高精度权限控制
-- **布局** 提供多套布局模式，满足各种视觉需求
-- **API** 完善的API管理，使用真实网络MOCK
-- **配置** 统一的全局配置和组件配置，支持build后配置热更新
-- **性能** 在减少带宽请求和前端算力上多次优化，并且持续着
-- **其他** 多功能视图标签、动态权限菜单、控制台组态化、统一异常处理等等
-
-## 演示和文档
-
-- <a href="https://lolicode.gitee.io/scui-doc/demo/#/login" target="_blank">演示</a>
-- <a href="https://lolicode.gitee.io/scui-doc/" target="_blank">文档</a>
-
-
-## 安装教程
-``` sh
-# 克隆项目
-git clone https://gitee.com/lolicode/scui.git
-
-# 进入项目目录
-cd scui
-
-# 安装依赖
-npm i
-
-# 启动项目(开发模式)
-npm run serve
+- 获取代码
 ```
-启动完成后浏览器访问 http://localhost:2800
+git clone https://github.com/kanyxmo/MineAdmin-Vue.git
+```
+或
+```
+git clone https://gitee.com/xmo/mineadmin-vue.git
+```
+- 安装依赖
+```
+cd MineAdmin-Vue && yarn install
+```
+- 运行
+```
+yarn dev
+```
+- 打包
+```
+yarn build
+```
 
-## 感谢
-![fastmock](https://www.fastmock.site/resource/images/logo.png)
+## 免责声明
+本软件不得用于开发违反国家有关政策的相关软件和应用，若因使用本软件造成的一切法律责任均与 `MineAdmin Vue` 无关
 
-## 支持
-如果觉得本项目还不错或在工作中有所启发，请在Gitee(码云)帮开发者点亮星星，这是对开发者最大的支持和鼓励！
+## 协议说明
+`MineAdmin Vue` 遵循MIT开源协议发布，免费开源。
+
+版权所有Copyright © 2020-2022 by MineAdmin (http://www.mineadmin.com)
+
+All rights reserved。
+
+## 通过OSCS安全认证
+
+<a href="https://www.oscs1024.com/project/oscs/kanyxmo/MineAdmin-Vue?ref=badge_large" alt="OSCS Status"><img src="https://www.oscs1024.com/platform/badge/kanyxmo/MineAdmin-Vue.svg?size=large"/></a>
+
+## 系统截图
+<img src="https://s1.ax1x.com/2022/07/31/vklKzR.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklGdO.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkl8eK.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkl1L6.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklwQI.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkldSA.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklNJH.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklJoD.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkllsx.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklZoF.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklUWd.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkl0yt.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkltFe.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vkluW9.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklnJJ.jpg" />
+<img src="https://s1.ax1x.com/2022/07/31/vklmi4.jpg" />

@@ -12,14 +12,14 @@ export default {
     {
       rows: res.data.items,      // 分析行数据字段结构
       pageInfo: res.data.pageInfo,    // 分析总数字段结构
-      msg: res.msg,      // 分析描述字段结构
+      message: res.message,      // 分析描述字段结构
       code: res.code            // 分析状态字段结构
     }
     :
     // 无分页响应字段结构定义
     {
       rows: res.data,           // 分析行数据字段结构
-      msg: res.msg,     // 分析描述字段结构
+      message: res.message,     // 分析描述字段结构
       code: res.code            // 分析状态字段结构
     }
 

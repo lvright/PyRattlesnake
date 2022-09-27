@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-modal v-model:visible="visible" :on-before-ok="save" width="600px" draggable top="50px" :align-center="false">
     <template #title>设置组件 - {{ row?.column_comment }}</template>
@@ -71,7 +79,7 @@
         </a-form-item>
       </div>
       <!-- 下拉、复选、单选 -->
-      <div v-if="['select', 'checkbox', 'radio'].includes(row.view_type)">
+      <div v-if="['select', 'checkbox', 'radio', 'transfer'].includes(row.view_type)">
         <a-form-item
           label="是否多选"
           field="multiple"
@@ -243,7 +251,7 @@
           :label-col-style="{ width: '120px' }"
           v-if="row.view_type == 'date'"
         >
-          <a-select v-model="form.formType" allow-clear>
+          <a-select v-model="form.mode" allow-clear>
             <a-option value="date">日期选择器</a-option>
             <a-option value="week">周选择器</a-option>
             <a-option value="month">月选择器</a-option>
@@ -258,7 +266,7 @@
           field="showTime"
           label-col-flex="auto"
           :label-col-style="{ width: '120px' }"
-          v-if="form.formType == 'date'"
+          v-if="form.mode == 'date'"
         >
           <a-radio-group v-model="form.showTime">
             <a-radio :value="true">是</a-radio>

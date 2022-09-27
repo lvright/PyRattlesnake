@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-drawer v-model:visible="visible" width="800px" :on-before-ok="save" ok-text="保存绑定">
     <template #title>绑定接口</template>

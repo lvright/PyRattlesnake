@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <div class="flex justify-between">
     <div class="ma-content-block rounded-sm flex justify-between w-full p-3">
@@ -16,15 +24,11 @@
             {{ userStore.user.nickname || userStore.user.username }}，欢迎回来！
           </div>
           <div class="leading-5 mt-2">
-            欢迎使用SnakeAdmin后台权限管理系统
-            <!-- <a-space size="large">
-              <a
-                href="https://qm.qq.com/cgi-bin/qm/qr?k=nMVc0IrE6hZGWHHarDFhQRZXc5WDK6zr&jump_from=webapi" 
-                target="_blank" 
-                class="arco-link arco-link-status-normal"
-              ><icon-qq /> QQ群：15169734</a>
+            <a-tag color="blue" bordered>免费开源、可商用</a-tag>
+            欢迎使用MineAdmin后台权限管理系统，系统开源、免费使用。喜欢的请点个 ⭐Star。
+            <a-space size="large">
               <a-link @click="donate"><icon-thumb-up /> 给作者买杯奶茶</a-link>
-            </a-space> -->
+            </a-space>
           </div>
         </div>
       </div>

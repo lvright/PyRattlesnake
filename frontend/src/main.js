@@ -9,12 +9,15 @@ import store from './store'
 import i18n from '@/i18n'
 import directives from './directives'
 
-import '@arco-design/web-vue/dist/arco.css'
+// 官方样式
+// import '@arco-design/web-vue/dist/arco.css'
+// MineAdmin样式
+import '@arco-themes/vue-mine-admin/index.less'
 import './style/skin.less'
 import './style/index.css'
 import './style/global.less'
 
-import * as skIcon from '@/assets/sk-icons'
+import * as maIcons from '@/assets/ma-icons'
 import tool from '@/utils/tool'
 import * as common from '@/utils/common'
 import packageJson from '../package.json'
@@ -29,9 +32,9 @@ app.use(ArcoVue, {})
 .use(directives)
 .use(globalComponents)
 
-// 注册sk-icon图标 --> skIcon
-for (let icon in skIcon) {
-  app.component(`skIcon${icon}`, skIcon[icon])
+// 注册ma-icon图标
+for (let icon in maIcons) {
+  app.component(`MaIcon${icon}`, maIcons[icon])
 }
 
 app.config.globalProperties.$tool = tool
@@ -39,4 +42,9 @@ app.config.globalProperties.$common = common
 
 app.mount('#app')
 
-tool.capsule('snake-admin', `v${packageJson.version} release`)
+tool.capsule('MineAdmin', `v${packageJson.version} release`)
+console.log('MineAdmin 官网  https://www.mineadmin.com')
+console.log('MineAdmin 文档  https://doc.mineadmin.com')
+console.log('MineAdmin Gitee https://gitee.com/xmo/MineAdmin')
+console.log('MineAdmin-Vue Gitee https://gitee.com/xmo/MineAdmin-Vue')
+console.log('请不要吝啬您的 star，谢谢 ~ 🤩🤩🤩')

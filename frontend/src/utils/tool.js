@@ -240,7 +240,7 @@ tool.download = (res, downName = '') => {
   if (!downName) {
     const patt = new RegExp('filename=([^;]+\\.[^.;]+);*');
     const contentDisposition = decodeURI(res.headers['content-disposition'])
-    const result = patt.exec(contentDisposition)
+    const result = patt.exec(contentDisposition + '.xls')
     fileName = result[1].replace(/\"/g, '')
   } else {
     fileName = downName

@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-modal width="1000px" v-model:visible="visible" :footer="false">
     <template #title>预览代码</template>
@@ -9,7 +17,7 @@
         :title="item.tab_name"
       >
         <div class="relative">
-          <ma-code-editor v-model="item.code" readonly :language="item.lang" :height="600" />
+          <ma-code-editor v-model="item.code" readonly isBind :language="item.lang" :height="600" />
           <a-button class="copy-button" type="primary" @click="copyCode(item.code)"><icon-copy /> 复制</a-button>
         </div>
       </a-tab-pane>

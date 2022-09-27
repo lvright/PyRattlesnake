@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <div class="work-area p-5">
     <div class="ma-content-block shadow p-5">
@@ -6,7 +14,7 @@
       <div class="ma-content-block shadow p-5 mt-5 leading-10">
         <div class="text-xl">身份信息</div>
         <div>
-          <a-tag color="blue">SnakeAdmin API</a-tag>
+          <a-tag color="blue">MineAdmin API</a-tag>
           的简易模式在请求时需要携带
           <a-tag color="magenta">app_id</a-tag> 和 <a-tag color="magenta">identity</a-tag> 认证参数
         </div>
@@ -27,7 +35,7 @@
       <div class="ma-content-block shadow p-5 mt-5 leading-10">
         <div class="text-xl">签名简介</div>
         <div>
-          <a-tag color="blue">SnakeAdmin API</a-tag>
+          <a-tag color="blue">MineAdmin API</a-tag>
           的签名主要是用于获取身份令牌
           <a-tag color="red">AccessToken</a-tag> 时所需必要认证参数
         </div>

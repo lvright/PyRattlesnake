@@ -123,7 +123,7 @@ export default {
   },
 
   /**
-   * 上传文件接口
+   * 分片上传接口
    * @returns
    */
   chunkUpload (data = {}) {
@@ -144,6 +144,28 @@ export default {
       url: 'system/saveNetworkImage',
       method: 'post',
       data
+    })
+  },
+
+  /**
+   * 获取登录日志列表
+   */
+  getLoginLogList(params = {}) {
+    return request({
+      url: 'system/common/getLoginLogList',
+      method: 'get',
+      params
+    })
+  },
+  
+  /**
+   * 获取操作日志列表
+   */
+   getOperationLogList(params = {}) {
+    return request({
+      url: 'system/common/getOperationLogList',
+      method: 'get',
+      params
     })
   },
 
@@ -188,17 +210,6 @@ export default {
     return request({
       url: 'setting/common/getModuleList',
       method: 'get'
-    })
-  },
-
-  /**
-   * 更新系统配置
-   */
-  updateBackendSetting(data) {
-    return request({
-      url: 'system/setting/backendSetting',
-      method: 'put',
-      data: data
     })
   }
 }

@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-layout
     class="bg"
@@ -27,7 +35,7 @@
       class="footer"
       :style="`background-color: ${appStore.mode == 'light' ? '#fff' : '#242424'}`"
     >
-      SnakeAdmin v{{ config.version }} release Copyright © 2021-{{dayjs().format('YYYY')}} SnakeAdmin.com All Rights Reserved.
+      MineAdmin v{{ config.version }} release Copyright © 2021-{{dayjs().format('YYYY')}} mineadmin.com All Rights Reserved.
     </a-layout-footer>
   </a-layout>
 </template>

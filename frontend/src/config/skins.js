@@ -1,6 +1,6 @@
 export default [
   {
-    name: 'snake',
+    name: 'mine',
     thumb: '/skins-thumb/mine/thumb.jpg',
   },
   {

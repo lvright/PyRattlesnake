@@ -1,3 +1,12 @@
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <div class="lg:w-2/12 w-full h-full p-2 shadow">
@@ -19,7 +28,7 @@
             :checked-value="1"
             unchecked-value="2"
             @change="changeStatus($event, record.id)"
-            :default-checked="record.status == 1"
+            :default-checked="record.status == 1" 
           />
         </template>
         <!-- 头像列 -->
@@ -41,7 +50,7 @@
             v-if="record.id != 1 && ! isRecovery"
             @select="selectOperation($event, record.id)"
           >
-
+          
             <a-link><icon-double-right /> 更多</a-link>
             <template #content>
               <a-doption value="updateCache">更新缓存</a-doption>
@@ -98,24 +107,24 @@
 
   const changeStatus = async (status, id) => {
     const response = await user.changeStatus({ id, status })
-    if (response.code === 200) {
-      Message.success(response.msg)
+    if (response.success) {
+      Message.success(response.message)
     }
   }
 
   const updateCache = id => {
     user.clearCache(id).then(res => {
-      if (res.code === 200) Message.success(res.msg)
+      if (res.success) Message.success(res.message)
     })
   }
-
+  
   const resetPassword = (id) => {
-    user.initUserPassword({ id }).then(res => res.code === 200 && Message.success(res.msg) )
+    user.initUserPassword({ id }).then(res => res.success && Message.success(res.message) )
   }
 
   const saveHomePage = (done) => {
     user.setHomePage({ id: userid.value, dashboard: homePage.value }).then(res => {
-      res.code === 200 && Message.success(res.msg)
+      res.success && Message.success(res.message)
     })
     done(true)
   }
@@ -174,7 +183,7 @@
       title: '头像', dataIndex: 'avatar', width: 75, formType: 'upload',
       type: 'image', rounded: true, span: 24, labelWidth: '86px'
     },
-    {
+    { 
       title: '账户', dataIndex: 'username', width: 130, search: true,
       rules: [{ required: true, message: '账户必填' }], span: 12
     },
@@ -182,15 +191,15 @@
       title: '所属部门', dataIndex: 'dept_id', hide: true, formType: 'tree-select', span: 12,
       dict: { url: 'system/dept/tree' }, rules: [{ required: true, message: '所属部门必选' }]
     },
-    {
+    { 
       title: '密码', dataIndex: 'password', hide: true, autocomplete: 'off',
-      addDefaultValue: '123456', editDefaultValue: '', type: 'password',
+      addDefaultValue: '123456', editDefaultValue: '', type: 'password', 
       span: 12, addRules: [{ required: true, message: '密码必填' }],
     },
     { title: '昵称', dataIndex: 'nickname', width: 120, span: 12 },
-    {
+    { 
       title: '角色', dataIndex: 'role_ids', width: 120, span: 12, formType: 'select', multiple: true,
-      dict: { url: 'system/role/list', props: { label: 'name', value: 'id' } }, hide: true,
+      dict: { url: 'system/role/list', props: { label: 'name', value: 'id' } }, hide: true, 
       rules: [{ required: true, message: '角色必选' }],
       editDefaultValue: async (record) => {
         const response = await user.read(record.id)
@@ -202,7 +211,7 @@
       title: '手机', dataIndex: 'phone', width: 150, search: true, span: 12,
       addRules: [{ match: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码' }]
     },
-    {
+    { 
       title: '岗位', dataIndex: 'post_ids', width: 120, span: 12, formType: 'select', multiple: true,
       dict: { url: 'system/post/list', props: { label: 'name', value: 'id' } }, hide: true,
       editDefaultValue: async (record) => {

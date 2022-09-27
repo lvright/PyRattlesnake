@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <div class="ma-content-block lg:flex justify-between p-4">
     <!-- CRUD 组件 -->
@@ -103,7 +111,7 @@
       }
     },
     { 
-      title: '菜单名称', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 180,
+      title: '菜单名称', dataIndex: 'title', search: true, rules: [{ required: true, message: '菜单名称必填' }], width: 180,
     },
     { 
       title: '菜单类型', dataIndex: 'type', hide: true, formType: 'radio', addDefaultValue: 'M', 
@@ -112,31 +120,31 @@
         if ( value == 'B') {
           return {
             'icon': { display: false },
-            'route': { display: false },
+            'path': { display: false },
             'component': { display: false },
             'redirect': { display: false },
             'sort': { display: false },
-            'is_hidden': { display: false },
+            'hidden': { display: false },
             'restful': { display: false },
           }
         } else if ( value == 'I' || value == 'L') {
           return {
             'icon': { display: true },
-            'route': { display: true },
+            'path': { display: true },
             'component': { display: false },
             'redirect': { display: false },
             'sort': { display: true },
-            'is_hidden': { display: true },
+            'hidden': { display: true },
             'restful': { display: false },
           }
         } else {
           return {
             'icon': { display: true },
-            'route': { display: true },
+            'path': { display: true },
             'component': { display: true },
             'redirect': { display: true },
             'sort': { display: true },
-            'is_hidden': { display: true },
+            'hidden': { display: true },
             'restful': { display: true },
           }
         }
@@ -144,9 +152,9 @@
     },
     {  title: '图标', dataIndex: 'icon', width: 80, formType: 'icon', style: { width: '100%' } },
     { 
-      title: '菜单标识', dataIndex: 'code', search: true, rules: [{ required: true, message: '菜单标识必填' }], width: 150,
+      title: '菜单标识', dataIndex: 'name', search: true, rules: [{ required: true, message: '菜单标识必填' }], width: 150,
     },
-    { title: '路由地址', dataIndex: 'route', width: 150,},
+    { title: '路由地址', dataIndex: 'path', width: 150,},
     { title: '视图组件', dataIndex: 'component', width: 200,},
     { title: '重定向', dataIndex: 'redirect', hide: true},
     {
@@ -154,7 +162,7 @@
       min: 0, max: 1000
     },
     {
-      title: '隐藏', dataIndex: 'is_hidden', search: true, formType: 'radio',
+      title: '隐藏', dataIndex: 'hidden', search: true, formType: 'radio',
       dict: {
         data: [ { title: '是', key: '1' }, { title: '否', key: '2' } ],
         props: { label: 'title', value: 'key' },

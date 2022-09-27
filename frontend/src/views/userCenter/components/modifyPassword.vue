@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <a-form class="w-full md:w-full mt-3" :model="password" @submit="modifyPassword">
     <a-form-item
@@ -85,11 +93,11 @@
         return
       }
       const response = await user.modifyPassword(data.values)
-      if (response.code === 200) {
+      if (response.success) {
         tool.local.clear()
         visible.value = true
       } else {
-        Message.error(response.msg)
+        Message.error(response.message)
       }
     }
   }

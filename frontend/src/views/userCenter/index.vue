@@ -1,4 +1,12 @@
-
+<!--
+ - MineAdmin is committed to providing solutions for quickly building web applications
+ - Please view the LICENSE file that was distributed with this source code,
+ - For the full copyright and license information.
+ - Thank you very much for using MineAdmin.
+ -
+ - @Author X.Mo<root@imoi.cn>
+ - @Link   https://gitee.com/xmo/mineadmin-vue
+-->
 <template>
   <div class="block">
     <div class="user-header rounded-sm text-center">
@@ -57,8 +65,7 @@
   import { useUserStore } from '@/store'
   import { Message } from '@arco-design/web-vue'
   import user from '@/api/system/user'
-  import loginLog from '@/api/system/loginLog'
-  import operLog from '@/api/system/operLog'
+  import commonApi from '@/api/common'
 
   import ModifyPassword from './components/modifyPassword.vue'
   import UserInfomation from './components/userInfomation.vue'
@@ -77,11 +84,11 @@
   })
 
   onMounted(() => {
-    loginLog.getPageList( Object.assign(requestParams, { orderBy: 'login_time', orderType: 'desc' }) ).then(res => {
+    commonApi.getLoginLogList( Object.assign(requestParams, { orderBy: 'login_time', orderType: 'desc' }) ).then(res => {
       loginLogList.value = res.data.items
     })
 
-    operLog.getPageList( Object.assign(requestParams, { orderBy: 'created_at', orderType: 'desc' }) ).then(res => {
+    commonApi.getOperationLogList( Object.assign(requestParams, { orderBy: 'created_at', orderType: 'desc' }) ).then(res => {
       operationLogList.value = res.data.items
     })
   })
@@ -93,8 +100,8 @@
     async newAvatar => {
       if (newAvatar) {
         const response = await user.updateInfo({ id: userInfo.id, avatar: newAvatar })
-        if (response.code === 200) {
-          Message.success(response.msg)
+        if (response.success) {
+          Message.success('头像修改成功')
           userStore.user.avatar = newAvatar
         }
       }
