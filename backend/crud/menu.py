@@ -22,12 +22,14 @@ class SystemMenu(CRUDBase[UserMenu, Menu]):
         """ 获取树状部门结构数据 """
         sql = select(self.model)
         menu_data = await db.scalars(sql)
-        menu_list = jsonable_encoder(menu_data.all())
+        routers = jsonable_encoder(menu_data.all())
         await db.close()
-        if menu_list:
+        if routers:
             result = []
-            for item in menu_list:
-                item["children"] = [{"id": menu["id"], "label": menu["title"], "parent_id": menu["parent_id"], "value": menu["id"]} for menu in menu_list if menu["parent_id"] == item["id"]]
+            for item in routers:
+                item = {"id": item["id"], "parent_id": item["parent_id"], "label": item["title"], "value":  item["id"]}
+                item["children"] = [{"id": menu["id"], "parent_id": menu["parent_id"], "label": menu["title"], "value": menu["id"]}
+                                    for menu in routers if menu["parent_id"] == item["id"]]
                 if item["parent_id"] == 0: result.append(item)
             return result
 
@@ -65,67 +67,57 @@ class SystemMenu(CRUDBase[UserMenu, Menu]):
     ):
         """ 根据查询条件获取部门 """
         result = None
-        if any([query_obj["name"], query_obj["code"], query_obj["is_hidden"]]):
+        if any([query_obj["name"], query_obj["code"], query_obj["hidden"]]):
             if orderType == "descending":
                 sql = select(self.model) \
                     .where(self.model.name.like('%' + query_obj["name"] + '%'),
                            self.model.leader.like('%' + query_obj["code"]),
-                           self.model.phone.like('%' + query_obj["is_hidden"] + '%')) \
+                           self.model.phone.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete != "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(desc(orderBy)) \
-                    .limit(pageSize)
+                    .order_by(desc(orderBy))
             else:
                 sql = select(self.model) \
                     .where(self.model.name.like('%' + query_obj["name"] + '%'),
                            self.model.leader.like('%' + query_obj["code"]),
-                           self.model.phone.like('%' + query_obj["is_hidden"] + '%')) \
+                           self.model.phone.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete != "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(orderBy) \
-                    .limit(pageSize)
+                    .order_by(orderBy)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
                 sql = select(self.model) \
                     .where(self.model.created_at >= query_obj["minDate"],
                            self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete != "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(desc(orderBy)).limit(pageSize)
+                    .order_by(desc(orderBy))
             else:
                 sql = select(self.model) \
                     .where(self.model.created_at >= query_obj["minDate"],
                            self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete != "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(orderBy).limit(pageSize)
+                    .order_by(orderBy)
         elif query_obj["status"]:
             if orderType == "descending":
                 sql = select(self.model) \
                     .where(self.model.status == str(query_obj["status"])) \
                     .where(self.model.delete != "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(desc(orderBy)).limit(pageSize)
+                    .order_by(desc(orderBy))
             else:
                 sql = select(self.model) \
                     .where(self.model.status == str(query_obj["status"])) \
                     .where(self.model.delete != "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(orderBy).limit(pageSize)
+                    .order_by(orderBy)
         else:
-            sql = select(self.model) \
-                .where(self.model.delete != "1") \
-                .offset((pageIndex - 1) * pageSize) \
-                .order_by(orderBy).limit(pageSize)
+            sql = select(self.model).where(self.model.delete != "1").order_by(orderBy)
         data = await db.scalars(sql)
-        result = jsonable_encoder(data.all())
+        routers = jsonable_encoder(data.all())
+        print(routers)
         await db.close()  # 释放会话
-        if result:
-            items = []
-            for item in result:
-                item["children"] = [menu for menu in result if menu["parent_id"] == item["id"]]
-                if item["parent_id"] == 0: items.append(item)
-            return result
+        if routers:
+            menus = []
+            for item in routers:
+                item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
+                if item["parent_id"] == 0: menus.append(item)
+            return menus
 
     async def getQueryReclcle(
             self, db: AsyncSession,
@@ -137,67 +129,57 @@ class SystemMenu(CRUDBase[UserMenu, Menu]):
     ):
         """ 根据查询条件获取部门 """
         result = None
-        if any([query_obj["name"], query_obj["code"], query_obj["is_hidden"]]):
+        if any([query_obj["name"], query_obj["code"], query_obj["hidden"]]):
             if orderType == "descending":
                 sql = select(self.model) \
                     .where(self.model.name.like('%' + query_obj["name"] + '%'),
                            self.model.leader.like('%' + query_obj["code"]),
-                           self.model.phone.like('%' + query_obj["is_hidden"] + '%')) \
+                           self.model.phone.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete == "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(desc(orderBy)) \
-                    .limit(pageSize)
+                    .order_by(desc(orderBy))
             else:
                 sql = select(self.model) \
                     .where(self.model.name.like('%' + query_obj["name"] + '%'),
                            self.model.leader.like('%' + query_obj["code"]),
-                           self.model.phone.like('%' + query_obj["is_hidden"] + '%')) \
+                           self.model.phone.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete == "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(orderBy) \
-                    .limit(pageSize)
+                    .order_by(orderBy)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
                 sql = select(self.model) \
                     .where(self.model.created_at >= query_obj["minDate"],
                            self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete == "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(desc(orderBy)).limit(pageSize)
+                    .order_by(desc(orderBy))
             else:
                 sql = select(self.model) \
                     .where(self.model.created_at >= query_obj["minDate"],
                            self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete == "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(orderBy).limit(pageSize)
+                    .order_by(orderBy)
         elif query_obj["status"]:
             if orderType == "descending":
                 sql = select(self.model) \
                     .where(self.model.status == str(query_obj["status"])) \
                     .where(self.model.delete == "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(desc(orderBy)).limit(pageSize)
+                    .order_by(desc(orderBy))
             else:
                 sql = select(self.model) \
                     .where(self.model.status == str(query_obj["status"])) \
                     .where(self.model.delete == "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(orderBy).limit(pageSize)
+                    .order_by(orderBy)
         else:
-            sql = select(self.model) \
-                .where(self.model.delete == "1") \
-                .offset((pageIndex - 1) * pageSize) \
-                .order_by(orderBy).limit(pageSize)
+            sql = select(self.model).where(self.model.delete == "1").order_by(orderBy)
         data = await db.scalars(sql)
-        result = jsonable_encoder(data.all())
+        routers = jsonable_encoder(data.all())
+        print(routers)
         await db.close()  # 释放会话
-        if result:
-            items = []
-            for item in result:
-                item["children"] = [menu for menu in result if menu["parent_id"] == item["id"]]
-                if item["parent_id"] == 0: items.append(item)
-            return result
+        if routers:
+            menus = []
+            for item in routers:
+                item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
+                if item["parent_id"] == 0: menus.append(item)
+            return menus
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         sql = update(self.model).where(self.model.id == obj_in["id"]).values({"sort": obj_in["numberValue"]})

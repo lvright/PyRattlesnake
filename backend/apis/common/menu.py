@@ -27,21 +27,21 @@ async def get_tree_menu(db: AsyncSession = Depends(get_db), token: str = Depends
 @router.get(path="/system/menu/index", response_model=Result, summary="获取菜单分页列表")
 async def get_page_menu(
     page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    name: Optional[str] = "", code: Optional[str] = "", is_hidden: Optional[str] = "",
+    name: Optional[str] = "", code: Optional[str] = "", hidden: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     total = await getMenu.get_number(db)
-    query_obj = {"name": name, "code": code, "is_hidden": is_hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
+    query_obj = {"name": name, "code": code, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
     return resp_200(data=await getMenu.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj))
 
 @router.get(path="/system/menu/recycle", response_model=Result, summary="获取被删除菜单分页列表")
 async def get_page_dept(
     page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    name: Optional[str] = "", code: Optional[str] = "", is_hidden: Optional[str] = "",
+    name: Optional[str] = "", code: Optional[str] = "", hidden: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     total = await getMenu.get_number(db)
-    query_obj = {"name": name, "code": code, "is_hidden": is_hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
+    query_obj = {"name": name, "code": code, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
     return resp_200(data=await getMenu.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj))

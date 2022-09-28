@@ -27,6 +27,7 @@ async def user_info(request: Request, token: str = Depends(check_jwt_token), db:
     user = await getUser.getUserInfo(db, user=token)
     routers = await getUser.getUserRouters(db, user=user)
     user["backend_setting"] = await getUser.getUserSetting(db, user=user)
+    print(user, routers)
     return resp_200(data={"codes": routers["codes"], "roles": [user["userId"]], "routers": routers["menus"], "user": user})
 
 @router.post(path="/system/user/updateInfo", response_model=Result, summary="更新用户信息")

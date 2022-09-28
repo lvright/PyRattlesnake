@@ -60,7 +60,7 @@ class Settings(BaseSettings):
     API_DOCS = API_PREFIX + '/docs'  # 接口文档
 
     REDIS_URI: str = "redis://localhost:6379/0"  # redis
-    DATABASE_URI: str = "mysql+asyncmy://root:root123456@localhost:3306/snake?charset=UTF8MB4"  # MySQL(异步)
+    DATABASE_URI: str = "mysql+asyncmy://root:123456@localhost:3306/snake?charset=UTF8MB4"  # MySQL(异步)
     DATABASE_ECHO: bool = True
 
     SECRET_KEY: str = 'lvright'

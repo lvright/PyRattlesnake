@@ -33,7 +33,7 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         fields = [UserMenu.id, UserMenu.title, UserMenu.type, UserMenu.hidden, UserMenu.parent_id, UserMenu.redirect,
                   UserMenu.path, UserMenu.icon, UserMenu.component, UserMenu.status, UserMenu.name]
         sql = select(*fields) \
-            .where(UserMenu.status == "0", UserMenu.hidden == "0") \
+            .where(UserMenu.status == "1", UserMenu.hidden == "0") \
             .where(UserMenu.id == MenuRelation.menu_id, MenuRelation.role_id == RoleRelation.role_id) \
             .where(user['id'] == RoleRelation.user_id)
         menu_data = await db.execute(sql)
