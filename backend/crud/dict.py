@@ -17,14 +17,14 @@ from backend.apis.deps import get_db, get_current_user, get_redis
 from backend.db import MyRedis
 
 
-class SystmDictData(CRUDBase[Dict, DictDate]):
+class SystemDictData(CRUDBase[Dict, DictDate]):
 
     async def getByCode(self, db: AsyncSession, code: str) -> list:
         sql = select(self.model).where(self.model.code == code)
         dict_data = await db.scalars(sql)
-        reslut = jsonable_encoder(dict_data.all())
-        reslut = [{"id": res["id"], "key": res["value"], "title": res["label"]} for res in reslut]
-        return reslut
+        result = jsonable_encoder(dict_data.all())
+        result = [{"id": res["id"], "key": res["value"], "title": res["label"]} for res in result]
+        return result
 
 
 class SystemDeptType(CRUDBase[DictType, DictType]):
@@ -34,4 +34,4 @@ class SystemDeptType(CRUDBase[DictType, DictType]):
 
 getDictType = SystemDeptType(DictType)
 
-getDict = SystmDictData(Dict)
+getDict = SystemDictData(Dict)

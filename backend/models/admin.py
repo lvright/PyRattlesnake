@@ -24,7 +24,7 @@ class Admin(Base):
 
     email = Column(String(50), comment='邮箱')
 
-    user_type = Column(String(10), comment='手机号')
+    user_type = Column(String(10), comment='用户类型')
 
     password = Column(String(12), server_default="123456", comment='密码')
 

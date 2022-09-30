@@ -11,7 +11,7 @@ import math
 from utils import resp_200, resp_400, resp_500, by_ip_get_address, ErrorUser
 from backend.apis.deps import get_redis, get_db, get_current_user, check_jwt_token, page_total
 from backend.crud import getDict, getDictType
-from backend.scheams import Token, Result
+from backend.scheams import Token, Result, DictDate, DictType
 from backend.db import MyRedis
 
 router = APIRouter()
@@ -31,4 +31,9 @@ async def get_dict_type(page: int, pageSize: int, type_id: Optional[int] = None,
     data = await getDictType.get_multi(db, pageIndex=page, pageSize=pageSize)
     total = await getDictType.get_number(db)
     return resp_200(data={"items": data, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+
+@router.put(path="/system/dictType/update/{id:path}", response_model=Result, summary="编辑数据字典分类")
+async def update_dict_type(dict_type: DictType, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictType.update(db, id, obj_in=dict_type.dict())
+    return resp_200(msg="修改成功")
 

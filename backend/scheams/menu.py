@@ -8,7 +8,7 @@ class Menu(BaseModel):
     """ 系统路由模型 """
     name: Optional[str] = None
     path: Optional[str] = None
-    parent_id: Optional[int] = 0
+    parent_id: Optional[int] = None
     icon: Optional[str] = None
     redirect: Optional[str] = None
     title: Optional[str] = None

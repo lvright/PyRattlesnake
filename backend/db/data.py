@@ -2883,21 +2883,6 @@ routerData = [
         "level": "0"
     },
     {
-        "id": 2500,
-        "name": "apps",
-        "path": "/apps",
-        "hidden": "0",
-        "parent_id": 2000,
-        "icon": "",
-        "redirect": "",
-        "title": "应用中心",
-        "type": "M",
-        "component": "",
-        "status": "1",
-        "sort": "0",
-        "level": "0"
-    },
-    {
         "id": 2510,
         "name": "system:appGroup",
         "path": "/appGroup",
@@ -2923,21 +2908,6 @@ routerData = [
         "title": "应用管理",
         "type": "M",
         "component": "system/app/index",
-        "status": "1",
-        "sort": "0",
-        "level": "0"
-    },
-    {
-        "id": 2600,
-        "name": "apis",
-        "path": "/apis",
-        "hidden": "0",
-        "parent_id": 2000,
-        "icon": "",
-        "redirect": "",
-        "title": "应用接口",
-        "type": "M",
-        "component": "",
         "status": "1",
         "sort": "0",
         "level": "0"
