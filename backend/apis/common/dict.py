@@ -10,7 +10,7 @@ from starlette.datastructures import MutableHeaders
 from utils import resp_200, resp_400, resp_500, by_ip_get_address, ErrorUser
 from backend.apis.deps import get_redis, get_db, get_current_user, check_jwt_token, page_total
 from backend.crud import getDictData, getDictType
-from backend.scheams import Token, Result, DictDate, DictClassify
+from backend.scheams import Token, Result, DictDate, DictClassify, ChangeStatus, DeleteIds, ChangeSort
 from backend.db import MyRedis
 
 router = APIRouter()
@@ -19,20 +19,110 @@ router = APIRouter()
 async def get_dict_type(code: Optional[str] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     return resp_200(data=await getDictData.getByCode(db, code=code))
 
-@router.get(path="/system/dataDict/index", summary="分页获取数据字典数据")
-async def get_dict_type(page: int, pageSize: int, type_id: Optional[int] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    data = await getDictData.get_multi(db, pageIndex=page, pageSize=pageSize)
-    total = await getDictData.get_number(db)
-    return resp_200(data={"items": data, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+@router.get(path="/system/dictType/index", response_model=Result, summary="获取数据典类型分页列表")
+async def get_page_dict_type(
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", code: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"name": name, "code": code, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getDictType.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
-@router.get(path="/system/dictType/index", summary="分页获取数据字典类型")
-async def get_dict_type(page: int, pageSize: int, type_id: Optional[int] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    data = await getDictType.get_multi(db, pageIndex=page, pageSize=pageSize)
-    total = await getDictType.get_number(db)
-    return resp_200(data={"items": data, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+@router.get(path="/system/dictType/recycle", response_model=Result, summary="获取被删除获取数据典类型分页列表")
+async def get_recycle_dict_type(
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", code: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"name": name, "code": code, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getDictType.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
+
+@router.get(path="/system/dataDict/index", response_model=Result, summary="获取数据典分页列表")
+async def get_page_dict_type(
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", code: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"name": name, "code": code, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getDictData.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
+
+@router.get(path="/system/dataDict/recycle", response_model=Result, summary="获取被删除获取数据典分页列表")
+async def get_recycle_dict_type(
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", code: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"name": name, "code": code, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getDictData.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
+
+# @router.get(path="/system/dataDict/index", summary="分页获取数据字典数据")
+# async def get_dict_type(page: int, pageSize: int, type_id: Optional[int] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+#     data = await getDictData.get_multi(db, pageIndex=page, pageSize=pageSize)
+#     total = await getDictData.get_number(db)
+#     return resp_200(data={"items": data, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+#
+# @router.get(path="/system/dictType/index", summary="分页获取数据字典类型")
+# async def get_dict_type(page: int, pageSize: int, type_id: Optional[int] = None, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+#     data = await getDictType.get_multi(db, pageIndex=page, pageSize=pageSize)
+#     total = await getDictType.get_number(db)
+#     return resp_200(data={"items": data, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.put(path="/system/dictType/update/{id:path}", response_model=Result, summary="编辑数据字典分类")
-async def update_dict_type(dict_type: DictClassify, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def update_dict_type(id: int, dict_type: DictClassify, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDictType.update(db, id, obj_in=dict_type.dict())
     return resp_200(msg="修改成功")
 
+@router.put(path="/system/dictType/update/{id:path}", response_model=Result, summary="保存字典类型")
+async def update_menu(id: int, dict_type: DictClassify, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictType.update(db, id, obj_in=dict_type.dict())
+    return resp_200(msg="保存成功")
+
+@router.post(path="/system/dictType/save", response_model=Result, summary="添加字典类型")
+async def save_menu(dict_type: DictClassify, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictType.create(db, obj_in=dict_type.dict())
+    return resp_200(msg="添加成功")
+
+@router.put(path="/system/dictType/changeStatus", response_model=Result, summary="修改字典类型状态")
+async def change_status_menu(dict_type: ChangeStatus, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictType.update(db, id=dict_type.id, obj_in={"status": dict_type.status})
+    return resp_200(msg="修改成功")
+
+@router.delete(path="/system/dictType/delete", response_model=Result, summary="删除字典类型[逻辑删除]")
+async def delete_menu(dict_type: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for id in dict_type.ids: await getDictType.tombstone(db, id)
+    return resp_200(msg="删除成功")
+
+@router.put(path="/system/dictType/numberOperation", response_model=Result, summary="修改字典类型列表排序")
+async def num_operation_dept(dict_type: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictType.getChangeSort(db, obj_in=dict_type.dict())
+    return resp_200(msg="修改成功")
+
+@router.put(path="/system/dataDict/update/{id:path}", response_model=Result, summary="编辑数据字典")
+async def update_dict_type(id: int, dict_data: DictDate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictData.update(db, id, obj_in=dict_data.dict())
+    return resp_200(msg="修改成功")
+
+@router.put(path="/system/dataDict/update/{id:path}", response_model=Result, summary="保存数据字典")
+async def update_menu(id: int, dict_data: DictDate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictData.update(db, id, obj_in=dict_data.dict())
+    return resp_200(msg="保存成功")
+
+@router.post(path="/system/dataDict/save", response_model=Result, summary="添加数据字典")
+async def save_menu(dict_data: DictDate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictData.create(db, obj_in=dict_data.dict())
+    return resp_200(msg="添加成功")
+
+@router.put(path="/system/dataDict/changeStatus", response_model=Result, summary="修改数据字典状态")
+async def change_status_menu(dict_data: ChangeStatus, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictData.update(db, id=dict_data.id, obj_in={"status": dict_data.status})
+    return resp_200(msg="修改成功")
+
+@router.delete(path="/system/dataDict/delete", response_model=Result, summary="删除数据字典[逻辑删除]")
+async def delete_menu(dict_data: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for id in dict_data.ids: await getDictData.tombstone(db, id)
+    return resp_200(msg="删除成功")
+
+@router.put(path="/system/dataDict/numberOperation", response_model=Result, summary="修改数据字典列表排序")
+async def num_operation_dept(dict_data: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    await getDictData.getChangeSort(db, obj_in=dict_data.dict())
+    return resp_200(msg="修改成功")
