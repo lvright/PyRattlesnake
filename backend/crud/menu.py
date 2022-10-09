@@ -13,7 +13,7 @@ from backend.core import setting, create_access_token, check_jwt_token, celery
 from backend.scheams import MenuStructure
 from backend.models import SystemMenu, MenuRelation
 from backend.crud import CRUDBase
-from backend.apis.deps import get_db, get_current_user, get_redis
+from backend.apis.deps import get_db, get_current_user, get_redis, page_total
 from backend.db import MyRedis
 
 class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
@@ -85,15 +85,15 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         else:
             sql = select(self.model).where(self.model.delete != "1").order_by(orderBy)
         _query = await db.scalars(sql)
+        total = await self.get_number(db)
         routers = jsonable_encoder(_query.all())
-        print(routers)
         await db.close()  # 释放会话
         if routers:
             result = []
             for item in routers:
                 item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
                 if item["parent_id"] == 0: result.append(item)
-            return result
+            return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
     async def getQueryReclcle(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
                               orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10

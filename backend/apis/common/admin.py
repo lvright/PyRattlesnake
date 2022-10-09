@@ -38,8 +38,7 @@ async def update_user(user: AccountUpdate, token: str = Depends(check_jwt_token)
 
 @router.post(path="/system/user/modifyPassword", response_model=Result, summary="更新密码")
 async def modify_password(paw: ModifyPassword, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
-    if await getUser.updatePassword(db, paw=paw.dict(), user_id=token["id"]):
-        return resp_200(msg="密码已更新")
+    if await getUser.updatePassword(db, paw=paw.dict(), user_id=token["id"]): return resp_200(msg="密码已更新")
     return resp_400(msg="密码验证错误，请重新输入")
 
 @router.post(path="/user/updateSetting", response_model=Result, summary="更新系统设置")
@@ -54,10 +53,9 @@ async def get_user_page(
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token),
 ):
-    total = await getUser.get_number(db)
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
     result = await getUser.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
-    return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/user/recycle", response_model=Result, summary="展示回收站用户")
 async def recycle_user(
@@ -67,10 +65,9 @@ async def recycle_user(
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    total = await getUser.get_number(db)
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
     result = await getUser.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
-    return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/user/userDetail/{user_id:path}", response_model=Result, summary="获取用户详情")
 async def get_user_detail(user_id: int, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):

@@ -14,7 +14,7 @@ from backend.core import setting, create_access_token, check_jwt_token, celery
 from backend.scheams import Result, Token, Account, Login, AccountUpdate, ModifyPassword
 from backend.models import Admin, MenuRelation, SystemMenu, Role, Dept, RoleRelation, DeptRelation, Setting, PostRelation
 from backend.crud import CRUDBase
-from backend.apis.deps import get_db, get_current_user, get_redis
+from backend.apis.deps import get_db, get_current_user, get_redis, page_total
 from backend.db import MyRedis
 
 
@@ -30,10 +30,10 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
 
     async def getUserRouters(self, db: AsyncSession, user: dict) -> list:
         """ 获取用户权限理由 """
-        fields = [UserMenu.id, UserMenu.title, UserMenu.type, UserMenu.hidden, UserMenu.parent_id,
-                  UserMenu.redirect, UserMenu.path, UserMenu.icon, UserMenu.component, UserMenu.status, UserMenu.name]
-        sql = select(*fields).where(UserMenu.status == "1", UserMenu.hidden == "0")\
-            .where(UserMenu.id == MenuRelation.menu_id, MenuRelation.role_id == RoleRelation.role_id).where(user['id'] == RoleRelation.user_id)
+        fields = [SystemMenu.id, SystemMenu.title, SystemMenu.type, SystemMenu.hidden, SystemMenu.parent_id,
+                  SystemMenu.redirect, SystemMenu.path, SystemMenu.icon, SystemMenu.component, SystemMenu.status, SystemMenu.name]
+        sql = select(*fields).where(SystemMenu.status == "1", SystemMenu.hidden == "0")\
+            .where(SystemMenu.id == MenuRelation.menu_id, MenuRelation.role_id == RoleRelation.role_id).where(user['id'] == RoleRelation.user_id)
         _menus = await db.execute(sql)
         routers = jsonable_encoder(_menus.all())
 
@@ -117,9 +117,10 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         else:
             sql = select(self.model).where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         _query = await db.scalars(sql)
+        total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
-        return result
+        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
     async def getQueryReclcle(self, db: AsyncSession, query_obj: dict, dept_id: int, orderBy: str = None,
                               orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
@@ -163,9 +164,10 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         else:
             sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         _query = await db.scalars(sql)
+        total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
-        return result
+        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
 
 getUser = CRUBAdmin(Admin)

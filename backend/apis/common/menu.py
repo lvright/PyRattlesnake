@@ -31,9 +31,9 @@ async def get_page_menu(
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    total = await getMenu.get_number(db)
     query_obj = {"name": name, "code": code, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
-    return resp_200(data=await getMenu.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj))
+    result = await getMenu.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/menu/recycle", response_model=Result, summary="获取被删除菜单分页列表")
 async def get_page_dept(
@@ -42,9 +42,9 @@ async def get_page_dept(
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    total = await getMenu.get_number(db)
     query_obj = {"name": name, "code": code, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
-    return resp_200(data=await getMenu.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj))
+    result = await getMenu.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.put(path="/system/menu/update/{id:path}", response_model=Result, summary="保存菜单")
 async def update_menu(id: int, menu: MenuStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):

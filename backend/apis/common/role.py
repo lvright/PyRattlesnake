@@ -31,9 +31,9 @@ async def get_role_page(
     maxDate: Optional[str] = "", minDate: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    total = await getRole.get_number(db)
-    result = await getRole.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
-    return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+    result = await getRole.getQuery(db, pageIndex=page, pageSize=pageSize,
+                                    query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/role/recycle", response_model=Result, summary="获取被删除角色分页列表")
 async def get_role_page(
@@ -42,9 +42,9 @@ async def get_role_page(
     maxDate: Optional[str] = "", minDate: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    total = await getRole.get_number(db)
-    result = await getRole.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
-    return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+    result = await getRole.getQueryReclcle(db, pageIndex=page, pageSize=pageSize,
+                                           query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.post(path="/system/role/save", response_model=Result, summary="添加角色")
 async def save_role(role: RoleUpdate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):

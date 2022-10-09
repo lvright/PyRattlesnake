@@ -13,7 +13,7 @@ from backend.core import setting, create_access_token, check_jwt_token, celery
 from backend.scheams import DeptStructure
 from backend.models import Dept, DeptRelation
 from backend.crud import CRUDBase
-from backend.apis.deps import get_db, get_current_user, get_redis
+from backend.apis.deps import get_db, get_current_user, get_redis, page_total
 from backend.db import MyRedis
 
 class CRUDDept(CRUDBase[Dept, DeptStructure]):
@@ -87,9 +87,10 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
         else:
             sql = select(self.model).where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         _query = await db.scalars(sql)
+        total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
-        return result
+        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
     async def getQueryReclcle(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
                               orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
@@ -122,9 +123,10 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
         else:
             sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         _query = await db.scalars(sql)
+        total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
-        return result
+        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """

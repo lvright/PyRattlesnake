@@ -31,9 +31,9 @@ async def get_post_page(
     maxDate: Optional[str] = "", minDate: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    total = await getPost.get_number(db)
-    result = await getPost.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
-    return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+    result = await getPost.getQuery(db, pageIndex=page, pageSize=pageSize,
+                                    query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/post/recycle", response_model=Result, summary="获取岗位逻辑删除分页数据")
 async def get_post_page(
@@ -42,9 +42,9 @@ async def get_post_page(
     maxDate: Optional[str] = "", minDate: Optional[str] = "",
     db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    total = await getPost.get_number(db)
-    result = await getPost.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
-    return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
+    result = await getPost.getQueryReclcle(db, pageIndex=page, pageSize=pageSize,
+                                           query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.post(path="/system/post/save", response_model=Result, summary="添加岗位")
 async def save_post(post: PostStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
