@@ -134,14 +134,11 @@ class SystemDept(CRUDBase[UserDept, Dept]):
         result = None
         if any([query_obj["name"], query_obj["leader"], query_obj["phone"]]):
             if orderType == "descending":
-                sql = select(self.model) \
-                    .where(self.model.name.like('%' + query_obj["name"] + '%'),
-                           self.model.leader.like('%' + query_obj["leader"]),
-                           self.model.phone.like('%' + query_obj["phone"] + '%')) \
-                    .where(self.model.delete == "1") \
-                    .offset((pageIndex - 1) * pageSize) \
-                    .order_by(desc(orderBy)) \
-                    .limit(pageSize)
+                sql = select(self.model).where(
+                    self.model.name.like('%' + query_obj["name"] + '%'),
+                    self.model.leader.like('%' + query_obj["leader"]),
+                    self.model.phone.like('%' + query_obj["phone"] + '%')
+                ).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model) \
                     .where(self.model.name.like('%' + query_obj["name"] + '%'),
