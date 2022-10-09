@@ -3,7 +3,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class Post(BaseModel):
+class PostStructure(BaseModel):
     """ 岗位模型 """
     name: Optional[str] = None
     code: Optional[str] = None

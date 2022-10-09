@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class Menu(BaseModel):
+class MenuStructure(BaseModel):
     """ 系统路由模型 """
     name: Optional[str] = None
     path: Optional[str] = None

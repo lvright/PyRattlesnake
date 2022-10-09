@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class Role(BaseModel):
+class RoleStructure(BaseModel):
     """ 系统角色模型 """
     id: Optional[int] = None
     name: Optional[str] = None
@@ -17,7 +17,7 @@ class Role(BaseModel):
     menu_ids: Optional[str] = None
 
 
-class BaseRole(BaseModel):
+class RoleUpdate(BaseModel):
     """ 增 改角色模型 """
     id: Optional[int] = None
     name: Optional[str] = None

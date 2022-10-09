@@ -15,7 +15,7 @@ class DictDate(BaseModel):
     type_id: Optional[int] = None
 
 
-class DictType(BaseModel):
+class DictClassify(BaseModel):
     """ 数据字典分类模型 """
     code: Optional[str] = None
     name: Optional[str] = None

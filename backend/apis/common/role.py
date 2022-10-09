@@ -11,8 +11,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, Role, BaseRole, DeleteIds, ChangeSort, ChangeStatus, RoleDataScope
-from backend.models import UserDept
+from backend.scheams import Result, Token, RoleStructure, RoleUpdate, DeleteIds, ChangeSort, ChangeStatus, RoleDataScope
+from backend.models import Dept
 from backend.crud import CRUDBase, getRole
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
 from backend.db import MyRedis
@@ -47,12 +47,12 @@ async def get_role_page(
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.post(path="/system/role/save", response_model=Result, summary="添加角色")
-async def save_role(role: BaseRole, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def save_role(role: RoleUpdate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getRole.create(db, obj_in=role.dict())
     return resp_200(msg="添加成功")
 
 @router.put(path="/system/role/update/{id:path}", response_model=Result, summary="编辑角色")
-async def update_role(id: int, role: BaseRole, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def update_role(id: int, role: RoleUpdate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getRole.update(db, id, obj_in=role.dict())
     return resp_200(msg="编辑成功")
 

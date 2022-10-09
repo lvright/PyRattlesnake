@@ -11,8 +11,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, Dept, ChangeStatus, DeleteIds, ChangeSort
-from backend.models import UserDept
+from backend.scheams import Result, Token, DeptStructure, ChangeStatus, DeleteIds, ChangeSort
+from backend.models import Dept
 from backend.crud import CRUDBase, getDept
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
 from backend.db import MyRedis
@@ -49,12 +49,12 @@ async def get_page_dept(
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.post(path="/system/dept/save", response_model=Result, summary="添加部门")
-async def save_dept(dept: Dept, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def save_dept(dept: DeptStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDept.create(db, obj_in=dept.dict())
     return resp_200(msg="添加成功")
 
 @router.put(path="/system/dept/update/{id:path}", response_model=Result, summary="保存部门")
-async def update_dept(id: int, dept: Dept, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def update_dept(id: int, dept: DeptStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDept.update(db, id, obj_in=dept.dict())
     return resp_200(msg="保存成功")
 

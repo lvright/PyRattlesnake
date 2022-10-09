@@ -11,8 +11,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, ChangeSort, ChangeStatus, DeleteIds, Menu
-from backend.models import UserMenu
+from backend.scheams import Result, Token, ChangeSort, ChangeStatus, DeleteIds, MenuStructure
+from backend.models import SystemMenu
 from backend.crud import CRUDBase, getMenu
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
 from backend.db import MyRedis
@@ -47,12 +47,12 @@ async def get_page_dept(
     return resp_200(data=await getMenu.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj))
 
 @router.put(path="/system/menu/update/{id:path}", response_model=Result, summary="保存菜单")
-async def update_menu(id: int, menu: Menu, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def update_menu(id: int, menu: MenuStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getMenu.update(db, id, obj_in=menu.dict())
     return resp_200(msg="保存成功")
 
 @router.post(path="/system/menu/save", response_model=Result, summary="添加菜单")
-async def save_menu(menu: Menu, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def save_menu(menu: MenuStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getMenu.create(db, obj_in=menu.dict())
     return resp_200(msg="添加成功")
 

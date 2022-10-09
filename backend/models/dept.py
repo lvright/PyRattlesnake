@@ -6,7 +6,7 @@ from backend.models import Base
 from utils import check_or_enum
 
 
-class UserDept(Base):
+class Dept(Base):
     """ 岗位 """
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment="ID")

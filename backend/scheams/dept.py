@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class Dept(BaseModel):
+class DeptStructure(BaseModel):
     """ 部门模型 """
     id: Optional[int] = None
     leader: Optional[str] = None

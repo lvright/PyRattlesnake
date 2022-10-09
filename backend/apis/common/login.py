@@ -16,10 +16,8 @@ router = APIRouter()
 
 @router.post(path='/system/login', summary='后台登录')
 async def login_access_token(request: Request, db: AsyncSession = Depends(get_db), from_data: OAuth2PasswordRequestForm = Depends()):
-    form_obj = {"username": from_data.username, "password": from_data.password}
-    token = await toLogin.go(db, request=request, form_data=form_obj)
-    if token:
-        return resp_200(data=token, msg="登录成功")
+    token = await toLogin.go(db, request=request, form_data={"username": from_data.username, "password": from_data.password})
+    if token: return resp_200(data=token, msg="登录成功")
     return resp_500(msg="错误的用户名或密码")
 
 @router.post("/logout", response_model=Result, summary="退出登录")

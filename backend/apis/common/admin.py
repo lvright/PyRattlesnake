@@ -16,7 +16,10 @@ from backend.apis.deps import get_redis, get_db, get_current_user, page_total
 from backend.crud import getUser, getDept, getPost, getRole
 from backend.core import check_jwt_token
 from backend.scheams import (
-    Token, Result, Account, AccountUpdate, ModifyPassword, BackendSetting, UserIDList, UserHome, UserId, QueryUser, ChangeSort, ChangeStatus, DeleteIds
+    Token, Result, Account, AccountUpdate,
+    ModifyPassword, BackendSetting, UserIDList,
+    UserHome, UserId, QueryUser, ChangeSort,
+    ChangeStatus, DeleteIds
 )
 from backend.db import MyRedis
 
@@ -27,7 +30,6 @@ async def user_info(request: Request, token: str = Depends(check_jwt_token), db:
     user = await getUser.getUserInfo(db, user=token)
     routers = await getUser.getUserRouters(db, user=user)
     user["backend_setting"] = await getUser.getUserSetting(db, user=user)
-    print(user, routers)
     return resp_200(data={"codes": routers["codes"], "roles": [user["userId"]], "routers": routers["menus"], "user": user})
 
 @router.post(path="/system/user/updateInfo", response_model=Result, summary="更新用户信息")
@@ -104,7 +106,7 @@ async def delete_user(user: UserIDList, db: AsyncSession = Depends(get_db), toke
 
 @router.get(path="/system/user/read/{id:path}", response_model=Result, summary="获取用户详情")
 async def get_user_detail(id: int, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    return resp_200(data=await getUser.get(db, id=id))
+    return resp_200(data=await getUser.get(db, id))
 
 @router.post(path="/system/user/clearCache", response_model=Result, summary="清理用户缓存")
 async def clear_cache_user(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
@@ -123,15 +125,15 @@ async def export_user(page: int = Body(...), pageSize: int = Body(...), db: Asyn
     for item in result: data.append([item[k] for k in item])
     wb = Workbook()
     ws = wb.active
-    ws.title = 'user'
+    ws.title = "user"
     for i in dataframe_to_rows(pd.DataFrame(data=data, columns=[str(k) for k in result[0].keys()])): ws.append(i)
-    save_file_name = os.path.abspath(os.path.join(os.getcwd(), "..")) + '/static/user_file_export/' + str(int(time.time()))
-    wb.save(save_file_name + '.xls')
+    save_file_name = os.path.abspath(os.path.join(os.getcwd(), "..")) + "/static/user_file_export/" + str(int(time.time()))
+    wb.save(save_file_name + ".xls")
     return resf_200(filename=str(int(time.time())), path=save_file_name + '.xls')
 
 @router.post(path="/system/user/downloadTemplate", response_model=Result, summary="下载导出用户模板")
 async def down_user_template(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    return resf_200(path=os.path.abspath(os.path.join(os.getcwd(), "..")) + '/static/user_file_export/template_user.xls')
+    return resf_200(path=os.path.abspath(os.path.join(os.getcwd(), "..")) + "/static/user_file_export/template_user.xls")
 
 @router.post(path="/system/user/uploadImage", response_model=Result, summary="上传头像")
 async def upload_img_user(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):

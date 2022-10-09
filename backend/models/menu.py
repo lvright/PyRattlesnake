@@ -6,7 +6,7 @@ from backend.models import Base
 from utils import check_or_enum
 
 
-class UserMenu(Base):
+class SystemMenu(Base):
     """ 系统路由 """
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment="ID")

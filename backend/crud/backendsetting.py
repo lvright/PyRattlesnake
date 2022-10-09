@@ -17,7 +17,7 @@ from backend.apis.deps import get_db, get_current_user, get_redis
 from backend.db import MyRedis
 
 
-class SystemBackendSetting(CRUDBase[Setting, BackendSetting]):
+class CRUDBackendSetting(CRUDBase[Setting, BackendSetting]):
 
     async def updateBackendSetting(self, db: AsyncSession, obj_in: dict, user_id: int) -> bool:
         sql = update(self.model).where(self.model.user_id == user_id).values(obj_in)
@@ -25,4 +25,4 @@ class SystemBackendSetting(CRUDBase[Setting, BackendSetting]):
         await db.commit()
         return True
 
-getBackendSetting = SystemBackendSetting(Setting)
+getBackendSetting = CRUDBackendSetting(Setting)

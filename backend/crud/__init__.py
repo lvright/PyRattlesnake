@@ -9,5 +9,5 @@ from .role import getRole
 from .loginlog import getLoginLog
 from .operlog import getOperLog
 from .backendsetting import getBackendSetting
-from .dict import getDict, getDictType
+from .dict import getDictData, getDictType
 from .menu import getMenu

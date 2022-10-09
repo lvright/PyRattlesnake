@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, Post, ChangeSort, ChangeStatus, DeleteIds
+from backend.scheams import Result, Token, PostStructure, ChangeSort, ChangeStatus, DeleteIds
 from backend.models import post
 from backend.crud import CRUDBase, getPost
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
@@ -47,13 +47,13 @@ async def get_post_page(
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": page, "totalPage": page_total(total, pageSize)}})
 
 @router.post(path="/system/post/save", response_model=Result, summary="添加岗位")
-async def save_post(post: Post, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def save_post(post: PostStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     print(post.dict())
     await getPost.create(db, obj_in=post.dict())
     return resp_200(msg="添加成功")
 
 @router.put(path="/system/post/update/{id:path}", response_model=Result, summary="保存岗位")
-async def update_post(id: int, post: Post, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def update_post(id: int, post: PostStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getPost.update(db, id, obj_in=post.dict())
     return resp_200(msg="保存成功")
 
