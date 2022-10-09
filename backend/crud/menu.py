@@ -59,7 +59,7 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
     async def getQuery(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
                        orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
                        ) -> list:
-        """ 根据查询条件获取部门 """
+        """ 根据查询条件获取 """
         result = None
         if any([query_obj["name"], query_obj["code"], query_obj["hidden"]]):
             if orderType == "descending":
@@ -98,16 +98,16 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
     async def getQueryReclcle(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
                               orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
                               ) -> list:
-        """ 根据查询条件获取部门 """
+        """ 根据查询条件获取 """
         result = None
         if any([query_obj["name"], query_obj["code"], query_obj["hidden"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.leader.like('%' + query_obj["code"]),
-                                               self.model.phone.like('%' + query_obj["hidden"] + '%'))\
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"]),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
                     .where(self.model.delete == "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.leader.like('%' + query_obj["code"]),
-                                               self.model.phone.like('%' + query_obj["hidden"] + '%')) \
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"]),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
                     .where(self.model.delete == "1").order_by(orderBy)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
@@ -124,15 +124,15 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         else:
             sql = select(self.model).where(self.model.delete == "1").order_by(orderBy)
         _query = await db.scalars(sql)
+        total = await self.get_number(db)
         routers = jsonable_encoder(_query.all())
-        print(routers)
         await db.close()  # 释放会话
         if routers:
             result = []
             for item in routers:
                 item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
                 if item["parent_id"] == 0: result.append(item)
-            return menus
+            return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """
