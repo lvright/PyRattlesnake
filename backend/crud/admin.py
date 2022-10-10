@@ -85,12 +85,12 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         if any([query_obj["username"], query_obj["nickname"], query_obj["phone"], query_obj["email"]]):
             if orderType == "descending":
                 sql = select(self.model)\
-                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"]),
+                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"] + '%'),
                            self.model.phone.like('%' + query_obj["phone"] + '%'), self.model.email.like('%' + query_obj["email"] + '%'))\
                     .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model)\
-                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"]),
+                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"] + '%'),
                            self.model.phone.like('%' + query_obj["phone"] + '%'), self.model.email.like('%' + query_obj["email"] + '%'))\
                     .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
@@ -130,12 +130,12 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         if any([query_obj["username"], query_obj["nickname"], query_obj["phone"], query_obj["email"]]):
             if orderType == "descending":
                 sql = select(self.model)\
-                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"]),
+                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"] + '%'),
                            self.model.phone.like('%' + query_obj["phone"] + '%'), self.model.email.like('%' + query_obj["email"] + '%'))\
                     .where(self.model.delete == "1") .offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model)\
-                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"]),
+                    .where(self.model.username.like('%' + query_obj["username"] + '%'), self.model.nickname.like('%' + query_obj["nickname"] + '%'),
                            self.model.phone.like('%' + query_obj["phone"] + '%'), self.model.email.like('%' + query_obj["email"] + '%'))\
                     .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):

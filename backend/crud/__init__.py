@@ -11,3 +11,4 @@ from .operlog import getOperLog
 from .backendsetting import getBackendSetting
 from .dict import getDictData, getDictType
 from .menu import getMenu
+from .annex import getAnnex
