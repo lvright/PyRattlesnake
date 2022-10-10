@@ -4,7 +4,7 @@ from fastapi import FastAPI, Security
 from backend.core.conf import setting
 from backend.apis import app_router
 from backend.apis.deps import get_current_user
-from backend.apis.common import login, admin, system, dept, post, role, dict, menu
+from backend.apis.common import login, admin, system, dept, post, role, dict, menu, annex
 
 def register_router(app: FastAPI):
     """ 注册路由 """
@@ -16,6 +16,7 @@ def register_router(app: FastAPI):
     app.include_router(role.router, prefix=setting.API_PREFIX, tags=["Role"])
     app.include_router(dict.router, prefix=setting.API_PREFIX, tags=["Dictionary"])
     app.include_router(menu.router, prefix=setting.API_PREFIX, tags=["Menu"])
+    app.include_router(annex.router, prefix=setting.API_PREFIX, tags=["Annex"])
 
     # 权限(权限在每个接口上)
     app.include_router(app_router, prefix=setting.API_PREFIX)

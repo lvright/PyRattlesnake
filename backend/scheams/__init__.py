@@ -13,3 +13,4 @@ from .account import Account, AccountUpdate, Login, ModifyPassword, UserIDList, 
 from .log import Loginlogger, Operlogger
 from .base import ChangeSort, ChangeStatus, DeleteIds
 from .menu import MenuStructure
+from .attachment import Annex

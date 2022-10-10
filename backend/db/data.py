@@ -277,6 +277,13 @@ dictTypeData = [
         "code": "queue_consume_status",
         "status": "1",
         "remark": ""
+    },
+    {
+      "id": 11,
+      "name": "附件类型",
+      "code": "attachment_type",
+      "status": "1",
+      "remark": ""
     }
 ]
 
@@ -658,6 +665,56 @@ dictData = [
         "value": "5",
         "code": "queue_consume_status",
         "sort": 1,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 39,
+        "type_id": 11,
+        "label": "图片",
+        "value": "image",
+        "code": "attachment_type",
+        "sort": 10,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 40,
+        "type_id": 11,
+        "label": "文档",
+        "value": "text",
+        "code": "attachment_type",
+        "sort": 9,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 41,
+        "type_id": 11,
+        "label": "音频",
+        "value": "audio",
+        "code": "attachment_type",
+        "sort": 8,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 42,
+        "type_id": 11,
+        "label": "视频",
+        "value": "video",
+        "code": "attachment_type",
+        "sort": 7,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 43,
+        "type_id": 11,
+        "label": "应用程序",
+        "value": "application",
+        "code": "attachment_type",
+        "sort": 6,
         "status": "1",
         "remark": ""
     }
