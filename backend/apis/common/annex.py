@@ -22,21 +22,21 @@ router = APIRouter()
 
 @router.get(path="/system/attachment/index", response_model=Result, summary="获取附件分页列表")
 async def get_page_dept(
-        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", mime_type: Optional[str] = "",
         origin_name: Optional[str] = "", storage_mode: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
         db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    query_obj = {"origin_name": origin_name, "storage_mode": storage_mode, "maxDate": maxDate, "minDate": minDate}
+    query_obj = {"origin_name": origin_name, "storage_mode": storage_mode, "mime_type": mime_type, "maxDate": maxDate, "minDate": minDate}
     result = await getAnnex.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/attachment/recycle", response_model=Result, summary="获取被删除附件分页列表")
 async def get_page_dept(
-        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", mime_type: Optional[str] = "",
         origin_name: Optional[str] = "", storage_mode: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
         db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    query_obj = {"origin_name": origin_name, "storage_mode": storage_mode, "maxDate": maxDate, "minDate": minDate}
+    query_obj = {"origin_name": origin_name, "storage_mode": storage_mode, "mime_type": mime_type, "maxDate": maxDate, "minDate": minDate}
     result = await getAnnex.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 

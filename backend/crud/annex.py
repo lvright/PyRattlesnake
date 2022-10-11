@@ -23,14 +23,16 @@ class CRUDAnnex(CRUDBase[Annex, Attachment]):
                        ) -> list:
         """ 根据查询条件获取 """
         result = None
-        if any([query_obj["origin_name"], query_obj["storage_mode"]]):
+        if any([query_obj["origin_name"], query_obj["storage_mode"], query_obj["mime_type"]]):
             if orderType == "descending":
                 sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"]))\
+                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
+                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%'))\
                     .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"]))\
+                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
+                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%'))\
                     .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
@@ -54,14 +56,16 @@ class CRUDAnnex(CRUDBase[Annex, Attachment]):
                               ) -> list:
         """ 根据查询条件获取 """
         result = None
-        if any([query_obj["origin_name"], query_obj["storage_mode"]]):
+        if any([query_obj["origin_name"], query_obj["storage_mode"], query_obj["mime_type"]]):
             if orderType == "descending":
                 sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"]))\
+                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
+                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%'))\
                     .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"]))\
+                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
+                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%'))\
                     .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":

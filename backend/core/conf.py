@@ -55,7 +55,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[AnyHttpUrl] = ["http://localhost:2888"]  # 跨域请求
 
     API_PREFIX: str = '/api'  # 接口前缀
-    STATIC_DIR: str = '../static'  # 本地静态文件目录
+    STATIC_DIR: str = 'static'  # 本地静态文件目录
     GLOBAL_ENCODING: str = 'utf-8'  # 全局编码
     API_DOCS = API_PREFIX + '/docs'  # 接口文档
 

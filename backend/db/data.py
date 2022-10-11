@@ -279,11 +279,11 @@ dictTypeData = [
         "remark": ""
     },
     {
-      "id": 11,
-      "name": "附件类型",
-      "code": "attachment_type",
-      "status": "1",
-      "remark": ""
+        "id": 11,
+        "name": "附件类型",
+        "code": "attachment_type",
+        "status": "1",
+        "remark": ""
     }
 ]
 
@@ -717,6 +717,75 @@ dictData = [
         "sort": 6,
         "status": "1",
         "remark": ""
+    }
+]
+
+annexData = [
+    {
+        "mime_type": "image/jpeg",
+        "object_name": "14636698788979994.jpeg",
+        "origin_name": "89ZNz6.jpeg",
+        "size_byte": 123833,
+        "size_info": "123.833KB",
+        "storage_mode": 1,
+        "storage_path": "attachment",
+        "suffix": "image/jpeg",
+        "url": "/static/attachment/89ZNz6.jpeg"
+    },
+    {
+        "mime_type": "image/png",
+        "object_name": "40813871623114304.png",
+        "origin_name": "sQ5yIZ.png",
+        "size_byte": 25878,
+        "size_info": "25.878KB",
+        "storage_mode": 1,
+        "storage_path": "attachment",
+        "suffix": "png",
+        "url": "/static/attachment/sQ5yIZ.png"
+    },
+    {
+        "mime_type": "image/jpeg",
+        "object_name": "57420895249048452.jpeg",
+        "origin_name": "uAVjuI.jpeg",
+        "size_byte": 71954,
+        "size_info": "71.954KB",
+        "storage_mode": 1,
+        "storage_path": "attachment",
+        "suffix": "image/jpeg",
+        "url": "/static/attachment/uAVjuI.jpeg"
+    },
+    {
+        "mime_type": "image/jpg",
+        "object_name": "54324670505182606.jpg",
+        "origin_name": "数字化工程数据中台架构.jpg",
+        "size_byte": 558038,
+        "size_info": "558.038KB",
+        "storage_mode": 1,
+        "storage_path": "attachment",
+        "suffix": "image/jpg",
+        "url": "/static/attachment/数字化工程数据中台架构.jpg"
+    },
+    {
+        "mime_type": "image/jpg",
+        "object_name": "10977524091790804.jpg",
+        "origin_name": "数字工厂系统业务架构.jpg",
+        "size_byte": 674064,
+        "size_info": "674.064KB",
+        "storage_mode": 1,
+        "storage_path": "attachment",
+        "suffix": "image/jpg",
+        "url": "/static/attachment/数字工厂系统业务架构.jpg"
+    },
+    {
+        "mime_type": "image/jpg",
+        "object_name": "52354345668208051.jpg",
+        "origin_name": "数字工程数据中台方案.jpg",
+        "size_byte": 534621,
+        "size_info": "534.621KB",
+        "storage_mode": 1,
+        "storage_path": "attachment",
+        "suffix": "image/jpg",
+        "url": "/static/attachment/数字工程数据中台方案.jpg"
     }
 ]
 
@@ -3190,66 +3259,6 @@ routerData = [
         "title": "服务监控",
         "type": "M",
         "component": "system/monitor/server/index",
-        "status": "1",
-        "sort": "0",
-        "level": "0"
-    },
-    {
-        "id": 3300,
-        "name": "logs",
-        "path": "/logs",
-        "hidden": "0",
-        "parent_id": 3000,
-        "icon": "",
-        "redirect": "",
-        "title": "日志监控",
-        "type": "M",
-        "component": "",
-        "status": "1",
-        "sort": "0",
-        "level": "0"
-    },
-    {
-        "id": 3400,
-        "name": "system:loginLog",
-        "path": "/loginLog",
-        "hidden": "0",
-        "parent_id": 3300,
-        "icon": "el-icon-reading",
-        "redirect": "",
-        "title": "登录日志",
-        "type": "M",
-        "component": "system/loginLog/index",
-        "status": "1",
-        "sort": "0",
-        "level": "0"
-    },
-    {
-        "id": 3500,
-        "name": "system:operLog",
-        "path": "/operLog",
-        "hidden": "0",
-        "parent_id": 3300,
-        "icon": "el-icon-document",
-        "redirect": "",
-        "title": "操作日志",
-        "type": "M",
-        "component": "system/operLog/index",
-        "status": "1",
-        "sort": "0",
-        "level": "0"
-    },
-    {
-        "id": 3600,
-        "name": "system:onlineUser",
-        "path": "/onlineUser",
-        "hidden": "0",
-        "parent_id": 3000,
-        "icon": "",
-        "redirect": "",
-        "title": "在线用户",
-        "type": "M",
-        "component": "system/monitor/onlineUser/index",
         "status": "1",
         "sort": "0",
         "level": "0"

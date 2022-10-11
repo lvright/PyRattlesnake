@@ -10,19 +10,21 @@ class Attachment(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment="ID")
 
-    object_name = Column(String(20), comment="现文件名称")
+    mime_type = Column(String(50), comment="文件类型")
 
-    origin_name = Column(String(20), comment="原文件名称")
+    object_name = Column(String(100), comment="现文件名称")
 
-    size_byte = Column(String(20), comment="文件类型")
+    origin_name = Column(String(100), comment="原文件名称")
 
-    size_info = Column(String(20), comment="文件大小")
+    size_byte = Column(String(50), comment="文件字节")
 
-    storage_mode = Column(String(20), comment="文件模式")
+    size_info = Column(String(50), comment="文件大小")
+
+    storage_mode = Column(String(50), comment="文件模式")
 
     storage_path = Column(String(100), comment="文件地址")
 
-    suffix = Column(String(20), comment="文件后缀")
+    suffix = Column(String(50), comment="文件后缀")
 
     url = Column(String(100), comment="附件地址")
 

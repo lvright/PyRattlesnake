@@ -7,7 +7,7 @@ from .data import (
     roleData, roleRelationData, settingData,
     configData, extendData, deptData, postData,
     deptRelationData, postRelationData, dictTypeData,
-    dictData
+    dictData, annexData
 )
 from backend.models import (
     Base, Admin, Attachment, Config, Dept,
@@ -61,6 +61,7 @@ async def init_data():
             await conn.execute(PostRelation.__table__.insert(), [relation for relation in postRelationData])
             await conn.execute(DictType.__table__.insert(), [type for type in dictTypeData])
             await conn.execute(Dict.__table__.insert(), [dict for dict in dictData])
+            await conn.execute(Attachment.__table__.insert(), [annex for annex in annexData])
             logger.info(f"成功初始化表数据!!!")
     except Exception as e:
         logger.error(f"初始化表数据失败!!! -- 错误信息如下:\n{e}")
