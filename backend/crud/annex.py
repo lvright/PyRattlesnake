@@ -70,11 +70,11 @@ class CRUDAnnex(CRUDBase[Annex, Attachment]):
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
                 sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
+                                               self.model.created_at <= query_obj["maxDate"])\
                     .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
+                                               self.model.created_at <= query_obj["maxDate"])\
                     .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         else:
             sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
