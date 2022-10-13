@@ -8,3 +8,4 @@ from .logger import logger
 from .permission_assign import handle_oauth2_scopes, generate_permission_data  # by_scopes_get_crud
 from .check_enum import check_or_enum
 from .read_files import read_local_files
+from .monitor import get_cpu, get_disk, get_memory, get_system
