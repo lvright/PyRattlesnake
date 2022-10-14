@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 from backend.apis.common import (
-    login, admin, post, dept, role, system, dict, menu
+    login, admin, post, dept, role, system, dict, menu, message, annex
 )
 
 app_router = APIRouter()

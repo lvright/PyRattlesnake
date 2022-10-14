@@ -18,8 +18,8 @@ from backend.db import MyRedis
 from utils import resp_200, SetRedis, by_ip_get_address
 
 
-class CRUBloginLog(CRUDBase[LoginLog, Loginlogger]):
+class CRUDLoginLog(CRUDBase[LoginLog, Loginlogger]):
 
     pass
 
-getLoginLog = CRUBloginLog(LoginLog)
+getLoginLog = CRUDLoginLog(LoginLog)

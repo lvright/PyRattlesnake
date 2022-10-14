@@ -11,6 +11,8 @@ class Message(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, comment="ID")
 
+    title = Column(String(50), comment="消息标题")
+
     content = Column(String(500), comment="消息内容")
 
     read_status = check_or_enum(name="read)_status", enumList=["0", "1"], comment="阅读状态: 0->未被阅读 1->已被阅读")

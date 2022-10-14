@@ -14,3 +14,4 @@ from .log import Loginlogger, Operlogger
 from .base import ChangeSort, ChangeStatus, Ids
 from .menu import MenuStructure
 from .attachment import Annex
+from .message import MessageStructure, SendMessage

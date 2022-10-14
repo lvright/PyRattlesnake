@@ -18,8 +18,8 @@ from backend.db import MyRedis
 from utils import resp_200, SetRedis, by_ip_get_address
 
 
-class CRUBoperLog(CRUDBase[OperLog, Operlogger]):
+class CRUDOperLog(CRUDBase[OperLog, Operlogger]):
 
     pass
 
-getOperLog = CRUBoperLog(OperLog)
+getOperLog = CRUDOperLog(OperLog)

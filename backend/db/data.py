@@ -279,7 +279,14 @@ dictTypeData = [
         "remark": ""
     },
     {
-        "id": 11,
+      "id": 11,
+      "name": "队列消息类型",
+      "code": "queue_msg_type",
+      "status": "1",
+      "remark": ""
+    },
+    {
+        "id": 12,
         "name": "附件类型",
         "code": "attachment_type",
         "status": "1",
@@ -671,6 +678,56 @@ dictData = [
     {
         "id": 39,
         "type_id": 11,
+        "label": "通知",
+        "value": "notice",
+        "code": "queue_msg_type",
+        "sort": 1,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 40,
+        "type_id": 11,
+        "label": "公告",
+        "value": "announcement",
+        "code": "queue_msg_type",
+        "sort": 2,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 41,
+        "type_id": 11,
+        "label": "待办",
+        "value": "todo",
+        "code": "queue_msg_type",
+        "sort": 3,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 42,
+        "type_id": 11,
+        "label": "抄送我的",
+        "value": "carbon_copy_mine",
+        "code": "queue_msg_type",
+        "sort": 4,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 43,
+        "type_id": 11,
+        "label": "私信",
+        "value": "private_message",
+        "code": "queue_msg_type",
+        "sort": 5,
+        "status": "1",
+        "remark": ""
+    },
+    {
+        "id": 44,
+        "type_id": 12,
         "label": "图片",
         "value": "image",
         "code": "attachment_type",
@@ -679,8 +736,8 @@ dictData = [
         "remark": ""
     },
     {
-        "id": 40,
-        "type_id": 11,
+        "id": 45,
+        "type_id": 12,
         "label": "文档",
         "value": "text",
         "code": "attachment_type",
@@ -689,8 +746,8 @@ dictData = [
         "remark": ""
     },
     {
-        "id": 41,
-        "type_id": 11,
+        "id": 46,
+        "type_id": 12,
         "label": "音频",
         "value": "audio",
         "code": "attachment_type",
@@ -699,8 +756,8 @@ dictData = [
         "remark": ""
     },
     {
-        "id": 42,
-        "type_id": 11,
+        "id": 47,
+        "type_id": 12,
         "label": "视频",
         "value": "video",
         "code": "attachment_type",
@@ -709,8 +766,8 @@ dictData = [
         "remark": ""
     },
     {
-        "id": 43,
-        "type_id": 11,
+        "id": 48,
+        "type_id": 12,
         "label": "应用程序",
         "value": "application",
         "code": "attachment_type",
