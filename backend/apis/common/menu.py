@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, ChangeSort, ChangeStatus, DeleteIds, MenuStructure
+from backend.scheams import Result, Token, ChangeSort, ChangeStatus, Ids, MenuStructure
 from backend.models import SystemMenu
 from backend.crud import CRUDBase, getMenu
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
@@ -58,7 +58,7 @@ async def change_status_menu(menu: ChangeStatus, db: AsyncSession = Depends(get_
     return resp_200(msg="修改成功")
 
 @router.delete(path="/system/menu/delete", response_model=Result, summary="删除菜单[逻辑删除]")
-async def delete_menu(menu: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def delete_menu(menu: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for id in menu.ids: await getMenu.tombstone(db, id)
     return resp_200(msg="删除成功")
 
@@ -66,3 +66,8 @@ async def delete_menu(menu: DeleteIds, db: AsyncSession = Depends(get_db), token
 async def num_operation_dept(menu: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getMenu.getChangeSort(db, obj_in=menu.dict())
     return resp_200(msg="修改成功")
+
+@router.put(path="/system/menu/recovery", response_model=Result, summary="恢复被删除的数据")
+async def recovery_user(menu: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for ids in menu.ids: await getMenu.update(db, ids, obj_in={"delete": 0})
+    return resp_200(msg="恢复成功")

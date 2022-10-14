@@ -10,7 +10,7 @@ from starlette.datastructures import MutableHeaders
 from utils import resp_200, resp_400, resp_500, by_ip_get_address, ErrorUser
 from backend.apis.deps import get_redis, get_db, get_current_user, check_jwt_token, page_total
 from backend.crud import getDictData, getDictType
-from backend.scheams import Token, Result, DictDate, DictClassify, ChangeStatus, DeleteIds, ChangeSort
+from backend.scheams import Token, Result, DictDate, DictClassify, ChangeStatus, Ids, ChangeSort
 from backend.db import MyRedis
 
 router = APIRouter()
@@ -76,7 +76,7 @@ async def change_status_menu(dict_type: ChangeStatus, db: AsyncSession = Depends
     return resp_200(msg="修改成功")
 
 @router.delete(path="/system/dictType/delete", response_model=Result, summary="删除字典类型[逻辑删除]")
-async def delete_menu(dict_type: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def delete_menu(dict_type: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for id in dict_type.ids: await getDictType.tombstone(db, id)
     return resp_200(msg="删除成功")
 
@@ -106,7 +106,7 @@ async def change_status_menu(dict_data: ChangeStatus, db: AsyncSession = Depends
     return resp_200(msg="修改成功")
 
 @router.delete(path="/system/dataDict/delete", response_model=Result, summary="删除数据字典[逻辑删除]")
-async def delete_menu(dict_data: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def delete_menu(dict_data: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for id in dict_data.ids: await getDictData.tombstone(db, id)
     return resp_200(msg="删除成功")
 
@@ -114,3 +114,13 @@ async def delete_menu(dict_data: DeleteIds, db: AsyncSession = Depends(get_db), 
 async def num_operation_dept(dict_data: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDictData.getChangeSort(db, obj_in=dict_data.dict())
     return resp_200(msg="修改成功")
+
+@router.put(path="/system/dataDict/recovery", response_model=Result, summary="恢复字典类型被删除的数据")
+async def recovery_user(dict_data: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for ids in dict_data.ids: await getDictData.update(db, ids, obj_in={"delete": 0})
+    return resp_200(msg="恢复成功")
+
+@router.put(path="/system/dictType/recovery", response_model=Result, summary="恢复字典数据被删除的数据")
+async def recovery_user(dict_type: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for ids in dict_type.ids: await getDictType.update(db, ids, obj_in={"delete": 0})
+    return resp_200(msg="恢复成功")

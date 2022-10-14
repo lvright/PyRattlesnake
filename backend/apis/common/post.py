@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, PostStructure, ChangeSort, ChangeStatus, DeleteIds
+from backend.scheams import Result, Token, PostStructure, ChangeSort, ChangeStatus, Ids
 from backend.models import post
 from backend.crud import CRUDBase, getPost
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
@@ -63,7 +63,7 @@ async def change_status_post(post: ChangeStatus, db: AsyncSession = Depends(get_
     return resp_200(msg="修改成功")
 
 @router.delete(path="/system/post/delete", response_model=Result, summary="删除岗位[逻辑删除]")
-async def delete_post(post: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def delete_post(post: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for id in post.ids: await getPost.tombstone(db, id)
     return resp_200(msg="删除成功")
 
@@ -71,3 +71,8 @@ async def delete_post(post: DeleteIds, db: AsyncSession = Depends(get_db), token
 async def num_operation_dept(post: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getPost.getChangeSort(db, obj_in=post.dict())
     return resp_200(msg="修改成功")
+
+@router.put(path="/system/post/recovery", response_model=Result, summary="恢复被删除的数据")
+async def recovery_user(post: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for ids in post.ids: await getPost.update(db, ids, obj_in={"delete": 0})
+    return resp_200(msg="恢复成功")

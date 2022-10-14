@@ -19,7 +19,7 @@ from backend.scheams import (
     Token, Result, Account, AccountUpdate,
     ModifyPassword, BackendSetting, UserIDList,
     UserHome, UserId, QueryUser, ChangeSort,
-    ChangeStatus, DeleteIds
+    ChangeStatus, Ids
 )
 from backend.db import MyRedis
 
@@ -145,3 +145,8 @@ async def set_home_user(user: UserHome, db: AsyncSession = Depends(get_db), toke
 async def init_password(user: UserId, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getUser.update(db, id=user.id, obj_in={"password": "123456"})
     return resp_200(msg="密码已充值")
+
+@router.put(path="/system/user/recovery", response_model=Result, summary="恢复被删除的数据")
+async def recovery_user(user: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for ids in user.ids: await getUser.update(db, ids, obj_in={"delete": 0})
+    return resp_200(msg="恢复成功")

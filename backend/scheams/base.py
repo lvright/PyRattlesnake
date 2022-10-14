@@ -17,6 +17,6 @@ class ChangeStatus(BaseModel):
     status: Optional[str] = None
 
 
-class DeleteIds(BaseModel):
+class Ids(BaseModel):
     """ 删除模型 """
     ids: Optional[list] = None

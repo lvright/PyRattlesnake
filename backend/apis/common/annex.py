@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, DeptStructure, ChangeStatus, DeleteIds, ChangeSort
+from backend.scheams import Result, Token, DeptStructure, ChangeStatus, Ids, ChangeSort
 from backend.models import Attachment
 from backend.crud import CRUDBase, getAnnex
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
@@ -41,7 +41,12 @@ async def get_page_dept(
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.delete(path="/system/attachment/delete", response_model=Result, summary="删除附件[逻辑删除]")
-async def delete_dept(annex: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def delete_dept(annex: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for id in annex.ids: await getAnnex.tombstone(db, id)
     return resp_200(msg="删除成功")
+
+@router.put(path="/system/attachment/recovery", response_model=Result, summary="恢复被删除的数据")
+async def recovery_user(annex: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for ids in annex.ids: await getAnnex.update(db, ids, obj_in={"delete": 0})
+    return resp_200(msg="恢复成功")
 

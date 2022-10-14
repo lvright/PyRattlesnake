@@ -93,7 +93,7 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
             for item in routers:
                 item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
                 if item["parent_id"] == 0: result.append(item)
-            return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
+        return {"data": result or [], "total": total, "page_total": page_total(total, pageSize)}
 
     async def getQueryReclcle(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
                               orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
@@ -132,7 +132,7 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
             for item in routers:
                 item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
                 if item["parent_id"] == 0: result.append(item)
-            return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
+        return {"data": result or [], "total": total, "page_total": page_total(total, pageSize)}
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """

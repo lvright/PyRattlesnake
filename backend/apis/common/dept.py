@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, DeptStructure, ChangeStatus, DeleteIds, ChangeSort
+from backend.scheams import Result, Token, DeptStructure, ChangeStatus, Ids, ChangeSort
 from backend.models import Dept
 from backend.crud import CRUDBase, getDept
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
@@ -62,7 +62,7 @@ async def change_status_dept(dept: ChangeStatus, db: AsyncSession = Depends(get_
     return resp_200(msg="修改成功")
 
 @router.delete(path="/system/dept/delete", response_model=Result, summary="删除部门[逻辑删除]")
-async def delete_dept(dept: DeleteIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def delete_dept(dept: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for id in dept.ids: await getDept.tombstone(db, id)
     return resp_200(msg="删除成功")
 
@@ -70,3 +70,8 @@ async def delete_dept(dept: DeleteIds, db: AsyncSession = Depends(get_db), token
 async def num_operation_dept(dept: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDept.getChangeSort(db, obj_in=dept.dict())
     return resp_200(msg="修改成功")
+
+@router.put(path="/system/dept/recovery", response_model=Result, summary="恢复被删除的数据")
+async def recovery_user(dept: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    for ids in dept.ids: await getDept.update(db, ids, obj_in={"delete": 0})
+    return resp_200(msg="恢复成功")

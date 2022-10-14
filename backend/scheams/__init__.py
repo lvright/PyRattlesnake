@@ -11,6 +11,6 @@ from .role import RoleStructure, RoleUpdate, RoleDataScope
 from .system import BackendSetting, ExtendConfig, SystemConfig, MenuForm, ConfigByKey, RedisInfo
 from .account import Account, AccountUpdate, Login, ModifyPassword, UserIDList, QueryUser, UserHome, UserId
 from .log import Loginlogger, Operlogger
-from .base import ChangeSort, ChangeStatus, DeleteIds
+from .base import ChangeSort, ChangeStatus, Ids
 from .menu import MenuStructure
 from .attachment import Annex
