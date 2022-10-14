@@ -17,13 +17,24 @@ router = APIRouter()
 
 @router.get(path="/system/queueMessage/receiveList", response_model=Result, summary="消息分页列表")
 async def get_message_page(
-        page: Optional[int] = 1, pageSize: Optional[int] = 10, orderBy: Optional[str] = "", orderType: Optional[str] = "", read_status: Optional[str] = "",
+        page: Optional[int] = 1, pageSize: Optional[int] = 10, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        read_status: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
         content_type: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    result = await getMessage.getQuery(db, query_obj={"read_status": read_status, "content_type": content_type})
+    result = await getMessage.getQuery(db, query_obj={"read_status": read_status, "content_type": content_type, "maxDate": maxDate, "minDate": minDate})
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.post(path="/system/queueMessage/sendPrivateMessage", response_model=Result, summary="发送消息")
 async def send_message(message: SendMessage, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    for user_id in message.users: await getMessage.update(db, user_id, obj_in={"content": message.content, "title": message.title, "send_user": token["username"]})
+    for user_id in message.users: await getMessage.create(db, obj_in={"content": message.content, "title": message.title, "send_user": token["username"]})
     return resp_200(msg="已发送")
+
+@router.get(path="/system/queueMessage/sendList", response_model=Result, summary="已发送消息")
+async def get_send_message_page(
+        page: Optional[int] = 1, pageSize: Optional[int] = 10, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        read_status: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        content_type: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    print(read_status, content_type)
+    result = await getMessage.getQuery(db, query_obj={"read_status": read_status, "content_type": content_type, "maxDate": maxDate, "minDate": minDate})
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})

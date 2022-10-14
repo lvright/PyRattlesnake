@@ -25,7 +25,7 @@ class CRUDMessage(CRUDBase[Message, MessageStructure]):
                        ) -> list:
         """ 根据查询条件获取 """
         result = None
-        if any([query_obj["read_status"], query_obj["content_type"]]):
+        if any([query_obj["read_status"], query_obj["content_type"]]) and query_obj["read_status"] and query_obj["content_type"] != "all":
             if orderType == "descending":
                 sql = select(self.model).where(self.model.read_status.like('%' + query_obj["read_status"] + '%'),
                                                self.model.content.like('%' + query_obj["content_type"] + '%'))\
@@ -48,6 +48,7 @@ class CRUDMessage(CRUDBase[Message, MessageStructure]):
         _query = await db.scalars(sql)
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
+        print(result)
         await db.close()  # 释放会话
         return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
