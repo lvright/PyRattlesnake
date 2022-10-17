@@ -5,6 +5,7 @@ from backend.core.conf import setting
 from backend.apis import app_router
 from backend.apis.deps import get_current_user
 from backend.apis.common import login, admin, system, dept, post, role, dict, menu, annex, message
+from backend.websocket import sys_message
 
 def register_router(app: FastAPI):
     """ 注册路由 """
@@ -18,6 +19,7 @@ def register_router(app: FastAPI):
     app.include_router(menu.router, prefix=setting.API_PREFIX, tags=["Menu"])
     app.include_router(annex.router, prefix=setting.API_PREFIX, tags=["Annex"])
     app.include_router(message.router, prefix=setting.API_PREFIX, tags=["Message"])
+    app.include_router(sys_message.router, prefix=setting.API_PREFIX, tags=["SystemMessage_WS"])
 
     # 权限(权限在每个接口上)
     app.include_router(app_router, prefix=setting.API_PREFIX)
