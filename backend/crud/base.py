@@ -40,6 +40,14 @@ class CRUDBase(Generic[ModelType, SchemaType]):
         data = [res[str(self.model.__name__)] for res in jsonable_encoder(result.all())]
         return data
 
+    async def get_first(self, db: AsyncSession) -> dict:
+        """ 获取最新一条数据 """
+        sql = select(self.model)
+        result = await db.execute(sql)
+        await db.close()
+        data =  jsonable_encoder(result.first())[str(self.model.__name__)]
+        return data
+
     async def get_multi(
             self, db: AsyncSession,
             orderBy: str = None,

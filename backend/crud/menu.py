@@ -32,6 +32,20 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
                 if item["parent_id"] == 0: result.append(item)
             return result
 
+    async def getMenuByRole(self, db: AsyncSession, user: dict) -> list:
+        """ 获取用户权限理由 """
+        sql = select(*[SystemMenu.id, SystemMenu.parent_id]).where(SystemMenu.status == "1")\
+            .where(SystemMenu.id == MenuRelation.menu_id, MenuRelation.role_id == RoleRelation.role_id).where(user['id'] == RoleRelation.user_id)
+        _menus = await db.execute(sql)
+        routers = jsonable_encoder(_menus.all())
+        if routers:
+            result = []
+            for item in routers:
+                item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
+                if item["parent_id"] == 0: result.append(item)
+            await db.close()  # 释放会话
+            return result
+
     async def userMenu(self, db: AsyncSession, user_id: int) -> list:
         """ 根据用户ID查询关联部门 """
         sql = select(MenuRelation).where(MenuRelation.user_id == user_id)

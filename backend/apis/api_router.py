@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from fastapi import APIRouter
-from backend.apis.common import (
-    login, admin, post, dept, role, system, dict, menu, message, annex
-)
+from backend.apis.common import login, admin, post, dept, role, system, dict, menu, message, annex
+from backend.websocket import sys_message
 
 app_router = APIRouter()
 
