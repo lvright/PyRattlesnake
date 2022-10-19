@@ -25,7 +25,7 @@ async def get_tree_dept(db: AsyncSession = Depends(get_db), token: str = Depends
     return resp_200(data=await getDept.deptTree(db))
 
 @router.get(path="/system/dept/index", response_model=Result, summary="获取部门分页列表")
-async def get_page_dept(
+async def get_dept_page(
     page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
     name: Optional[str] = "", leader: Optional[str] = "", phone: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
@@ -36,7 +36,7 @@ async def get_page_dept(
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/dept/recycle", response_model=Result, summary="获取被删除部门分页列表")
-async def get_page_dept(
+async def recycle_dept(
     page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
     name: Optional[str] = "", leader: Optional[str] = "", phone: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
@@ -67,11 +67,11 @@ async def delete_dept(dept: Ids, db: AsyncSession = Depends(get_db), token: str 
     return resp_200(msg="删除成功")
 
 @router.put(path="/system/dept/numberOperation", response_model=Result, summary="修改部门列表排序")
-async def num_operation_dept(dept: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def sort_operation_dept(dept: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDept.getChangeSort(db, obj_in=dept.dict())
     return resp_200(msg="修改成功")
 
 @router.put(path="/system/dept/recovery", response_model=Result, summary="恢复被删除的数据")
-async def recovery_user(dept: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def recovery_dept(dept: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for ids in dept.ids: await getDept.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")

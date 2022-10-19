@@ -68,11 +68,11 @@ async def delete_post(post: Ids, db: AsyncSession = Depends(get_db), token: str 
     return resp_200(msg="删除成功")
 
 @router.put(path="/system/post/numberOperation", response_model=Result, summary="修改岗位列表排序")
-async def num_operation_dept(post: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def sort_operation_dept(post: ChangeSort, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getPost.getChangeSort(db, obj_in=post.dict())
     return resp_200(msg="修改成功")
 
 @router.put(path="/system/post/recovery", response_model=Result, summary="恢复被删除的数据")
-async def recovery_user(post: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def recovery_post(post: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for ids in post.ids: await getPost.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")

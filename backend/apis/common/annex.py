@@ -21,7 +21,7 @@ from utils import resp_200
 router = APIRouter()
 
 @router.get(path="/system/attachment/index", response_model=Result, summary="获取附件分页列表")
-async def get_page_dept(
+async def get_annex_page(
         page: Optional[int] = 1, pageSize: Optional[int] = 0, orderBy: Optional[str] = "", orderType: Optional[str] = "",
         mime_type: Optional[str] = "", origin_name: Optional[str] = "", storage_mode: Optional[str] = "", maxDate: Optional[str] = "",
         minDate: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
@@ -31,7 +31,7 @@ async def get_page_dept(
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/attachment/recycle", response_model=Result, summary="获取被删除附件分页列表")
-async def get_page_dept(
+async def recycle_annex(
         page: Optional[int] = 1, pageSize: Optional[int] = 0, orderBy: Optional[str] = "", orderType: Optional[str] = "",
         mime_type: Optional[str] = "", origin_name: Optional[str] = "", storage_mode: Optional[str] = "", maxDate: Optional[str] = "",
         minDate: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
@@ -41,12 +41,12 @@ async def get_page_dept(
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.delete(path="/system/attachment/delete", response_model=Result, summary="删除附件[逻辑删除]")
-async def delete_dept(annex: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def delete_annex(annex: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for id in annex.ids: await getAnnex.tombstone(db, id)
     return resp_200(msg="删除成功")
 
 @router.put(path="/system/attachment/recovery", response_model=Result, summary="恢复被删除的数据")
-async def recovery_user(annex: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def recovery_annex(annex: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for ids in annex.ids: await getAnnex.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")
 

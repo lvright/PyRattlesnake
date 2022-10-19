@@ -51,7 +51,7 @@ async def get_post_list(db: AsyncSession = Depends(get_db), token: str = Depends
     return resp_200(data=await getPost.get_all(db))
 
 @router.get(path="/system/common/getUserList", response_model=Result, summary="获取用户列表")
-async def get_user_page(
+async def get_user_list(
     page: int = None, pageSize: int = None, orderBy: Optional[str] = "", orderType: Optional[str] = "",
     dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
     username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
@@ -63,7 +63,7 @@ async def get_user_page(
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.post(path="/system/common/getUserInfoByIds", response_model=Result, summary="获取接收信息用户")
-async def get_user(user: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def get_user_by_id(user: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     result = []
     for user_id in user.ids: result.append(await getUser.get(db, user_id))
     return resp_200(data=result)

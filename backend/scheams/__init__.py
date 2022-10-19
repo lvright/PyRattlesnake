@@ -15,3 +15,4 @@ from .base import ChangeSort, ChangeStatus, Ids
 from .menu import MenuStructure, MenuIds
 from .attachment import Annex
 from .message import MessageStructure, SendMessage
+from .notification import SystemNotification

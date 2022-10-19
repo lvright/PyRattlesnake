@@ -13,3 +13,4 @@ from .dict import getDictData, getDictType
 from .menu import getMenu
 from .annex import getAnnex
 from .message import getMessage
+from .notice import getNotification

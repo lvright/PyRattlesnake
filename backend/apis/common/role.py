@@ -95,7 +95,7 @@ async def update_dept_by_role(id: int, role: RoleDataScope, db: AsyncSession = D
     return resp_200(msg="保存成功")
 
 @router.put(path="/system/role/recovery", response_model=Result, summary="恢复被删除的数据")
-async def recovery_user(role: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def recovery_role(role: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for ids in role.ids: await getRole.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")
 
