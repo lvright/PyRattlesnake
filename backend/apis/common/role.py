@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
 from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, RoleStructure, RoleUpdate, Ids, ChangeSort, ChangeStatus, RoleDataScope
+from backend.scheams import Result, Token, RoleStructure, RoleUpdate, Ids, ChangeSort, ChangeStatus, RoleDataScope, MenuIds
 from backend.models import Dept
 from backend.crud import CRUDBase, getRole, getMenu
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
@@ -72,13 +72,26 @@ async def num_operation_dept(role: ChangeSort, db: AsyncSession = Depends(get_db
 @router.get(path="/system/role/getDeptByRole/{id:path}", response_model=Result, summary="获取数据权限")
 async def get_dept_by_role(id: int, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     data = await getRole.get_all(db)
-    result = [{"id": id, "depts": [{"id": int(dept_id), "pivot": {"role_id": id, "dept_id": int(dept_id)}} for item in data for dept_id in str(item["dept_ids"]).split(",") if dept_id]}]
+    result = [{"id": id, "depts": [
+                {
+                    "id": dept_id,
+                    "pivot":
+                        {
+                            "role_id": id,
+                            "dept_id": dept_id
+                        }
+                }
+                    for item in data
+                    for dept_id in str(item["dept_ids"]).split(",")
+                    if dept_id
+                ]
+            }]
     return resp_200(data=result)
 
 @router.put(path="/system/role/dataPermission/{id:path}", response_model=Result, summary="保存角色数据")
 async def update_dept_by_role(id: int, role: RoleDataScope, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     if role.dept_ids:
-        for dept in role.dept_ids: await getRole.update(db, id, obj_in={"data_scope": role.data_scope, "dept_ids": str(dept)})
+        for dept in role.dept_ids: await getRole.update(db, id, obj_in={"data_scope": role.data_scope, "dept_ids": dept})
     return resp_200(msg="保存成功")
 
 @router.put(path="/system/role/recovery", response_model=Result, summary="恢复被删除的数据")
@@ -87,13 +100,13 @@ async def recovery_user(role: Ids, db: AsyncSession = Depends(get_db), token: st
     return resp_200(msg="恢复成功")
 
 @router.get(path="/system/role/getMenuByRole/{id:path}", response_model=Result, summary="获取角色菜单权限")
-async def get_role_menu_id(id: int, c):
-    data = await getMenu.get_all(db)
-    result = [{"id": id, "menus": [{"id": id, "pivot": {"role_id": id, "menu_id": menu_id}} for item in data for menu_id in str(item["id"]).split(",") if menu_id]}]
+async def get_role_menu_id(id: int, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    data = await getMenu.getMenuByRole(db, user_id=id)
+    result = [{"id": id, "menus": [{"role_id": id, "menu_id": item["menu_id"]} for item in data]}]
     return resp_200(data={"id": id, "menus": result})
 
 @router.put(path="/system/role/menuPermission/{id:path}", response_model=Result, summary="保存角色菜单权限")
-async def save_role_permission(id: int, menu_ids: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    if menu_ids.ids:
-        for menu in menu_ids.ids: await getMenu.createRelation(db, obj_in={"user_id": id, "menu_id": menu})
+async def save_role_permission(id: int, ids: MenuIds, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    if ids.menu_ids:
+        for menu in ids.menu_ids: await getMenu.createRelation(db, obj_in={"role_id": id, "menu_id": menu})
     return resp_200(msg="保存成功")

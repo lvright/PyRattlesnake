@@ -18,3 +18,8 @@ class MenuStructure(BaseModel):
     sort: Optional[int] = None
     level: Optional[str] = None
     status: Optional[str] = None
+
+
+class MenuIds(BaseModel):
+    """ 角色菜单权限保存模型 """
+    menu_ids: Optional[list] = None

@@ -47,7 +47,7 @@ async def update_setting(setting: BackendSetting, token: str = Depends(check_jwt
 
 @router.get(path="/system/user/index", response_model=Result, summary="分页获取系统用户列表")
 async def get_user_page(
-    page: int = None, pageSize: int = None, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
     dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
     username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",

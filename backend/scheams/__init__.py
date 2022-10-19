@@ -12,6 +12,6 @@ from .system import BackendSetting, ExtendConfig, SystemConfig, MenuForm, Config
 from .account import Account, AccountUpdate, Login, ModifyPassword, UserIDList, QueryUser, UserHome, UserId
 from .log import Loginlogger, Operlogger
 from .base import ChangeSort, ChangeStatus, Ids
-from .menu import MenuStructure
+from .menu import MenuStructure, MenuIds
 from .attachment import Annex
 from .message import MessageStructure, SendMessage
