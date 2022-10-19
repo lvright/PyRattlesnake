@@ -26,19 +26,19 @@ async def get_tree_menu(db: AsyncSession = Depends(get_db), token: str = Depends
 
 @router.get(path="/system/menu/index", response_model=Result, summary="获取菜单分页列表")
 async def get_page_menu(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", code: Optional[str] = "", hidden: Optional[str] = "",
+    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", title: Optional[str] = "", hidden: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    query_obj = {"name": name, "code": code, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
+    query_obj = {"name": name, "title": title, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
     result = await getMenu.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/menu/recycle", response_model=Result, summary="获取被删除菜单分页列表")
 async def get_page_dept(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", code: Optional[str] = "", hidden: Optional[str] = "",
+    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "", title: Optional[str] = "", hidden: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    query_obj = {"name": name, "code": code, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
+    query_obj = {"name": name, "title": title, "hidden": hidden, "status": status, "maxDate": maxDate, "minDate": minDate}
     result = await getMenu.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 

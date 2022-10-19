@@ -37,11 +37,9 @@ class CRUBLogin(CRUDBase[Admin, Account]):
                 raise SetRedis(f"Redis存储 token 失败！-- {e}")
             return {"token": token}
 
-    async def out(self, request: Request, db: AsyncSession, redis: MyRedis = Depends(get_redis)) -> bool:
+    async def out(self, db: AsyncSession, request: Request, redis: MyRedis = Depends(get_redis)) -> bool:
         if 'authorization' in request.headers.keys():
             token = request.headers.get('authorization')[7:]  # 去除token前面的 Bearer
             await redis.delete(token)
-            return True
-        return False
 
 toLogin = CRUBLogin(Admin)

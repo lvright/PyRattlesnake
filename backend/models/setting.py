@@ -17,7 +17,7 @@ class Setting(Base):
 
     layout = Column(String(20), comment='系统布局')
 
-    menuCollapse = check_or_enum(name="menuCollapse", enumList=["0", "1"], comment="是否展开菜单: 0->否 1->是")
+    menuCollapse = Column(Integer, comment="是否展开菜单: 0->否 1->是")
 
     menuWidth = Column(Integer, comment='菜单宽度')
 
@@ -25,6 +25,6 @@ class Setting(Base):
 
     skin = Column(String(20), comment='系统皮肤')
 
-    tag = check_or_enum(name="layoutTags", enumList=["0", "1"], comment="是否显示标签: 0->否 1->是")
+    tag = Column(Integer, comment="是否显示标签: 0->否 1->是")
 
     user_id = Column(String(5), comment='绑定用户ID')

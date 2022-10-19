@@ -20,13 +20,13 @@ accountData = [
 settingData = [
     {
         "mode": "light",
-        "tag": "1",
+        "tag": 1,
         "menuCollapse": "0",
         "menuWidth": 240,
         "layout": "classic",
         "skin": "mine",
         "language": "zh_CN",
-        "color": "",
+        "color": "#5770F5",
         "user_id": 1
     }
 ]

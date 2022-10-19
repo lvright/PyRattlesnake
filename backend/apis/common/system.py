@@ -32,8 +32,9 @@ async def get_oper_log(username: str, orderBy: str, orderType: str, pageSize: in
     result = [res for res in result if res["username"] == username and result]
     return resp_200(data={"items": result, "pageInfo": {"total": total, "currentPage": 1, "totalPage": page_total(total, pageSize)}})
 
-@router.put(path="/system/setting/backendSetting", response_model=Result, summary="更新系统配置")
+@router.put(path="/system/common/saveSysSetting", response_model=Result, summary="更新系统配置")
 async def update_backend_setting(backend_setting: BackendSetting, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    print(backend_setting.dict())
     await getBackendSetting.updateBackendSetting(db, user_id=token["id"], obj_in=backend_setting.dict())
     return resp_200(msg="更新成功")
 

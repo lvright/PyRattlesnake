@@ -74,14 +74,14 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
                        ) -> list:
         """ 根据查询条件获取 """
         result = None
-        if any([query_obj["name"], query_obj["code"], query_obj["hidden"]]):
+        if any([query_obj["name"], query_obj["title"], query_obj["hidden"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.leader.like('%' + query_obj["code"] + '%'),
-                                               self.model.phone.like('%' + query_obj["hidden"] + '%'))\
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
                     .where(self.model.delete != "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.leader.like('%' + query_obj["code"] + '%'),
-                                               self.model.phone.like('%' + query_obj["hidden"] + '%'))\
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
                     .where(self.model.delete != "1").order_by(orderBy)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
@@ -113,13 +113,13 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
                               ) -> list:
         """ 根据查询条件获取 """
         result = None
-        if any([query_obj["name"], query_obj["code"], query_obj["hidden"]]):
+        if any([query_obj["name"], query_obj["title"], query_obj["hidden"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"] + '%'),
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
                                                self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
                     .where(self.model.delete == "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"] + '%'),
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
                                                self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
                     .where(self.model.delete == "1").order_by(orderBy)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
