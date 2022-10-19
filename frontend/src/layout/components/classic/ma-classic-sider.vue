@@ -1,12 +1,4 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
+
 <template>
   <a-layout-sider
     class="layout-classic-sider h-full flex flex-col hidden lg:block"
@@ -14,7 +6,7 @@
   >
     <div class="flex justify-center logo">
       <a-avatar class="mt-1" :size="40"><img src="/logo.svg" class="bg-white" /></a-avatar>
-      <span class="ml-2 text-xl mt-2.5" v-if="! appStore.menuCollapse">MineAdmin</span>
+      <span class="ml-2 text-xl mt-2.5" v-if="! appStore.menuCollapse">PyRattlesna</span>
     </div>
     <ma-menu
       ref="MaMenuRef"

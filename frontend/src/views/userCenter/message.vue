@@ -1,12 +1,4 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
+
 <template>
   <div class="ma-content-block p-3 lg:h-full block lg:border-0 lg:flex justify-between">
     <ul class="w-full lg:w-52 msg-menu p-2 shadow" ref="msgMenuRef">

@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 
 let defaultConfig = {
-  site_name: 'MineAdmin',
+  site_name: 'PyRattlesna',
   site_keywords: '',
   site_desc: '',
   site_record_number: '',

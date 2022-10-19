@@ -204,6 +204,16 @@ export default {
   },
 
   /**
+   * 保存系统设置
+   */
+     saveSystemSetting() {
+      return request({
+        url: 'system/common/saveSysSetting',
+        method: 'put'
+      })
+    },
+
+  /**
    * 获取模块列表
    */
   getModuleList() {
@@ -211,5 +221,5 @@ export default {
       url: 'setting/common/getModuleList',
       method: 'get'
     })
-  }
+  },
 }

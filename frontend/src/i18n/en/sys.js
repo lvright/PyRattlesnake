@@ -42,7 +42,6 @@ export default {
   goHome: 'Go Home',
   notFoundPage: 'Exit tip Ah oh, the page visited was hijacked by the Martians...',
   login: {
-    slogan: 'High-quality middle and back office management system out of the box',
     title: 'Login System',
     username: 'Username',
     usernameNotice: 'Please enter the username',

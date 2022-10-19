@@ -1,12 +1,4 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
+
 
 <template>
   <a-drawer
@@ -73,7 +65,7 @@
 import { ref, reactive, watch } from 'vue'
 import { useAppStore, useUserStore } from '@/store'
 import { Message } from '@arco-design/web-vue'
-import user from '@/api/system/user'
+import common from '@/api/common'
 import Skin from './skin.vue'
 import skins from '@/config/skins'
 import { useI18n } from 'vue-i18n'
@@ -129,7 +121,8 @@ const handleMenuWidth = (val) => appStore.changeMenuWidth(val)
 watch(() => appStore.menuCollapse, val => form.menuCollapse = val)
 
 const save = async (done) => {
-  const data = {
+
+  const backend_setting = {
     mode: appStore.mode,
     tag: appStore.tag,
     menuCollapse: appStore.menuCollapse,
@@ -140,9 +133,7 @@ const save = async (done) => {
     color: appStore.color
   }
 
-  user.updateInfo({ id: userStore.user.id, backend_setting: data }).then(res => {
-    res.success && Message.success(res.message)
-  })
+  common.saveSystemSetting(backend_setting).then(res => { res.success && Message.success(res.message) })
   done(true)
 }
 

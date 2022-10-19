@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref } from 'vue'
-const url = ref(import.meta.env.VITE_APP_BASE_URL + '/swagger')
+const url = ref(import.meta.env.VITE_APP_BASE_URL + '/api/docs')
 </script>
 <script>
 export default { name: 'systemInterface' }

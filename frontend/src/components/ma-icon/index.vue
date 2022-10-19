@@ -1,12 +1,4 @@
-<!--
- - MineAdmin is committed to providing solutions for quickly building web applications
- - Please view the LICENSE file that was distributed with this source code,
- - For the full copyright and license information.
- - Thank you very much for using MineAdmin.
- -
- - @Author X.Mo<root@imoi.cn>
- - @Link   https://gitee.com/xmo/mineadmin-vue
--->
+
 <template>
   <div>
     <a-input-group class="flex">
@@ -30,7 +22,7 @@
             </div>
           </a-option>
         </a-optgroup>
-        <a-optgroup label="MineAdmin">
+        <a-optgroup label="PyRattlesna">
           <a-option
             v-for="icon in mineadminIcons"
             :key="icon"
@@ -64,7 +56,7 @@
             </li>
           </ul>
         </a-tab-pane>
-        <a-tab-pane key="mine" title="MineAdmin">
+        <a-tab-pane key="mine" title="PyRattlesna">
           <ul class="mine">
             <li
               v-for="icon in mineadminIcons"
