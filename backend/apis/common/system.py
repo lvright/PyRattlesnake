@@ -52,7 +52,7 @@ async def get_post_list(db: AsyncSession = Depends(get_db), token: str = Depends
 
 @router.get(path="/system/common/getUserList", response_model=Result, summary="获取用户列表")
 async def get_user_list(
-    page: int = None, pageSize: int = None, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
     dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
     username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
     maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",

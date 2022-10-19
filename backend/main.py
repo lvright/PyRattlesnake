@@ -8,7 +8,6 @@ from utils.logger import logger
 from db import init_db, init_data, init_redis_pool
 from register import register_mount, register_exception, register_cors, register_middleware, register_router
 
-
 app = FastAPI(description=setting.PROJECT_DESC, version=setting.PROJECT_VERSION, docs_url=setting.API_DOCS)
 
 def create_app():

@@ -35,6 +35,5 @@ async def get_send_message_page(
         read_status: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
         content_type: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    print(read_status, content_type)
     result = await getMessage.getQuery(db, query_obj={"read_status": read_status, "content_type": content_type, "maxDate": maxDate, "minDate": minDate})
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
