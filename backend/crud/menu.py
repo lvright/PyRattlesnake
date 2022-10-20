@@ -16,6 +16,7 @@ from backend.crud import CRUDBase
 from backend.apis.deps import get_db, get_current_user, get_redis, page_total
 from backend.db import MyRedis
 
+
 class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
 
     async def menuTree(self, db: AsyncSession) -> list:
@@ -27,7 +28,7 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         if routers:
             result = []
             for item in routers:
-                item = {"id": item["id"], "parent_id": item["parent_id"], "label": item["title"], "value":  item["id"]}
+                item = {"id": item["id"], "parent_id": item["parent_id"], "label": item["title"], "value": item["id"]}
                 item["children"] = [{
                     "id": menu["id"],
                     "parent_id": menu["parent_id"],
@@ -76,25 +77,31 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         result = None
         if any([query_obj["name"], query_obj["title"], query_obj["hidden"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete != "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete != "1").order_by(orderBy)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"] + '%')\
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"] + '%') \
                     .where(self.model.delete != "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"] + '%')\
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"] + '%') \
                     .where(self.model.delete != "1").order_by(orderBy)
         elif query_obj["status"]:
             if orderType == "descending":
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete != "1").order_by(desc(orderBy))
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete != "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete != "1").order_by(orderBy)
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete != "1").order_by(orderBy)
         else:
             sql = select(self.model).where(self.model.delete != "1").order_by(orderBy)
         _query = await db.scalars(sql)
@@ -115,25 +122,31 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         result = None
         if any([query_obj["name"], query_obj["title"], query_obj["hidden"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete == "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%'))\
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
                     .where(self.model.delete == "1").order_by(orderBy)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete == "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
                     .where(self.model.delete == "1").order_by(orderBy)
         elif query_obj["status"]:
             if orderType == "descending":
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete == "1").order_by(desc(orderBy))
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete == "1").order_by(desc(orderBy))
             else:
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete == "1").order_by(orderBy)
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete == "1").order_by(orderBy)
         else:
             sql = select(self.model).where(self.model.delete == "1").order_by(orderBy)
         _query = await db.scalars(sql)
@@ -153,5 +166,6 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         result = await db.execute(sql)
         await db.commit()
         return result.rowcount
+
 
 getMenu = CRUDMenu(SystemMenu)

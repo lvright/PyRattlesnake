@@ -25,23 +25,24 @@ class CRUDMessage(CRUDBase[Message, MessageStructure]):
                        ) -> list:
         """ 根据查询条件获取 """
         result = None
-        if any([query_obj["read_status"], query_obj["content_type"]]) and query_obj["read_status"] and query_obj["content_type"] != "all":
+        if any([query_obj["read_status"], query_obj["content_type"]]) and query_obj["read_status"] and query_obj[
+            "content_type"] != "all":
             if orderType == "descending":
                 sql = select(self.model).where(self.model.read_status.like('%' + query_obj["read_status"] + '%'),
-                                               self.model.content.like('%' + query_obj["content_type"] + '%'))\
+                                               self.model.content.like('%' + query_obj["content_type"] + '%')) \
                     .offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model).where(self.model.read_status.like('%' + query_obj["read_status"] + '%'),
-                                               self.model.content.like('%' + query_obj["content_type"] + '%'))\
+                                               self.model.content.like('%' + query_obj["content_type"] + '%')) \
                     .offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
                 sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"])\
+                                               self.model.created_at <= query_obj["maxDate"]) \
                     .offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
                 sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"])\
+                                               self.model.created_at <= query_obj["maxDate"]) \
                     .offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         else:
             sql = select(self.model).offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
@@ -51,5 +52,6 @@ class CRUDMessage(CRUDBase[Message, MessageStructure]):
         print(result)
         await db.close()  # 释放会话
         return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
+
 
 getMessage = CRUDMessage(Message)

@@ -14,11 +14,14 @@ from backend.db import MyRedis
 
 router = APIRouter()
 
+
 @router.post(path='/system/login', response_model=Result, summary='后台登录')
-async def login_access_token(request: Request, db: AsyncSession = Depends(get_db), from_data: OAuth2PasswordRequestForm = Depends()):
+async def login_access_token(request: Request, db: AsyncSession = Depends(get_db),
+                             from_data: OAuth2PasswordRequestForm = Depends()):
     token = await toLogin.go(db, request, form_data={"username": from_data.username, "password": from_data.password})
     if token: return resp_200(data=token, msg="登录成功")
     return ErrorUser()
+
 
 @router.post("/system/logout", response_model=Result, summary="退出登录")
 async def logout_token(request: Request, db: AsyncSession = Depends(get_db), redis: MyRedis = Depends(get_redis)):

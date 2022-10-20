@@ -25,4 +25,5 @@ class CRUDBackendSetting(CRUDBase[Setting, BackendSetting]):
         await db.commit()
         return True
 
+
 getBackendSetting = CRUDBackendSetting(Setting)

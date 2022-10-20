@@ -19,7 +19,7 @@ from utils import resp_200, SetRedis, by_ip_get_address
 
 
 class CRUDLoginLog(CRUDBase[LoginLog, Loginlogger]):
-
     pass
+
 
 getLoginLog = CRUDLoginLog(LoginLog)

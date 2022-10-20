@@ -13,6 +13,7 @@ from utils import obj_as_dict, list_obj_as_dict
 ModelType = TypeVar("ModelType", bound=Base)
 SchemaType = TypeVar("SchemaType", bound=BaseModel)
 
+
 # db.scalar(sql) 返回的是标量(原始数据) <models.department.Department object at 0x000002F2C2D22110>
 # db.execute(sql) 返回的是元组 (<models.department.Department object at 0x000002F2C2D22110>)
 # db.scalars(sql).all()  [<models...>, <models...>, <models...>]
@@ -45,7 +46,7 @@ class CRUDBase(Generic[ModelType, SchemaType]):
         sql = select(self.model)
         result = await db.execute(sql)
         await db.close()
-        data =  jsonable_encoder(result.first())[str(self.model.__name__)]
+        data = jsonable_encoder(result.first())[str(self.model.__name__)]
         return data
 
     async def get_multi(
@@ -57,11 +58,15 @@ class CRUDBase(Generic[ModelType, SchemaType]):
     ) -> List[ModelType]:
         """ 获取第 pageIndex 页的 pageSize 数据 """
         if orderType == "descending":
-            if pageIndex and pageSize <= 1: sql = select(self.model).order_by(desc(orderBy))
-            else: sql = select(self.model).offset((pageIndex - 1) * pageSize).limit(pageSize).order_by(desc(orderBy))
+            if pageIndex and pageSize <= 1:
+                sql = select(self.model).order_by(desc(orderBy))
+            else:
+                sql = select(self.model).offset((pageIndex - 1) * pageSize).limit(pageSize).order_by(desc(orderBy))
         else:
-            if pageIndex and pageSize <= 1: sql = select(self.model)
-            else: sql = select(self.model).offset((pageIndex - 1) * pageSize).limit(pageSize)
+            if pageIndex and pageSize <= 1:
+                sql = select(self.model)
+            else:
+                sql = select(self.model).offset((pageIndex - 1) * pageSize).limit(pageSize)
         result = await db.scalars(sql)
         data = jsonable_encoder(result.all())
         await db.close()  # 释放会话

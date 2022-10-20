@@ -51,27 +51,38 @@ class CRUDRole(CRUDBase[Role, RoleStructure]):
         """ 按条件查询 """
         if any([query_obj["name"], query_obj["code"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"] + '%'))\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.code.like('%' + query_obj["code"] + '%')) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"] + '%'))\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.code.like('%' + query_obj["code"] + '%')) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         elif query_obj["status"]:
             if orderType == "descending":
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete != "1")\
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete != "1") \
                     .offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete != "1")\
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete != "1") \
                     .offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         else:
-            sql = select(self.model).where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+            sql = select(self.model).where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(
+                orderBy).limit(pageSize)
         _query = await db.scalars(sql)
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
@@ -84,27 +95,38 @@ class CRUDRole(CRUDBase[Role, RoleStructure]):
         """ 按条件查询逻辑删除数据 """
         if any([query_obj["name"], query_obj["code"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"] + '%'))\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.code.like('%' + query_obj["code"] + '%')) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'), self.model.code.like('%' + query_obj["code"] + '%'))\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
+                                               self.model.code.like('%' + query_obj["code"] + '%')) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         elif query_obj["status"]:
             if orderType == "descending":
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete == "1")\
-                    .offset((pageIndex - 1) * pageSize) .order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete == "1") \
+                    .offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
             else:
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(self.model.delete == "1")\
+                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
+                    self.model.delete == "1") \
                     .offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
         else:
-            sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+            sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(
+                orderBy).limit(pageSize)
         _query = await db.scalars(sql)
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
@@ -117,5 +139,6 @@ class CRUDRole(CRUDBase[Role, RoleStructure]):
         result = await db.execute(sql)
         await db.commit()
         return result.rowcount
+
 
 getRole = CRUDRole(Role)

@@ -27,18 +27,26 @@ class CURDNotification(CRUDBase[Notification, SystemNotification]):
         result = None
         if any([query_obj["title"], query_obj["type"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'), self.model.type.like('%' + query_obj["type"] + '%'))\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.type.like('%' + query_obj["type"] + '%')) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'), self.model.type.like('%' + query_obj["type"] + '%'))\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.type.like('%' + query_obj["type"] + '%')) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         else:
             sql = select(self.model).where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(
                 orderBy).limit(pageSize)
@@ -55,20 +63,29 @@ class CURDNotification(CRUDBase[Notification, SystemNotification]):
         result = None
         if any([query_obj["title"], query_obj["type"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'), self.model.type.like('%' + query_obj["type"] + '%'))\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.type.like('%' + query_obj["type"] + '%')) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'), self.model.type.like('%' + query_obj["type"] + '%'))\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.title.like('%' + query_obj["title"] + '%'),
+                                               self.model.type.like('%' + query_obj["type"] + '%')) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
+                    pageSize)
             else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])\
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
+                                               self.model.created_at <= query_obj["maxDate"]) \
+                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
+                    pageSize)
         else:
-            sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(pageSize)
+            sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(
+                orderBy).limit(pageSize)
         _query = await db.scalars(sql)
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
