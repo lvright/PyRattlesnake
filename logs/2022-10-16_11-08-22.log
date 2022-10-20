@@ -1,7 +1,0 @@
-2022-10-16 11:08:24.003 | INFO     | main:create_app:25 - 日志初始化成功！
-2022-10-16 11:08:24.026 | ERROR    | db.init_db:drop_db:41 - 删除表失败!!! -- 错误信息如下:
-'cryptography' package is required for sha256_password or caching_sha2_password auth methods
-2022-10-16 11:08:24.030 | ERROR    | db.init_db:init_db:29 - 创建表失败!!! -- 错误信息如下:
-'cryptography' package is required for sha256_password or caching_sha2_password auth methods
-2022-10-16 11:08:24.033 | ERROR    | db.init_db:init_data:67 - 初始化表数据失败!!! -- 错误信息如下:
-'cryptography' package is required for sha256_password or caching_sha2_password auth methods

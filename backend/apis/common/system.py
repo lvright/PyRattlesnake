@@ -34,7 +34,6 @@ async def get_oper_log(username: str, orderBy: str, orderType: str, pageSize: in
 
 @router.put(path="/system/common/saveSysSetting", response_model=Result, summary="更新系统配置")
 async def update_backend_setting(backend_setting: BackendSetting, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    print(backend_setting.dict())
     await getBackendSetting.updateBackendSetting(db, user_id=token["id"], obj_in=backend_setting.dict())
     return resp_200(msg="更新成功")
 
@@ -52,11 +51,10 @@ async def get_post_list(db: AsyncSession = Depends(get_db), token: str = Depends
 
 @router.get(path="/system/common/getUserList", response_model=Result, summary="获取用户列表")
 async def get_user_list(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
-    username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
-    maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
-    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token),
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", dept_id: Optional[str] = "",
+        role_id: Optional[str] = "", post_id: Optional[str] = "", username: Optional[str] = "", nickname: Optional[str] = "",
+        phone: Optional[str] = "", email: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token),
 ):
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
     result = await getUser.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
@@ -67,3 +65,7 @@ async def get_user_by_id(user: Ids, db: AsyncSession = Depends(get_db), token: s
     result = []
     for user_id in user.ids: result.append(await getUser.get(db, user_id))
     return resp_200(data=result)
+
+@router.post(path="/system/uploadImage", response_model=Result, summary="上传图片文件")
+async def upload_image(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    pass
