@@ -27,9 +27,9 @@ router = APIRouter()
 
 @router.get(path="/system/getInfo", response_model=Result, summary="获取用户信息")
 async def user_info(request: Request, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
-    user = await getUser.getUserInfo(db, user=token)
-    routers = await getUser.getUserRouters(db, user=user)
-    user["backend_setting"] = await getUser.getUserSetting(db, user=user)
+    user = await getUser.getUserInfo(db, token)
+    routers = await getUser.getUserRouters(db, user)
+    user["backend_setting"] = await getUser.getUserSetting(db, user)
     return resp_200(data={"codes": routers["codes"], "roles": [user["userId"]], "routers": routers["menus"], "user": user})
 
 @router.post(path="/system/user/updateInfo", response_model=Result, summary="更新用户信息")
@@ -44,30 +44,6 @@ async def modify_password(paw: ModifyPassword, token: str = Depends(check_jwt_to
 @router.post(path="/user/updateSetting", response_model=Result, summary="更新系统设置")
 async def update_setting(setting: BackendSetting, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
     if await getUser.updateSetting(db, obj_in=setting.dict(), user_id=token["id"]): return resp_200(msg="设置更新成功！")
-
-@router.get(path="/system/user/index", response_model=Result, summary="分页获取系统用户列表")
-async def get_user_page(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
-    username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
-    maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
-    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token),
-):
-    query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getUser.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
-
-@router.get(path="/system/user/recycle", response_model=Result, summary="展示回收站用户")
-async def recycle_user(
-    page: int = None, pageSize: int = None, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
-    username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
-    maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
-    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
-):
-    query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getUser.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/user/userDetail/{user_id:path}", response_model=Result, summary="获取用户详情")
 async def get_user_detail(user_id: int, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
@@ -132,10 +108,6 @@ async def export_user(page: int = Body(...), pageSize: int = Body(...), db: Asyn
 async def down_user_template(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     return resf_200(path=os.path.abspath(os.path.join(os.getcwd(), "..")) + "/static/user_file_export/template_user.xls")
 
-@router.post(path="/system/user/uploadImage", response_model=Result, summary="上传头像")
-async def upload_img_user(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    pass
-
 @router.post(path="/system/user/setHomePage", response_model=Result, summary="设置用户首页")
 async def set_home_user(user: UserHome, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getUser.update(db, id=user.id, obj_in=user.dict())
@@ -150,3 +122,25 @@ async def init_password(user: UserId, db: AsyncSession = Depends(get_db), token:
 async def recovery_user(user: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for ids in user.ids: await getUser.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")
+
+@router.get(path="/system/user/index", response_model=Result, summary="分页获取系统用户列表")
+async def get_user_page(
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", dept_id: Optional[str] = "",
+        role_id: Optional[str] = "", post_id: Optional[str] = "", username: Optional[str] = "", nickname: Optional[str] = "",
+        phone: Optional[str] = "", email: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token),
+):
+    query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getUser.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
+
+@router.get(path="/system/user/recycle", response_model=Result, summary="展示回收站用户")
+async def recycle_user(
+        page: int = None, pageSize: int = None, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "", username: Optional[str] = "",
+        nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "", maxDate: Optional[str] = "",
+        minDate: Optional[str] = "", status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getUser.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})

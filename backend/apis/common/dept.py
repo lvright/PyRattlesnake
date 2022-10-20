@@ -24,28 +24,6 @@ router = APIRouter()
 async def get_tree_dept(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     return resp_200(data=await getDept.deptTree(db))
 
-@router.get(path="/system/dept/index", response_model=Result, summary="获取部门分页列表")
-async def get_dept_page(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    name: Optional[str] = "", leader: Optional[str] = "", phone: Optional[str] = "",
-    maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
-    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
-):
-    query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getDept.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
-
-@router.get(path="/system/dept/recycle", response_model=Result, summary="获取被删除部门分页列表")
-async def recycle_dept(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    name: Optional[str] = "", leader: Optional[str] = "", phone: Optional[str] = "",
-    maxDate: Optional[str] = "", minDate: Optional[str] = "", status: Optional[str] = "",
-    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
-):
-    query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getDept.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
-
 @router.post(path="/system/dept/save", response_model=Result, summary="添加部门")
 async def save_dept(dept: DeptStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getDept.create(db, obj_in=dept.dict())
@@ -75,3 +53,23 @@ async def sort_operation_dept(dept: ChangeSort, db: AsyncSession = Depends(get_d
 async def recovery_dept(dept: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for ids in dept.ids: await getDept.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")
+
+@router.get(path="/system/dept/index", response_model=Result, summary="获取部门分页列表")
+async def get_dept_page(
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "",
+        leader: Optional[str] = "", phone: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getDept.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
+
+@router.get(path="/system/dept/recycle", response_model=Result, summary="获取被删除部门分页列表")
+async def recycle_dept(
+        page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "", name: Optional[str] = "",
+        leader: Optional[str] = "", phone: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        status: Optional[str] = "", db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getDept.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})

@@ -40,7 +40,7 @@ async def save_notice(notice: SystemNotification, db: AsyncSession = Depends(get
         data["users"] = str(user_id)
         print(data)
         await getNotification.create(db, obj_in=data)
-    resp_200(msg="添加成功")
+    return resp_200(msg="添加成功")
 
 @router.get(path="/system/common/getNoticeList", response_model=Result, summary="系统公告列表")
 async def recycle_notice(

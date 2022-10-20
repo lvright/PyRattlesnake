@@ -24,31 +24,8 @@ router = APIRouter()
 async def get_post_list(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     return resp_200(data=await getPost.userPost(db, user_id=token["id"]))
 
-@router.get(path="/system/post/index", response_model=Result, summary="获取岗位分页数据")
-async def get_post_page(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
-    maxDate: Optional[str] = "", minDate: Optional[str] = "",
-    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
-):
-    result = await getPost.getQuery(db, pageIndex=page, pageSize=pageSize,
-                                    query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
-
-@router.get(path="/system/post/recycle", response_model=Result, summary="获取岗位逻辑删除分页数据")
-async def get_post_page(
-    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-    name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
-    maxDate: Optional[str] = "", minDate: Optional[str] = "",
-    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
-):
-    result = await getPost.getQueryReclcle(db, pageIndex=page, pageSize=pageSize,
-                                           query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
-
 @router.post(path="/system/post/save", response_model=Result, summary="添加岗位")
 async def save_post(post: PostStructure, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    print(post.dict())
     await getPost.create(db, obj_in=post.dict())
     return resp_200(msg="添加成功")
 
@@ -76,3 +53,25 @@ async def sort_operation_dept(post: ChangeSort, db: AsyncSession = Depends(get_d
 async def recovery_post(post: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     for ids in post.ids: await getPost.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")
+
+@router.get(path="/system/post/index", response_model=Result, summary="获取岗位分页数据")
+async def get_post_page(
+    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+    name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
+    maxDate: Optional[str] = "", minDate: Optional[str] = "",
+    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getPost.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
+
+@router.get(path="/system/post/recycle", response_model=Result, summary="获取岗位逻辑删除分页数据")
+async def get_post_page(
+    page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
+    name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
+    maxDate: Optional[str] = "", minDate: Optional[str] = "",
+    db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
+):
+    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getPost.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})

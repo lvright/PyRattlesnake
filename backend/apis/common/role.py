@@ -30,8 +30,8 @@ async def get_role_page(
         code: Optional[str] = "", status: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
         db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    result = await getRole.getQuery(db, pageIndex=page, pageSize=pageSize,
-                                    query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
+    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getRole.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.get(path="/system/role/recycle", response_model=Result, summary="获取被删除角色分页列表")
@@ -40,8 +40,8 @@ async def get_role_page(
         code: Optional[str] = "", status: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
         db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    result = await getRole.getQueryReclcle(db, pageIndex=page, pageSize=pageSize,
-                                           query_obj={"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate})
+    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getRole.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page, "totalPage": result["page_total"]}})
 
 @router.post(path="/system/role/save", response_model=Result, summary="添加角色")
@@ -72,20 +72,7 @@ async def num_operation_dept(role: ChangeSort, db: AsyncSession = Depends(get_db
 @router.get(path="/system/role/getDeptByRole/{id:path}", response_model=Result, summary="获取数据权限")
 async def get_dept_by_role(id: int, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     data = await getRole.get_all(db)
-    result = [{"id": id, "depts": [
-                {
-                    "id": dept_id,
-                    "pivot":
-                        {
-                            "role_id": id,
-                            "dept_id": dept_id
-                        }
-                }
-                    for item in data
-                    for dept_id in str(item["dept_ids"]).split(",")
-                    if dept_id
-                ]
-            }]
+    result = [{"id": id, "depts": [{"id": dept_id, "pivot": {"role_id": id, "dept_id": dept_id}} for item in data for dept_id in str(item["dept_ids"]).split(",") if dept_id]}]
     return resp_200(data=result)
 
 @router.put(path="/system/role/dataPermission/{id:path}", response_model=Result, summary="保存角色数据")
