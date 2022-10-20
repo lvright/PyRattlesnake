@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.core import setting, create_access_token, celery
 from backend.scheams import Result, Token, Account, Login, AccountUpdate
-from backend.models import Admin
+from backend.models import Admin, LoginLog
 from backend.crud import CRUDBase
 from backend.apis.deps import get_db, get_current_user, get_redis
 from backend.db import MyRedis
@@ -28,9 +28,12 @@ class CRUBLogin(CRUDBase[Admin, Account]):
         if user_info:
             access_token_expires = timedelta(minutes=setting.ACCESS_TOKEN_EXPIRE_MINUTES)
             token = create_access_token(user_info, access_token_expires)
-            set_ipconfig = update(self.model).where(self.model.id == user_info['id']).values(
-                login_ip=request.client.host)
+            set_ipconfig = update(self.model).where(self.model.id == user_info['id']) \
+                .values(login_ip=request.client.host)
+            set_login_log = insert(LoginLog).values({"username": user_info["username"], "ip": request.client.host,
+                                                     "ip_location": by_ip_get_address(request.client.host)})
             await db.execute(set_ipconfig)
+            await db.execute(set_login_log)
             await db.commit()
             try:
                 await request.app.state.redis.incr('visit_num')  # 用户访问量 自增1

@@ -15,13 +15,6 @@ class LoginLog(Base):
 
     ip = Column(String(25), comment="登录IP地址")
 
-    os = Column(String(20), comment="登录系统")
-
     ip_location = Column(String(50), comment="IP所在地")
 
-    message = Column(String(150), comment="日志消息")
-
     login_time = Column(DateTime, server_default=func.now(), comment='登录时间')
-
-    status = check_or_enum(name="status", enumList=["0", "1"], comment="状态: 0->正常 1->禁用")
-

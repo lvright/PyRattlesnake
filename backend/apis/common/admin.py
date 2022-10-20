@@ -78,8 +78,10 @@ async def save_user(user: Account, db: AsyncSession = Depends(get_db), token: st
 
 @router.put(path="/system/user/update/{id:path}", response_model=Result, summary="保存用户")
 async def save_user(id: int, user: Account, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    await getPost.removeRelation(db, user_id=id), getRole.removeRelation(db, user_id=id), getPost.removeRelation(db,
-                                                                                                                 user_id=id)
+    await \
+        getPost.removeRelation(db, user_id=id), \
+        getRole.removeRelation(db, user_id=id), \
+        getPost.removeRelation(db, user_id=id)
     for post_id in user.post_ids:
         await getPost.createRelation(db, obj_in={"user_id": id, "post_id": post_id})
     for role_id in user.role_ids:

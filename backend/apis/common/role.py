@@ -71,7 +71,8 @@ async def change_status_dept(role: ChangeStatus, db: AsyncSession = Depends(get_
 
 @router.delete(path="/system/role/delete", response_model=Result, summary="删除角色[逻辑删除]")
 async def delete_role(role: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    for id in role.ids: await getRole.tombstone(db, id)
+    for id in role.ids:
+        await getRole.tombstone(db, id)
     return resp_200(msg="删除成功")
 
 
@@ -102,7 +103,8 @@ async def update_dept_by_role(id: int, role: RoleDataScope, db: AsyncSession = D
 
 @router.put(path="/system/role/recovery", response_model=Result, summary="恢复被删除的数据")
 async def recovery_role(role: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    for ids in role.ids: await getRole.update(db, ids, obj_in={"delete": 0})
+    for ids in role.ids:
+        await getRole.update(db, ids, obj_in={"delete": 0})
     return resp_200(msg="恢复成功")
 
 

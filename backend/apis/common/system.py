@@ -44,7 +44,8 @@ async def get_post_list(db: AsyncSession = Depends(get_db), token: str = Depends
 @router.post(path="/system/common/getUserInfoByIds", response_model=Result, summary="获取接收信息用户")
 async def get_user_by_id(user: Ids, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     result = []
-    for user_id in user.ids: result.append(await getUser.get(db, user_id))
+    for user_id in user.ids:
+        result.append(await getUser.get(db, user_id))
     return resp_200(data=result)
 
 
@@ -75,8 +76,8 @@ async def get_oper_log(username: str, orderBy: str, orderType: str, pageSize: in
 
 @router.get(path="/system/common/getUserList", response_model=Result, summary="获取用户列表")
 async def get_user_list(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        dept_id: Optional[str] = "",role_id: Optional[str] = "", post_id: Optional[str] = "",
-                        username: Optional[str] = "",nickname: Optional[str] = "",phone: Optional[str] = "",
+                        dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
+                        username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "",
                         email: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
                         status: Optional[str] = "", db: AsyncSession = Depends(get_db),
                         token: str = Depends(check_jwt_token)):
