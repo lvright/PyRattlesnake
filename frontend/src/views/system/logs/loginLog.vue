@@ -32,7 +32,6 @@
     },
     { title: '登录IP', dataIndex: 'ip', width: 150, search: true },
     { title: '登录地点', dataIndex: 'ip_location', width: 150 },
-    { title: '操作系统', dataIndex: 'os', width: 150},
     { title: '浏览器', dataIndex: 'browser', width: 150},
     { title: '登录信息', dataIndex: 'message', width: 180},
     { title: '登录时间', dataIndex: 'login_time', width: 180, search: true, formType: 'range' },

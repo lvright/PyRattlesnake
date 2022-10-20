@@ -27,22 +27,11 @@
           <a-tab-pane key="login-log" title="登录日志">
             <a-timeline class="pl-5 mt-3">
               <a-timeline-item
-                :label="`地理位置；${item.ip_location}，操作系统：${item.os}`"
+                :label="`地理位置；${item.ip_location}`"
                 v-for="(item, idx) in loginLogList"
                 :key="idx"
               >
-                您于 {{ item.login_time }} 登录系统，{{ item.message }}
-              </a-timeline-item>
-            </a-timeline>
-          </a-tab-pane>
-          <a-tab-pane key="operation-log" title="操作日志">
-            <a-timeline class="pl-5 mt-3">
-              <a-timeline-item
-                :label="`地理位置；${item.ip_location}，方式：${item.method}，路由：${item.router}`"
-                v-for="(item, idx) in operationLogList"
-                :key="idx"
-              >
-                您于 {{ item.created_at }} 执行了 {{ item.service_name }}
+                您于 {{ item.login_time }} 登录系统， {{ item.message }}
               </a-timeline-item>
             </a-timeline>
           </a-tab-pane>
