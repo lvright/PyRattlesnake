@@ -22,7 +22,7 @@
             </div>
           </a-option>
         </a-optgroup>
-        <a-optgroup label="PyRattlesna">
+        <a-optgroup label="PyRattlesnake">
           <a-option
             v-for="icon in mineadminIcons"
             :key="icon"
@@ -56,7 +56,7 @@
             </li>
           </ul>
         </a-tab-pane>
-        <a-tab-pane key="mine" title="PyRattlesna">
+        <a-tab-pane key="mine" title="PyRattlesnake">
           <ul class="mine">
             <li
               v-for="icon in mineadminIcons"

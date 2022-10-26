@@ -16,7 +16,7 @@
             {{ userStore.user.nickname || userStore.user.username }}，欢迎回来！
           </div>
           <div class="leading-5 mt-2">
-            欢迎使用PyRattlesna后台权限管理系统
+            欢迎使用PyRattlesnake后台权限管理系统
             <a-space size="large">
             </a-space>
           </div>

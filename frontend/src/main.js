@@ -42,6 +42,6 @@ app.config.globalProperties.$common = common
 
 app.mount('#app')
 
-tool.capsule('PyRattlesna', `v${packageJson.version} release`)
-console.log('PyRattlesna Github https://github.com/lvright/PyRattlesnake')
+tool.capsule('PyRattlesnake', `v${packageJson.version} release`)
+console.log('PyRattlesnake Github https://github.com/lvright/PyRattlesnake')
 console.log('芜湖~')
