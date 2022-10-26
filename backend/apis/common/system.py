@@ -78,7 +78,7 @@ async def get_login_log(username: str, orderBy: str, orderType: str, pageSize: i
                           "pageInfo": {"total": total, "currentPage": 1, "totalPage": page_total(total, pageSize)}})
 
 
-@router.get(path="/system/common/getOperationLogList", response_model=Result, summary="系统登录日志")
+@router.get(path="/system/common/getOperationLogList", response_model=Result, summary="系统访问日志")
 async def get_oper_log(username: str, orderBy: str, orderType: str, pageSize: int, db: AsyncSession = Depends(get_db),
                        token: str = Depends(check_jwt_token)):
     total = await getOperLog.get_number(db)
