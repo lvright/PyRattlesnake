@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import json
-from datetime import timedelta
-from backend.apis.deps import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, update
 from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter, Depends, Request, Security
-from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import insert, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import MenuStructure
-from backend.models import SystemMenu, MenuRelation, RoleRelation
+from backend.apis.deps import page_total
 from backend.crud import CRUDBase
-from backend.apis.deps import get_db, get_current_user, get_redis, page_total
-from backend.db import MyRedis
+from backend.models import SystemMenu, MenuRelation
+from backend.scheams import MenuStructure
 
 
 class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):

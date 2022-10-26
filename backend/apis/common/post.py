@@ -66,9 +66,15 @@ async def recovery_post(post: Ids, db: AsyncSession = Depends(get_db), token: st
 
 
 @router.get(path="/system/post/index", response_model=Result, summary="获取岗位分页数据")
-async def get_post_page(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
-                        maxDate: Optional[str] = "", minDate: Optional[str] = "",db: AsyncSession = Depends(get_db),
+async def get_post_page(page: int, pageSize: int,
+                        orderBy: Optional[str] = None,
+                        orderType: Optional[str] = None,
+                        name: Optional[str] = None,
+                        code: Optional[str] = None,
+                        status: Optional[str] = None,
+                        maxDate: Optional[str] = None,
+                        minDate: Optional[str] = None,
+                        db: AsyncSession = Depends(get_db),
                         token: str = Depends(check_jwt_token)):
     query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
     result = await getPost.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
@@ -77,9 +83,15 @@ async def get_post_page(page: int, pageSize: int, orderBy: Optional[str] = "", o
 
 
 @router.get(path="/system/post/recycle", response_model=Result, summary="获取岗位逻辑删除分页数据")
-async def get_post_page(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
-                        maxDate: Optional[str] = "", minDate: Optional[str] = "",db: AsyncSession = Depends(get_db),
+async def get_post_page(page: int, pageSize: int,
+                        orderBy: Optional[str] = None,
+                        orderType: Optional[str] = None,
+                        name: Optional[str] = None,
+                        code: Optional[str] = None,
+                        status: Optional[str] = None,
+                        maxDate: Optional[str] = None,
+                        minDate: Optional[str] = None,
+                        db: AsyncSession = Depends(get_db),
                         token: str = Depends(check_jwt_token)):
     query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
     result = await getPost.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)

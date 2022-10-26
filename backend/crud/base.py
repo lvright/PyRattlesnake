@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import func, distinct, select, insert, update, desc, delete
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.encoders import jsonable_encoder
 
 from backend.core import verify_password
 from backend.models import Base
-from utils import obj_as_dict, list_obj_as_dict
 
 ModelType = TypeVar("ModelType", bound=Base)
 SchemaType = TypeVar("SchemaType", bound=BaseModel)

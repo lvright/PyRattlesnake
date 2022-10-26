@@ -66,10 +66,17 @@ async def recovery_dept(dept: Ids, db: AsyncSession = Depends(get_db), token: st
 
 
 @router.get(path="/system/dept/index", response_model=Result, summary="获取部门分页列表")
-async def get_dept_page(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        name: Optional[str] = "",leader: Optional[str] = "", phone: Optional[str] = "",
-                        maxDate: Optional[str] = "", minDate: Optional[str] = "",status: Optional[str] = "",
-                        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def get_dept_page(page: int, pageSize: int,
+                        orderBy: Optional[str] = None,
+                        orderType: Optional[str] = None,
+                        name: Optional[str] = None,
+                        leader: Optional[str] = None,
+                        phone: Optional[str] = None,
+                        maxDate: Optional[str] = None,
+                        minDate: Optional[str] = None,
+                        status: Optional[str] = None,
+                        db: AsyncSession = Depends(get_db),
+                        token: str = Depends(check_jwt_token)):
     query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate,
                  "minDate": minDate}
     result = await getDept.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
@@ -78,10 +85,17 @@ async def get_dept_page(page: int, pageSize: int, orderBy: Optional[str] = "", o
 
 
 @router.get(path="/system/dept/recycle", response_model=Result, summary="获取被删除部门分页列表")
-async def recycle_dept(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                       name: Optional[str] = "",leader: Optional[str] = "", phone: Optional[str] = "",
-                       maxDate: Optional[str] = "", minDate: Optional[str] = "",status: Optional[str] = "",
-                       db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def recycle_dept(page: int, pageSize: int,
+                       orderBy: Optional[str] = None,
+                       orderType: Optional[str] = None,
+                       name: Optional[str] = None,
+                       leader: Optional[str] = None,
+                       phone: Optional[str] = None,
+                       maxDate: Optional[str] = None,
+                       minDate: Optional[str] = None,
+                       status: Optional[str] = None,
+                       db: AsyncSession = Depends(get_db),
+                       token: str = Depends(check_jwt_token)):
     query_obj = {"name": name, "leader": leader, "phone": phone, "status": status, "maxDate": maxDate,
                  "minDate": minDate}
     result = await getDept.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)

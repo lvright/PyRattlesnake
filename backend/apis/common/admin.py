@@ -57,9 +57,9 @@ async def update_setting(setting: BackendSetting, token: str = Depends(check_jwt
 async def get_user_detail(user_id: int, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
     result = await getUser.get(db, id=user_id)
     result["backend_setting"] = await getUser.getUserSetting(db, user=result)
-    result["dept_id"] = await getDept.userDept(db, result["id"])
-    result["roleList"] = await getRole.userRole(db, result["id"])
-    result["postList"] = await getPost.userPost(db, result["id"])
+    result["dept_id"] = await getDept.userDept(db, user_id)
+    result["roleList"] = await getRole.userRole(db, user_id)
+    result["postList"] = await getPost.userPost(db, user_id)
     return resp_200(data=result)
 
 
@@ -68,24 +68,18 @@ async def save_user(user: Account, db: AsyncSession = Depends(get_db), token: st
     user_data = user.dict()
     del user_data["post_ids"], user_data["role_ids"], user_data["dept_id"]
     new_user_id = await getUser.create(db, obj_in=user_data)
-    for post_id in user.post_ids:
-        await getPost.createRelation(db, obj_in={"user_id": new_user_id, "post_id": post_id})
-    for role_id in user.role_ids:
-        await getRole.createRelation(db, obj_in={"user_id": new_user_id, "role_id": role_id})
+    for post_id in user.post_ids: await getPost.createRelation(db, obj_in={"user_id": new_user_id, "post_id": post_id})
+    for role_id in user.role_ids: await getRole.createRelation(db, obj_in={"user_id": new_user_id, "role_id": role_id})
     await getDept.createRelation(db, obj_in={"user_id": new_user_id, "dept_id": user.dept_id})
     return resp_200(msg="创建成功")
 
 
 @router.put(path="/system/user/update/{id:path}", response_model=Result, summary="保存用户")
 async def save_user(id: int, user: Account, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    await \
-        getPost.removeRelation(db, user_id=id), \
-        getRole.removeRelation(db, user_id=id), \
-        getPost.removeRelation(db, user_id=id)
-    for post_id in user.post_ids:
-        await getPost.createRelation(db, obj_in={"user_id": id, "post_id": post_id})
-    for role_id in user.role_ids:
-        await getRole.createRelation(db, obj_in={"user_id": id, "role_id": role_id})
+    await getPost.removeRelation(db, user_id=id), getRole.removeRelation(db, user_id=id), \
+                                                  getPost.removeRelation(db, user_id=id)
+    for post_id in user.post_ids: await getPost.createRelation(db, obj_in={"user_id": id, "post_id": post_id})
+    for role_id in user.role_ids: await getRole.createRelation(db, obj_in={"user_id": id, "role_id": role_id})
     await getDept.createRelation(db, obj_in={"user_id": id, "dept_id": user.dict()["dept_id"]})
     return resp_200(msg="创建成功")
 
@@ -154,11 +148,20 @@ async def recovery_user(user: Ids, db: AsyncSession = Depends(get_db), token: st
 
 
 @router.get(path="/system/user/index", response_model=Result, summary="分页获取系统用户列表")
-async def get_user_page(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
-                        username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "",
-                        email: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
-                        status: Optional[str] = "", db: AsyncSession = Depends(get_db),
+async def get_user_page(page: int, pageSize: int,
+                        orderBy: Optional[str] = None,
+                        orderType: Optional[str] = None,
+                        dept_id: Optional[str] = None,
+                        role_id: Optional[str] = None,
+                        post_id: Optional[str] = None,
+                        username: Optional[str] = None,
+                        nickname: Optional[str] = None,
+                        phone: Optional[str] = None,
+                        email: Optional[str] = None,
+                        maxDate: Optional[str] = None,
+                        minDate: Optional[str] = None,
+                        status: Optional[str] = None,
+                        db: AsyncSession = Depends(get_db),
                         token: str = Depends(check_jwt_token)):
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status,
                  "maxDate": maxDate, "minDate": minDate}
@@ -168,11 +171,20 @@ async def get_user_page(page: int, pageSize: int, orderBy: Optional[str] = "", o
 
 
 @router.get(path="/system/user/recycle", response_model=Result, summary="展示回收站用户")
-async def recycle_user(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                       dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "",
-                       username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "",
-                       email: Optional[str] = "", maxDate: Optional[str] = "", minDate: Optional[str] = "",
-                       status: Optional[str] = "", db: AsyncSession = Depends(get_db),
+async def recycle_user(page: int, pageSize: int,
+                       orderBy: Optional[str] = None,
+                       orderType: Optional[str] = None,
+                       dept_id: Optional[str] = None,
+                       role_id: Optional[str] = None,
+                       post_id: Optional[str] = None,
+                       username: Optional[str] = None,
+                       nickname: Optional[str] = None,
+                       phone: Optional[str] = None,
+                       email: Optional[str] = None,
+                       maxDate: Optional[str] = None,
+                       minDate: Optional[str] = None,
+                       status: Optional[str] = None,
+                       db: AsyncSession = Depends(get_db),
                        token: str = Depends(check_jwt_token)):
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status,
                  "maxDate": maxDate, "minDate": minDate}

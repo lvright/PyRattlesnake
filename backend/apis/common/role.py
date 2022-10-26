@@ -27,28 +27,6 @@ async def get_role_list(db: AsyncSession = Depends(get_db), token: str = Depends
     return resp_200(data=await getRole.userRole(db, user_id=token["id"]))
 
 
-@router.get(path="/system/role/index", response_model=Result, summary="获取角色分页列表")
-async def get_role_page(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        name: Optional[str] = "",code: Optional[str] = "", status: Optional[str] = "",
-                        maxDate: Optional[str] = "", minDate: Optional[str] = "",db: AsyncSession = Depends(get_db),
-                        token: str = Depends(check_jwt_token)):
-    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getRole.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page,
-                                                                "totalPage": result["page_total"]}})
-
-
-@router.get(path="/system/role/recycle", response_model=Result, summary="获取被删除角色分页列表")
-async def get_role_page(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        name: Optional[str] = "",code: Optional[str] = "", status: Optional[str] = "",
-                        maxDate: Optional[str] = "", minDate: Optional[str] = "",db: AsyncSession = Depends(get_db),
-                        token: str = Depends(check_jwt_token)):
-    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
-    result = await getRole.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
-    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page,
-                                                                "totalPage": result["page_total"]}})
-
-
 @router.post(path="/system/role/save", response_model=Result, summary="添加角色")
 async def save_role(role: RoleUpdate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     await getRole.create(db, obj_in=role.dict())
@@ -96,8 +74,8 @@ async def get_dept_by_role(id: int, db: AsyncSession = Depends(get_db), token: s
 async def update_dept_by_role(id: int, role: RoleDataScope, db: AsyncSession = Depends(get_db),
                               token: str = Depends(check_jwt_token)):
     if role.dept_ids:
-        for dept in role.dept_ids: await getRole.update(db, id,
-                                                        obj_in={"data_scope": role.data_scope, "dept_ids": dept})
+        for dept in role.dept_ids:
+            await getRole.update(db, id, obj_in={"data_scope": role.data_scope, "dept_ids": dept})
     return resp_200(msg="保存成功")
 
 
@@ -119,5 +97,40 @@ async def get_role_menu_id(id: int, db: AsyncSession = Depends(get_db), token: s
 async def save_role_permission(id: int, ids: MenuIds, db: AsyncSession = Depends(get_db),
                                token: str = Depends(check_jwt_token)):
     if ids.menu_ids:
-        for menu in ids.menu_ids: await getMenu.createRelation(db, obj_in={"role_id": id, "menu_id": menu})
+        for menu in ids.menu_ids:
+            await getMenu.createRelation(db, obj_in={"role_id": id, "menu_id": menu})
     return resp_200(msg="保存成功")
+
+
+@router.get(path="/system/role/index", response_model=Result, summary="获取角色分页列表")
+async def get_role_page(page: int, pageSize: int,
+                        orderBy: Optional[str] = None,
+                        orderType: Optional[str] = None,
+                        name: Optional[str] = None,
+                        code: Optional[str] = None,
+                        status: Optional[str] = None,
+                        maxDate: Optional[str] = None,
+                        minDate: Optional[str] = None,
+                        db: AsyncSession = Depends(get_db),
+                        token: str = Depends(check_jwt_token)):
+    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getRole.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page,
+                                                                "totalPage": result["page_total"]}})
+
+
+@router.get(path="/system/role/recycle", response_model=Result, summary="获取被删除角色分页列表")
+async def get_role_page(page: int, pageSize: int,
+                        orderBy: Optional[str] = None,
+                        orderType: Optional[str] = None,
+                        name: Optional[str] = None,
+                        code: Optional[str] = None,
+                        status: Optional[str] = None,
+                        maxDate: Optional[str] = None,
+                        minDate: Optional[str] = None,
+                        db: AsyncSession = Depends(get_db),
+                        token: str = Depends(check_jwt_token)):
+    query_obj = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    result = await getRole.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)
+    return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page,
+                                                                "totalPage": result["page_total"]}})

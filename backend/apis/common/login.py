@@ -19,7 +19,8 @@ router = APIRouter()
 async def login_access_token(request: Request, db: AsyncSession = Depends(get_db),
                              from_data: OAuth2PasswordRequestForm = Depends()):
     token = await toLogin.go(db, request, form_data={"username": from_data.username, "password": from_data.password})
-    if token: return resp_200(data=token, msg="登录成功")
+    if token:
+        return resp_200(data=token, msg="登录成功")
     return ErrorUser()
 
 

@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from datetime import timedelta
-from backend.apis.deps import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, update, delete
 from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter, Depends, Request, Security
-from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import insert, select, update, delete
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import PostStructure
-from backend.models import Post, PostRelation
+from backend.apis.deps import page_total
 from backend.crud import CRUDBase
-from backend.apis.deps import get_db, get_current_user, get_redis, page_total
-from backend.db import MyRedis
+from backend.models import Post, PostRelation
+from backend.scheams import PostStructure
 
 
 class CRUDPost(CRUDBase[Post, PostStructure]):

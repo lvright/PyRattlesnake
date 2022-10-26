@@ -66,9 +66,15 @@ async def recovery_menu(menu: Ids, db: AsyncSession = Depends(get_db), token: st
 
 
 @router.get(path="/system/menu/index", response_model=Result, summary="获取菜单分页列表")
-async def get_menu_page(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                        name: Optional[str] = "",title: Optional[str] = "", hidden: Optional[str] = "",
-                        maxDate: Optional[str] = "", minDate: Optional[str] = "",status: Optional[str] = "",
+async def get_menu_page(page: int, pageSize: int,
+                        orderBy: Optional[str] = None,
+                        orderType: Optional[str] = None,
+                        name: Optional[str] = None,
+                        title: Optional[str] = None,
+                        hidden: Optional[str] = None,
+                        maxDate: Optional[str] = None,
+                        minDate: Optional[str] = None,
+                        status: Optional[str] = None,
                         db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     query_obj = {"name": name, "title": title, "hidden": hidden, "status": status, "maxDate": maxDate,
                  "minDate": minDate}
@@ -78,10 +84,17 @@ async def get_menu_page(page: int, pageSize: int, orderBy: Optional[str] = "", o
 
 
 @router.get(path="/system/menu/recycle", response_model=Result, summary="获取被删除菜单分页列表")
-async def recycle_menu(page: int, pageSize: int, orderBy: Optional[str] = "", orderType: Optional[str] = "",
-                       name: Optional[str] = "",title: Optional[str] = "", hidden: Optional[str] = "",
-                       maxDate: Optional[str] = "", minDate: Optional[str] = "",status: Optional[str] = "",
-                       db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+async def recycle_menu(page: int, pageSize: int,
+                       orderBy: Optional[str] = None,
+                       orderType: Optional[str] = None,
+                       name: Optional[str] = None,
+                       title: Optional[str] = None,
+                       hidden: Optional[str] = None,
+                       maxDate: Optional[str] = None,
+                       minDate: Optional[str] = None,
+                       status: Optional[str] = None,
+                       db: AsyncSession = Depends(get_db),
+                       token: str = Depends(check_jwt_token)):
     query_obj = {"name": name, "title": title, "hidden": hidden, "status": status, "maxDate": maxDate,
                  "minDate": minDate}
     result = await getMenu.getQueryReclcle(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj)

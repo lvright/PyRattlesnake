@@ -17,9 +17,15 @@ router = APIRouter()
 
 
 @router.get(path="/system/notice/index", response_model=Result, summary="系统通知分页列表")
-async def get_notice_page(page: Optional[int] = 1, pageSize: Optional[int] = 10, orderBy: Optional[str] = "",
-                          orderType: Optional[str] = "", title: Optional[str] = "", maxDate: Optional[str] = "",
-                          minDate: Optional[str] = "", type: Optional[str] = "", db: AsyncSession = Depends(get_db),
+async def get_notice_page(page: Optional[int] = 1,
+                          pageSize: Optional[int] = 10,
+                          orderBy: Optional[str] = None,
+                          orderType: Optional[str] = None,
+                          title: Optional[str] = None,
+                          maxDate: Optional[str] = None,
+                          minDate: Optional[str] = None,
+                          type: Optional[str] = None,
+                          db: AsyncSession = Depends(get_db),
                           token: str = Depends(check_jwt_token)):
     result = await getNotification.getQuery(db, query_obj={"title": title, "type": type, "maxDate": maxDate,
                                                            "minDate": minDate})
@@ -28,9 +34,15 @@ async def get_notice_page(page: Optional[int] = 1, pageSize: Optional[int] = 10,
 
 
 @router.get(path="/system/notice/recycle", response_model=Result, summary="系统通知分页列表")
-async def recycle_notice(page: Optional[int] = 1, pageSize: Optional[int] = 10, orderBy: Optional[str] = "",
-                         orderType: Optional[str] = "",title: Optional[str] = "", maxDate: Optional[str] = "",
-                         minDate: Optional[str] = "", type: Optional[str] = "",db: AsyncSession = Depends(get_db),
+async def recycle_notice(page: Optional[int] = 1,
+                         pageSize: Optional[int] = 10,
+                         orderBy: Optional[str] = None,
+                         orderType: Optional[str] = None,
+                         title: Optional[str] = None,
+                         maxDate: Optional[str] = None,
+                         minDate: Optional[str] = None,
+                         type: Optional[str] = None,
+                         db: AsyncSession = Depends(get_db),
                          token: str = Depends(check_jwt_token)):
     result = await getNotification.getQueryReclcle(db, query_obj={"title": title, "type": type, "maxDate": maxDate,
                                                                   "minDate": minDate})

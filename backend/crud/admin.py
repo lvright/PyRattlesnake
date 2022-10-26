@@ -1,22 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import json
-from datetime import timedelta
-from backend.apis.deps import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, update, and_, desc
 from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter, Depends, Request, Security
-from fastapi.security import OAuth2PasswordRequestForm
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from sqlalchemy import select, update, desc
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, Account, Login, AccountUpdate, ModifyPassword
-from backend.models import Admin, MenuRelation, SystemMenu, Role, Dept, RoleRelation, DeptRelation, Setting, \
-    PostRelation
+from backend.apis.deps import page_total
 from backend.crud import CRUDBase
-from backend.apis.deps import get_db, get_current_user, get_redis, page_total
-from backend.db import MyRedis
+from backend.models import Admin, MenuRelation, SystemMenu, RoleRelation, DeptRelation, Setting
+from backend.scheams import Account
 
 
 class CRUBAdmin(CRUDBase[Admin, Account]):
@@ -82,9 +73,15 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         await db.close()  # 释放会话
         return result.rowcount
 
-    async def getQuery(self, db: AsyncSession, query_obj: dict, dept_id: int, orderBy: str = None,
-                       orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
-                       ) -> list:
+    async def getQuery(
+            self, db: AsyncSession,
+            query_obj: dict,
+            dept_id: int,
+            orderBy: str = None,
+            orderType: str = "ascending",
+            pageIndex: int = 1,
+            pageSize: int = 10
+    ) -> list:
         """ 根据查询条件获取用户 """
         result = None
         if any([query_obj["username"], query_obj["nickname"], query_obj["phone"], query_obj["email"]]):
