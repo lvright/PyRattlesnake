@@ -2,6 +2,7 @@
 
 from pydantic import BaseModel
 from typing import Optional
+from fastapi import File, UploadFile, Form
 
 
 class BackendSetting(BaseModel):
@@ -53,13 +54,12 @@ class MenuForm(BaseModel):
     title: Optional[str] = None,
     type: Optional[str] = None,
 
-# 系统登录配置
+
 class ConfigByKey(BaseModel):
     """ 系统登录配置模型 """
     key: str = None
 
 
-# redis 信息
 class RedisInfo(BaseModel):
     """ redis key模型 """
     key: str = None

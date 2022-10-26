@@ -12,9 +12,14 @@ from backend.scheams import Annex
 
 class CRUDAnnex(CRUDBase[Annex, Attachment]):
 
-    async def getQuery(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
-                       orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
-                       ) -> list:
+    async def getQuery(
+            self, db: AsyncSession,
+            query_obj: dict,
+            orderBy: str = None,
+            orderType: str = "ascending",
+            pageIndex: int = 1,
+            pageSize: int = 10
+    ) -> list:
         """ 根据查询条件获取 """
         result = None
         if any([query_obj["origin_name"], query_obj["storage_mode"], query_obj["mime_type"]]):

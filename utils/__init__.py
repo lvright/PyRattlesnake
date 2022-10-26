@@ -7,5 +7,4 @@ from .custom_exc import IdNotExist, SetRedis, UserNotExist, AccessTokenFail, Err
 from .logger import logger
 from .permission_assign import handle_oauth2_scopes, generate_permission_data  # by_scopes_get_crud
 from .check_enum import check_or_enum
-from .read_files import read_local_files
 from .socket_msg import ConnectionManager
