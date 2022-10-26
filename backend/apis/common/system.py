@@ -68,6 +68,19 @@ async def upload_image(image: UploadFile = File(...), isChunk: bool = Form(...),
     return resp_200(data=result, msg="上传成功")
 
 
+@router.post(path="/system/uploadFile", summary="上传文件")
+async def upload_image(file: UploadFile = File(...), isChunk: bool = Form(...), hash: str = Form(...),
+                       db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
+    contents = await file.read()
+    savePath = "/static/attachment/" + file.filename
+    with open(os.path.abspath("..") + savePath, "wb") as f: f.write(contents)
+    result = {"object_name": str(random.randint(1, 100)), "origin_name": file.filename, "url": savePath,
+              "size_byte": str(file.spool_max_size), "storage_mode": file.file.mode, "storage_path": "attachment",
+              "size_info": str(file.spool_max_size/1000)+"KB", "suffix": file.filename.split(".")[1]}
+    await getAnnex.create(db, obj_in=result)
+    return resp_200(data=result, msg="上传成功")
+
+
 @router.get(path="/system/common/getLoginLogList", response_model=Result, summary="系统登录日志")
 async def get_login_log(username: str, orderBy: str, orderType: str, pageSize: int, db: AsyncSession = Depends(get_db),
                         token: str = Depends(check_jwt_token)):
