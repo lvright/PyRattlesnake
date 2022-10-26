@@ -35,14 +35,14 @@ async def recovery_annex(annex: Ids, db: AsyncSession = Depends(get_db), token: 
 
 @router.get(path="/system/attachment/recycle", response_model=Result, summary="获取被删除附件分页列表")
 async def recycle_annex(pageSize: int,
-                        page: Optional[int] = None,
-                        orderBy: Optional[str] = None,
-                        orderType: Optional[str] = None,
-                        mime_type: Optional[str] = None,
-                        origin_name: Optional[str] = None,
-                        storage_mode: Optional[str] = None,
-                        maxDate: Optional[str] = None,
-                        minDate: Optional[str] = None,
+                        page: Optional[int],
+                        orderBy: Optional[str] = "",
+                        orderType: Optional[str] = "",
+                        mime_type: Optional[str] = "",
+                        origin_name: Optional[str] = "",
+                        storage_mode: Optional[str] = "",
+                        maxDate: Optional[str] = "",
+                        minDate: Optional[str] = "",
                         db: AsyncSession = Depends(get_db),
                         token: str = Depends(check_jwt_token)):
     query_obj = {"origin_name": origin_name, "storage_mode": storage_mode, "mime_type": mime_type, "maxDate": maxDate,
@@ -54,18 +54,19 @@ async def recycle_annex(pageSize: int,
 
 @router.get(path="/system/attachment/index", response_model=Result, summary="获取附件分页列表")
 async def get_annex_page(pageSize: int,
-                         page: Optional[int] = None,
-                         orderBy: Optional[str] = None,
-                         orderType: Optional[str] = None,
-                         mime_type: Optional[str] = None,
-                         origin_name: Optional[str] = None,
-                         storage_mode: Optional[str] = None,
-                         maxDate: Optional[str] = None,
-                         minDate: Optional[str] = None,
+                         page: Optional[int],
+                         orderBy: Optional[str] = "",
+                         orderType: Optional[str] = "",
+                         mime_type: Optional[str] = "",
+                         origin_name: Optional[str] = "",
+                         storage_mode: Optional[str] = "",
+                         maxDate: Optional[str] = "",
+                         minDate: Optional[str] = "",
                          db: AsyncSession = Depends(get_db),
                          token: str = Depends(check_jwt_token)):
     query_obj = {"origin_name": origin_name, "storage_mode": storage_mode, "mime_type": mime_type, "maxDate": maxDate,
                  "minDate": minDate}
+    print(query_obj)
     result = await getAnnex.getQuery(db, pageSize=pageSize, query_obj=query_obj)
     return resp_200(data={"items": result["data"], "pageInfo": {"total": result["total"], "currentPage": page,
                                                                 "totalPage": result["page_total"]}})
