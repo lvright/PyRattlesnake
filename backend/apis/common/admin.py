@@ -98,6 +98,7 @@ async def get_user_detail(
         str = Depends(check_jwt_token),
         db: AsyncSession = Depends(get_db)
 ):
+    result = {}
     result = await getUser.get(db, id=user_id)
     result.setdefault("backend_setting", await getUser.getUserSetting(db, user=result))
     result.setdefault("dept_id", await getDept.userDept(db, user_id))
@@ -119,9 +120,13 @@ async def save_user(
     user_data = user.dict()
     for key in ["post_ids", "role_ids", "dept_id"]: user_data.pop(key)
     new_user_id = await getUser.create(db, user_data)
-    create_post_data = [{"user_id": new_user_id, "post_id": post_id} for post_id in user.post_ids]
-    create_role_data = [{"user_id": new_user_id, "role_id": role_id} for role_id in user.role_ids]
-    await getPost.createRelation(db, create_post_data), getRole.createRelation(db, create_role_data)
+    print(user.post_ids, user.role_ids)
+    if user.post_ids:
+        create_relation_post = [{"user_id": new_user_id, "post_id": post_id} for post_id in user.post_ids]
+        await getPost.createRelation(db, *create_relation_post)
+    if user.role_ids:
+        create_relation_role = [{"user_id": new_user_id, "role_id": role_id} for role_id in user.role_ids]
+        await getRole.createRelation(db, *create_relation_role)
     await getDept.createRelation(db, {"user_id": new_user_id, "dept_id": user.dept_id})
     return resp_200(msg="创建成功")
 
@@ -137,10 +142,15 @@ async def update_user(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    await getPost.removeRelation(db, id), getRole.removeRelation(db, id), getPost.removeRelation(db, id)
-    update_post_data = [{"user_id": id, "post_id": post_id} for post_id in user.post_ids]
-    update_role_data = [{"user_id": id, "role_id": role_id} for role_id in user.role_ids]
-    await getPost.createRelation(db, update_post_data), getRole.createRelation(db, update_role_data)
+    await getPost.removeRelation(db, id)
+    await getRole.removeRelation(db, id)
+    await getPost.removeRelation(db, id)
+    if user.post_ids:
+        update_post_result = [{"user_id": id, "post_id": post_id} for post_id in user.post_ids]
+        await getPost.createRelation(db, *update_post_data)
+    if user.role_ids:
+        update_role_result = [{"user_id": id, "role_id": role_id} for role_id in user.role_ids]
+        await getRole.createRelation(db, *update_role_data)
     await getDept.createRelation(db, {"user_id": id, "dept_id": user.dept_id})
     return resp_200(msg="创建成功")
 
