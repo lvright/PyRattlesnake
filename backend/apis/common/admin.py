@@ -104,6 +104,7 @@ async def get_user_detail(
     result.setdefault("dept_id", await getDept.userDept(db, user_id))
     result.setdefault("roleList", await getRole.userRole(db, user_id))
     result.setdefault("postList", await getPost.userPost(db, user_id))
+    print("result", result)
     return resp_200(data=result)
 
 
@@ -120,7 +121,6 @@ async def save_user(
     user_data = user.dict()
     for key in ["post_ids", "role_ids", "dept_id"]: user_data.pop(key)
     new_user_id = await getUser.create(db, user_data)
-    print(user.post_ids, user.role_ids)
     if user.post_ids:
         create_relation_post = [{"user_id": new_user_id, "post_id": post_id} for post_id in user.post_ids]
         await getPost.createRelation(db, *create_relation_post)
@@ -367,13 +367,12 @@ async def recycle_user(
     result = await getUser.getQueryReclcle(
         db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id
     )
-    return resp_200(
-        data={
-            "items": result["data"],
-            "pageInfo": {
-                "total": result["total"],
-                "currentPage": page,
-                "totalPage": result["page_total"]
-            }
+    return resp_200(data={
+        "items": result["data"],
+        "pageInfo": {
+            "total": result["total"],
+            "currentPage": page,
+            "totalPage": result["page_total"]
         }
-    )
+    })
+
