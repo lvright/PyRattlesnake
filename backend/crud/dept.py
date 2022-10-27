@@ -88,7 +88,8 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
                            self.model.phone.like('%' + query_obj["phone"] + '%'))\
                     .where(self.model.delete == delete)\
                     .offset((pageIndex - 1) * pageSize)\
-                    .order_by(orderBy).limit(pageSize)
+                    .order_by(orderBy)\
+                    .limit(pageSize)
 
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
