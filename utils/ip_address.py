@@ -5,8 +5,8 @@ import re
 import ssl
 from urllib import request
 from ipaddress import ip_address
-
 from utils.custom_exc import IpError
+from utils import logger
 
 
 def verify_ip(ip):
@@ -20,15 +20,18 @@ def verify_ip(ip):
 def by_ip_get_address(ip) -> str:
     """ 根据ip获取地址 """
 
+    response_dict = None
+
     ssl._create_default_https_context = ssl._create_unverified_context
 
     verify_ip(ip)
 
-    req = request.Request(f"https://whois.pconline.com.cn/ipJson.jsp?json=true&ip={ip}")
-    response = request.urlopen(req).read().decode('gbk')  # 获取响应
-
-    response_dict = json.loads(response)
-
+    try:
+        req = request.Request(f"https://whois.pconline.com.cn/ipJson.jsp?json=true&ip={ip}")
+        response = request.urlopen(req).read().decode('gbk')  # 获取响应
+        response_dict = json.loads(response)
+    except Exception as e:
+        logger.warning(f"IP 获取失败！ --{e}")
     if response_dict["proCode"] == "999999":
         return '广东省广州市'
     else:

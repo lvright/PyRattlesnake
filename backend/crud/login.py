@@ -14,7 +14,7 @@ from backend.crud import CRUDBase
 from backend.db import MyRedis
 from backend.models import Admin, LoginLog
 from backend.scheams import Account
-from utils import SetRedis, by_ip_get_address
+from utils import SetRedis, by_ip_get_address, logger
 
 
 class CRUBLogin(CRUDBase[Admin, Account]):
@@ -31,8 +31,8 @@ class CRUBLogin(CRUDBase[Admin, Account]):
                 .values(login_ip=request.client.host)
             set_login_log = insert(LoginLog).values({"username": user_info["username"], "ip": request.client.host,
                                                      "ip_location": by_ip_get_address(request.client.host)})
-            await db.execute(set_ipconfig)
             await db.execute(set_login_log)
+            await db.execute(set_ipconfig)
             await db.commit()
             try:
                 await request.app.state.redis.incr('visit_num')  # 用户访问量 自增1

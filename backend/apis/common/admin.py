@@ -1,33 +1,30 @@
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter, Depends, Request, Security, Body
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.datastructures import MutableHeaders
+import os
+import time
 from typing import Optional
+
+import pandas as pd
+from fastapi import APIRouter, Depends, Body
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-import pandas as pd
-import time
-import os
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from utils import resp_200, resp_400, resp_500, resp_404, resf_200, by_ip_get_address, ErrorUser
-from backend.apis.deps import get_redis, get_db, get_current_user, page_total
-from backend.crud import getUser, getDept, getPost, getRole
+from backend.apis.deps import get_db
 from backend.core import check_jwt_token
+from backend.crud import getUser, getDept, getPost, getRole
 from backend.scheams import (
-    Token, Result, Account, AccountUpdate,
+    Result, Account, AccountUpdate,
     ModifyPassword, BackendSetting, UserIDList,
-    UserHome, UserId, QueryUser, ChangeSort,
-    ChangeStatus, Ids
+    UserHome, UserId, ChangeStatus, Ids
 )
-from backend.db import MyRedis
+from utils import resp_200, resp_400, resf_200
 
 router = APIRouter()
 
 
 @router.get(path="/system/getInfo", response_model=Result, summary="获取用户信息")
-async def user_info(request: Request, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
+async def user_info(db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     user = await getUser.getUserInfo(db, token)
     routers = await getUser.getUserRouters(db, user)
     user["backend_setting"] = await getUser.getUserSetting(db, user)
@@ -36,7 +33,7 @@ async def user_info(request: Request, token: str = Depends(check_jwt_token), db:
 
 
 @router.post(path="/system/user/updateInfo", response_model=Result, summary="更新用户信息")
-async def update_user(user: AccountUpdate, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
+async def update_user(user: AccountUpdate, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
     if await getUser.update(db, id=user.id, obj_in=user.dict()): return resp_200(msg="更新成功")
 
 
@@ -56,10 +53,10 @@ async def update_setting(setting: BackendSetting, token: str = Depends(check_jwt
 @router.get(path="/user/userDetail/{user_id:path}", response_model=Result, summary="获取用户详情")
 async def get_user_detail(user_id: int, token: str = Depends(check_jwt_token), db: AsyncSession = Depends(get_db)):
     result = await getUser.get(db, id=user_id)
-    result["backend_setting"] = await getUser.getUserSetting(db, user=result)
-    result["dept_id"] = await getDept.userDept(db, user_id)
-    result["roleList"] = await getRole.userRole(db, user_id)
-    result["postList"] = await getPost.userPost(db, user_id)
+    result.setdefault("backend_setting", await getUser.getUserSetting(db, user=result))
+    result.setdefault("dept_id", await getDept.userDept(db, user_id))
+    result.setdefault("roleList", await getRole.userRole(db, user_id))
+    result.setdefault("postList", await getPost.userPost(db, user_id))
     return resp_200(data=result)
 
 
@@ -75,9 +72,10 @@ async def save_user(user: Account, db: AsyncSession = Depends(get_db), token: st
 
 
 @router.put(path="/system/user/update/{id:path}", response_model=Result, summary="保存用户")
-async def save_user(id: int, user: Account, db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)):
-    await getPost.removeRelation(db, user_id=id), getRole.removeRelation(db, user_id=id), \
-                                                  getPost.removeRelation(db, user_id=id)
+async def update_user(id: int, user: Account, db: AsyncSession = Depends(get_db),
+                      token: str = Depends(check_jwt_token)):
+    await getPost.removeRelation(db, user_id=id), getRole.removeRelation(db, user_id=id), getPost.removeRelation(db,
+                                                                                                                 user_id=id)
     for post_id in user.post_ids: await getPost.createRelation(db, obj_in={"user_id": id, "post_id": post_id})
     for role_id in user.role_ids: await getRole.createRelation(db, obj_in={"user_id": id, "role_id": role_id})
     await getDept.createRelation(db, obj_in={"user_id": id, "dept_id": user.dict()["dept_id"]})
@@ -149,20 +147,20 @@ async def recovery_user(user: Ids, db: AsyncSession = Depends(get_db), token: st
 
 @router.get(path="/system/user/index", response_model=Result, summary="分页获取系统用户列表")
 async def get_user_page(page: int, pageSize: int,
-                        orderBy: Optional[str] = "",
-                        orderType: Optional[str] = "",
-                        dept_id: Optional[str] = "",
-                        role_id: Optional[str] = "",
-                        post_id: Optional[str] = "",
-                        username: Optional[str] = "",
-                        nickname: Optional[str] = "",
-                        phone: Optional[str] = "",
-                        email: Optional[str] = "",
-                        maxDate: Optional[str] = "",
-                        minDate: Optional[str] = "",
-                        status: Optional[str] = "",
-                        db: AsyncSession = Depends(get_db),
-                        token: str = Depends(check_jwt_token)):
+                       orderBy: Optional[str] = "",
+                       orderType: Optional[str] = "",
+                       dept_id: Optional[str] = "",
+                       role_id: Optional[str] = "",
+                       post_id: Optional[str] = "",
+                       username: Optional[str] = "",
+                       nickname: Optional[str] = "",
+                       phone: Optional[str] = "",
+                       email: Optional[str] = "",
+                       maxDate: Optional[str] = "",
+                       minDate: Optional[str] = "",
+                       status: Optional[str] = "",
+                       db: AsyncSession = Depends(get_db),
+                       token: str = Depends(check_jwt_token)):
     query_obj = {"phone": phone, "email": email, "nickname": nickname, "username": username, "status": status,
                  "maxDate": maxDate, "minDate": minDate}
     result = await getUser.getQuery(db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id)
