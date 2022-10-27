@@ -1,21 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import json
-from datetime import timedelta
-from backend.apis.deps import get_db
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import insert, select, update
-from fastapi.encoders import jsonable_encoder
-from fastapi import APIRouter, Depends, Request, Security
-from fastapi.security import OAuth2PasswordRequestForm
 from typing import Optional
 
-from backend.core import setting, create_access_token, check_jwt_token, celery
-from backend.scheams import Result, Token, DeptStructure, ChangeStatus, Ids, ChangeSort
-from backend.models import Dept
-from backend.crud import CRUDBase, getDept
-from backend.apis.deps import get_db, get_current_user, get_redis, page_total
-from backend.db import MyRedis
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.apis.deps import get_db
+from backend.core import check_jwt_token
+from backend.crud import getDept
+from backend.scheams import Result, DeptStructure, ChangeStatus, Ids, ChangeSort
 from utils import resp_200
 
 router = APIRouter()
