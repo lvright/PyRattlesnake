@@ -321,7 +321,7 @@ async def get_user_page(
         "minDate": minDate
     }
     result = await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id
+        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id, delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -364,8 +364,8 @@ async def recycle_user(
         "maxDate": maxDate,
         "minDate": minDate
     }
-    result = await getUser.getQueryReclcle(
-        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id
+    result = await getUser.getQuery(
+        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id, delete="1"
     )
     return resp_200(data={
         "items": result["data"],

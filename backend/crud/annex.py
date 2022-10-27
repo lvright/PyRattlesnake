@@ -18,75 +18,62 @@ class CRUDAnnex(CRUDBase[Annex, Attachment]):
             orderBy: str = None,
             orderType: str = "ascending",
             pageIndex: int = 1,
-            pageSize: int = 10
+            pageSize: int = 10,
+            delete: str = "0"
     ) -> list:
         """ 根据查询条件获取 """
-        result = None
-        if any([query_obj["origin_name"], query_obj["storage_mode"], query_obj["mime_type"]]):
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
-                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%')) \
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
-                    pageSize)
-            else:
-                sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
-                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%')) \
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
-                    pageSize)
-        elif any([query_obj["minDate"], query_obj["maxDate"]]):
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
-                    pageSize)
-            else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
-                    .where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
-                    pageSize)
-        else:
-            sql = select(self.model).where(self.model.delete != "1").offset((pageIndex - 1) * pageSize).order_by(
-                orderBy).limit(pageSize)
-        _query = await db.scalars(sql)
-        total = await self.get_number(db)
-        result = jsonable_encoder(_query.all())
-        await db.close()  # 释放会话
-        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
 
-    async def getQueryReclcle(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
-                              orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
-                              ) -> list:
-        """ 根据查询条件获取 """
         result = None
-        if any([query_obj["origin_name"], query_obj["storage_mode"], query_obj["mime_type"]]):
+
+        if any([
+            query_obj["origin_name"],
+            query_obj["storage_mode"],
+            query_obj["mime_type"]
+        ]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
-                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%')) \
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
-                    pageSize)
+                sql = select(self.model)\
+                    .where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
+                           self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
+                           self.model.mime_type.like('%' + query_obj["mime_type"] + '%'))\
+                    .where(self.model.delete == delete)\
+                    .offset((pageIndex - 1) * pageSize)\
+                    .order_by(desc(orderBy))\
+                    .limit(pageSize)
             else:
-                sql = select(self.model).where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
-                                               self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
-                                               self.model.mime_type.like('%' + query_obj["mime_type"] + '%')) \
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
-                    pageSize)
+                sql = select(self.model)\
+                    .where(self.model.origin_name.like('%' + query_obj["origin_name"] + '%'),
+                           self.model.storage_mode.like('%' + query_obj["storage_mode"] + '%'),
+                           self.model.mime_type.like('%' + query_obj["mime_type"] + '%'))\
+                    .where(self.model.delete == delete)\
+                    .offset((pageIndex - 1) * pageSize)\
+                    .order_by(orderBy)\
+                    .limit(pageSize)
+
         elif any([query_obj["minDate"], query_obj["maxDate"]]):
             if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(desc(orderBy)).limit(
-                    pageSize)
+                sql = select(self.model)\
+                    .where(self.model.created_at >= query_obj["minDate"],
+                            self.model.created_at <= query_obj["maxDate"])\
+                    .where(self.model.delete == delete)\
+                    .offset((pageIndex - 1) * pageSize)\
+                    .order_by(desc(orderBy))\
+                    .limit(pageSize)
             else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
-                    .where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(orderBy).limit(
-                    pageSize)
+                sql = select(self.model)\
+                    .where(
+                        self.model.created_at >= query_obj["minDate"],
+                        self.model.created_at <= query_obj["maxDate"]
+                    )\
+                    .where(self.model.delete == delete)\
+                    .offset((pageIndex - 1) * pageSize)\
+                    .order_by(orderBy).limit(pageSize)
         else:
-            sql = select(self.model).where(self.model.delete == "1").offset((pageIndex - 1) * pageSize).order_by(
-                orderBy).limit(pageSize)
+            sql = select(self.model)\
+                .where(self.model.delete == delete)\
+                .offset((pageIndex - 1) * pageSize)\
+                .order_by(orderBy)\
+                .limit(pageSize)
+
         _query = await db.scalars(sql)
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
@@ -95,7 +82,9 @@ class CRUDAnnex(CRUDBase[Annex, Attachment]):
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """
-        sql = update(self.model).where(self.model.id == obj_in["id"]).values({"sort": obj_in["numberValue"]})
+        sql = update(self.model)\
+            .where(self.model.id == obj_in["id"])\
+            .values({"sort": obj_in["numberValue"]})
         result = await db.execute(sql)
         await db.commit()
         return result.rowcount
