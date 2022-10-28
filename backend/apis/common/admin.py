@@ -311,7 +311,7 @@ async def get_user_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    query_obj = {
+    queryObj = {
         "phone": phone,
         "email": email,
         "nickname": nickname,
@@ -321,7 +321,7 @@ async def get_user_page(
         "minDate": minDate
     }
     result = await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id, delete="0"
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, dept_id=dept_id, delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -355,7 +355,7 @@ async def recycle_user(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    query_obj = {
+    queryObj = {
         "phone": phone,
         "email": email,
         "nickname": nickname,
@@ -365,7 +365,7 @@ async def recycle_user(
         "minDate": minDate
     }
     result = await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id, delete="1"
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, dept_id=dept_id, delete="1"
     )
     return resp_200(data={
         "items": result["data"],

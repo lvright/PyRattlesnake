@@ -162,3 +162,10 @@ class CRUDBase(Generic[ModelType, SchemaType]):
         result = await db.scalars(sql)
         await db.close()  # 释放会话
         return result.all()
+
+    async def changeStatus(self, sql, db: AsyncSession, status: str = "1"):
+        # elif any([query_obj["minDate"], query_obj["maxDate"]]):
+        # sql = sql.where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])
+        if status:
+            sql = sql.where(self.model.status == str(status))
+            return sql

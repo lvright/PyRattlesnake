@@ -94,14 +94,14 @@ async def get_annex_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    query_obj = {
+    queryObj = {
         "origin_name": origin_name,
         "storage_mode": storage_mode,
         "mime_type": mime_type,
         "maxDate": maxDate,
         "minDate": minDate
     }
-    result = await getAnnex.getQuery(db, pageSize=pageSize, query_obj=query_obj, delete="0")
+    result = await getAnnex.getQuery(db, pageSize=pageSize, queryObj=queryObj, delete="0")
     return resp_200(data={
         "items": result["data"],
         "pageInfo": {

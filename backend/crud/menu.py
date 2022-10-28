@@ -21,13 +21,22 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         if routers:
             result = []
             for item in routers:
-                item = {"id": item["id"], "parent_id": item["parent_id"], "label": item["title"], "value": item["id"]}
-                item["children"] = [{
-                    "id": menu["id"],
-                    "parent_id": menu["parent_id"],
-                    "label": menu["title"],
-                    "value": menu["id"]}
-                    for menu in routers if menu["parent_id"] == item["id"]]
+                item = {
+                    "id": item["id"],
+                    "parent_id": item["parent_id"],
+                    "label": item["title"],
+                    "value": item["id"]
+                }
+                item.setdefault("children", [
+                    {
+                        "id": menu["id"],
+                        "parent_id": menu["parent_id"],
+                        "label": menu["title"],
+                        "value": menu["id"]
+                    }
+                    for menu in routers
+                    if menu["parent_id"] == item["id"]
+                ])
                 if item["parent_id"] == 0: result.append(item)
             return result
 
@@ -63,85 +72,40 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         await db.commit()
         return result.rowcount
 
-    async def getQuery(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
-                       orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
-                       ) -> list:
+    async def getQuery(
+            self,
+            db: AsyncSession,
+            queryObj: dict,
+            orderBy: str = None,
+            orderType: str = "ascending",
+            pageIndex: int = 1,
+            pageSize: int = 10,
+            delete: str = "0"
+    ) -> list:
         """ 根据查询条件获取 """
-        result = None
-        if any([query_obj["name"], query_obj["title"], query_obj["hidden"]]):
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
-                                               self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
-                    .where(self.model.delete != "1").order_by(desc(orderBy))
-            else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
-                                               self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
-                    .where(self.model.delete != "1").order_by(orderBy)
-        elif any([query_obj["minDate"], query_obj["maxDate"]]):
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"] + '%') \
-                    .where(self.model.delete != "1").order_by(desc(orderBy))
-            else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"] + '%') \
-                    .where(self.model.delete != "1").order_by(orderBy)
-        elif query_obj["status"]:
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
-                    self.model.delete != "1").order_by(desc(orderBy))
-            else:
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
-                    self.model.delete != "1").order_by(orderBy)
-        else:
-            sql = select(self.model).where(self.model.delete != "1").order_by(orderBy)
-        _query = await db.scalars(sql)
-        total = await self.get_number(db)
-        routers = jsonable_encoder(_query.all())
-        await db.close()  # 释放会话
-        if routers:
-            result = []
-            for item in routers:
-                item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
-                if item["parent_id"] == 0: result.append(item)
-        return {"data": result or [], "total": total, "page_total": page_total(total, pageSize)}
 
-    async def getQueryReclcle(self, db: AsyncSession, query_obj: dict, orderBy: str = None,
-                              orderType: str = "ascending", pageIndex: int = 1, pageSize: int = 10
-                              ) -> list:
-        """ 根据查询条件获取 """
         result = None
-        if any([query_obj["name"], query_obj["title"], query_obj["hidden"]]):
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
-                                               self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
-                    .where(self.model.delete == "1").order_by(desc(orderBy))
-            else:
-                sql = select(self.model).where(self.model.name.like('%' + query_obj["name"] + '%'),
-                                               self.model.title.like('%' + query_obj["title"] + '%'),
-                                               self.model.hidden.like('%' + query_obj["hidden"] + '%')) \
-                    .where(self.model.delete == "1").order_by(orderBy)
-        elif any([query_obj["minDate"], query_obj["maxDate"]]):
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
-                    .where(self.model.delete == "1").order_by(desc(orderBy))
-            else:
-                sql = select(self.model).where(self.model.created_at >= query_obj["minDate"],
-                                               self.model.created_at <= query_obj["maxDate"]) \
-                    .where(self.model.delete == "1").order_by(orderBy)
-        elif query_obj["status"]:
-            if orderType == "descending":
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
-                    self.model.delete == "1").order_by(desc(orderBy))
-            else:
-                sql = select(self.model).where(self.model.status == str(query_obj["status"])).where(
-                    self.model.delete == "1").order_by(orderBy)
+
+        baseSQL = select(self.model).where(self.model.delete == delete)
+
+        if any([queryObj["name"], queryObj["title"], queryObj["hidden"]]):
+            sql = baseSQL.where(self.model.name.like('%' + queryObj["name"] + '%'),
+                                self.model.title.like('%' + queryObj["title"] + '%'))
+        elif any([queryObj["minDate"], queryObj["maxDate"]]):
+            sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
+                                self.model.created_at <= queryObj["maxDate"])
+        elif queryObj["hidden"]:
+            sql = baseSQL.where(self.model.hidden == queryObj["hidden"])
+        elif queryObj["status"]:
+            sql = baseSQL.where(self.model.status == str(queryObj["status"]))
         else:
-            sql = select(self.model).where(self.model.delete == "1").order_by(orderBy)
+            sql = baseSQL.offset((pageIndex - 1) * pageSize)
+
+        if orderType == "descending":
+            sql = sql.order_by(desc(orderBy))
+        else:
+            sql = sql.order_by(orderBy)
+
         _query = await db.scalars(sql)
         total = await self.get_number(db)
         routers = jsonable_encoder(_query.all())
@@ -149,9 +113,9 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         if routers:
             result = []
             for item in routers:
-                item["children"] = [menu for menu in routers if menu["parent_id"] == item["id"]]
+                item.setdefault("children", [menu for menu in routers if menu["parent_id"] == item["id"]])
                 if item["parent_id"] == 0: result.append(item)
-        return {"data": result or [], "total": total, "page_total": page_total(total, pageSize)}
+        return {"data": result or [], "total": len(result), "page_total": page_total(len(result), pageSize)}
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """
