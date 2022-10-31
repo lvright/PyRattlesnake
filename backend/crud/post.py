@@ -51,8 +51,6 @@ class CRUDPost(CRUDBase[Post, PostStructure]):
     ) -> list:
         """ 按条件查询 """
 
-        result = None
-
         baseSQL = Select(self.model).where(self.model.delete == delete)
 
         if any([queryObj["name"], queryObj["code"]]):

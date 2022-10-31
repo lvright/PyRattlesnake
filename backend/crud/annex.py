@@ -23,8 +23,6 @@ class CRUDAnnex(CRUDBase[Annex, Attachment]):
     ) -> list:
         """ 根据查询条件获取 """
 
-        result = None
-
         baseSQL = select(self.model).where(self.model.delete == delete)
 
         if any([queryObj["origin_name"], queryObj["storage_mode"], queryObj["mime_type"]]):

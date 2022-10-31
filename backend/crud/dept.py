@@ -60,8 +60,6 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
     ) -> list:
         """ 根据查询条件获取部门 """
 
-        result = None
-
         baseSQL = select(self.model).where(self.model.delete == delete)
 
         if any([queryObj["name"], queryObj["leader"], queryObj["phone"]]):

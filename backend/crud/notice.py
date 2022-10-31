@@ -23,8 +23,6 @@ class CURDNotification(CRUDBase[Notification, SystemNotification]):
     ) -> list:
         """ 根据查询条件获取 """
 
-        result = None
-
         baseSQL = select(self.model).where(self.model.delete == delete)
 
         if any([query_obj["title"], query_obj["type"]]):

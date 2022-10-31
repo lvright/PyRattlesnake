@@ -23,8 +23,6 @@ class CRUDMessage(CRUDBase[Message, MessageStructure]):
     ) -> list:
         """ 根据查询条件获取 """
 
-        result = None
-
         baseSQL = select(self.model).where(self.model.delete == delete)
 
         if any([queryObj["read_status"], queryObj["content_type"]]) \
