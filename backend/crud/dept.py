@@ -87,9 +87,7 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """
-        sql = update(self.model)\
-            .where(self.model.id == obj_in["id"])\
-            .values({"sort": obj_in["numberValue"]})
+        sql = update(self.model).where(self.model.id == obj_in["id"]).values({"sort": obj_in["numberValue"]})
         result = await db.execute(sql)
         await db.commit()
         return result.rowcount

@@ -54,9 +54,9 @@ class CRUDRole(CRUDBase[Role, RoleStructure]):
 
         baseSQL = select(self.model).where(self.model.delete == delete)
 
-        if any([query_obj["name"], query_obj["code"]]):
-            sql = baseSQL.where(self.model.name.like('%' + query_obj["name"] + '%'),
-                                self.model.code.like('%' + query_obj["code"] + '%'))
+        if any([queryObj["name"], queryObj["code"]]):
+            sql = baseSQL.where(self.model.name.like('%' + queryObj["name"] + '%'),
+                                self.model.code.like('%' + queryObj["code"] + '%'))
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])

@@ -245,7 +245,7 @@ async def recycle_role(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    query_obj = {
+    queryObj = {
         "code": code,
         "name": name,
         "status": status,
@@ -253,7 +253,7 @@ async def recycle_role(
         "minDate": minDate
     }
     result = await getRole.getQuery(
-        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, delete="1"
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="1"
     )
     return resp_200(data={
         "items": result["data"],
