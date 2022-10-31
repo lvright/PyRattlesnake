@@ -34,8 +34,6 @@ class CRUDMessage(CRUDBase[Message, MessageStructure]):
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
-        elif queryObj["status"]:
-            sql = baseSQL.where(self.model.status == str(queryObj["status"]))
         else:
             sql = baseSQL.offset((pageIndex - 1) * pageSize)
 
