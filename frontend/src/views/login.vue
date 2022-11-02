@@ -119,26 +119,25 @@
   background-size: cover;
 
   .login-width {
-    max-width: 800px;
+    max-width: 860px;
     min-width: 400px;
   }
 
   .logo {
     width: 260px;
-    display: flex; margin-top: 20px; color: #333;
+    display: flex; 
+    margin-top: 20px; 
+    color: #333;
   }
-
   :deep(.arco-input-append) {
     padding: 0 !important;
   }
-
   .qq:hover, .alipay:hover {
     background: #5770F5;
   }
   .wechat:hover {
     background: #0f9c02;
   }
-
   .weibo:hover {
     background: #f3ce2b;
   }
