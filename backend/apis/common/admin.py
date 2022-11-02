@@ -11,7 +11,7 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.apis.deps import get_db
-from backend.core import check_jwt_token
+from backend.core import check_jwt_token, get_password_hash
 from backend.crud import getUser, getDept, getPost, getRole
 from backend.scheams import (
     Result, Account, AccountUpdate,
@@ -65,11 +65,11 @@ async def update_user(
     summary="更新密码"
 )
 async def modify_password(
-        paw: ModifyPassword,
+        password: ModifyPassword,
         token: str = Depends(check_jwt_token),
         db: AsyncSession = Depends(get_db)
 ):
-    if await getUser.updatePassword(db, paw=paw.dict(), user_id=token["id"]):
+    if await getUser.updatePassword(db, password=password.dict(), user=token):
         return resp_200(msg="密码已更新")
     return resp_400(msg="密码验证错误，请重新输入")
 
@@ -119,6 +119,7 @@ async def save_user(
         token: str = Depends(check_jwt_token)
 ):
     user_data = user.dict()
+    user_data.setdefault("password", get_password_hash(user_data["password"]))
     for key in ["post_ids", "role_ids", "dept_id"]: user_data.pop(key)
     new_user_id = await getUser.create(db, user_data)
     if user.post_ids:
@@ -142,16 +143,18 @@ async def update_user(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    await getPost.removeRelation(db, id)
-    await getRole.removeRelation(db, id)
-    await getPost.removeRelation(db, id)
+    await getPost.removeRelation(db, id), getRole.removeRelation(db, id), getPost.removeRelation(db, id)
+    user_data = user.dict()
+    user_data.setdefault("password", get_password_hash(user_data["password"]))
+    await getUser.update(db, id, obj_in=user_data)
     if user.post_ids:
         update_post_result = [{"user_id": id, "post_id": post_id} for post_id in user.post_ids]
         await getPost.createRelation(db, *update_post_data)
     if user.role_ids:
         update_role_result = [{"user_id": id, "role_id": role_id} for role_id in user.role_ids]
         await getRole.createRelation(db, *update_role_data)
-    await getDept.createRelation(db, {"user_id": id, "dept_id": user.dept_id})
+    if user.dept_id:
+        await getDept.createRelation(db, {"user_id": id, "dept_id": user.dept_id})
     return resp_200(msg="创建成功")
 
 
@@ -197,7 +200,8 @@ async def clear_cache_user(
 
 @router.put(
     path="/system/user/changeStatus",
-    response_model=Result, summary="修改用户状态"
+    response_model=Result,
+    summary="修改用户状态"
 )
 async def change_status(
         user: ChangeStatus,
@@ -270,7 +274,7 @@ async def init_password(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    await getUser.update(db, id=user.id, obj_in={"password": "123456"})
+    await getUser.update(db, id=user.id, obj_in={"password": get_password_hash("123456")})
     return resp_200(msg="密码已充值")
 
 
@@ -311,17 +315,21 @@ async def get_user_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "phone": phone,
-        "email": email,
-        "nickname": nickname,
-        "username": username,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, dept_id=dept_id, delete="0"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "phone": phone,
+            "email": email,
+            "nickname": nickname,
+            "username": username,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        dept_id=dept_id,
+        delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -355,17 +363,21 @@ async def recycle_user(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "phone": phone,
-        "email": email,
-        "nickname": nickname,
-        "username": username,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, dept_id=dept_id, delete="1"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "phone": phone,
+            "email": email,
+            "nickname": nickname,
+            "username": username,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        dept_id=dept_id,
+        delete="1"
     )
     return resp_200(data={
         "items": result["data"],

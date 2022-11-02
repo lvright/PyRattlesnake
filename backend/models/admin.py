@@ -26,7 +26,7 @@ class Admin(Base):
 
     user_type = Column(String(10), comment='用户类型')
 
-    password = Column(String(12), server_default="123456", comment='密码')
+    password = Column(String(255), server_default="123456", comment='密码')
 
     signed = Column(String(100), server_default="人生苦短，我写Python", comment='简介')
 

@@ -24,11 +24,11 @@ class Base:
 
     @declared_attr
     def created_at(cls):  # 创建时间
-        return Column(DateTime(timezone=True), server_default=func.now(), comment='创建时间')
+        return Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
 
     @declared_attr
     def updated_at(cls):  # 更新时间
-        return Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), comment='更新时间')
+        return Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), comment="更新时间")
 
     @declared_attr
     def delete(cls):  # 逻辑删除

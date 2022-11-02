@@ -5,6 +5,7 @@ from sqlalchemy import select, update, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.apis.deps import page_total
+from backend.core import get_password_hash, verify_password
 from backend.crud import CRUDBase
 from backend.models import Admin, MenuRelation, SystemMenu, RoleRelation, DeptRelation, Setting
 from backend.scheams import Account
@@ -70,15 +71,18 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         await db.close()  # 释放会话
         return result
 
-    async def updatePassword(self, db: AsyncSession, paw: dict, user_id: int) -> int:
+    async def updatePassword(self, db: AsyncSession, password: dict, user: dict) -> int:
         """ 更改用户密码 """
-        if paw["newPassword"] == paw["newPassword_confirmation"]:
-            sql = update(self.model).where(self.model.id == user_id).where(self.model.password == paw["oldPassword"])\
-                .values(password=paw['newPassword'])
-            result = await db.execute(sql)
-            await db.commit()
-            await db.close()  # 释放会话
-            return result.rowcount
+        password_match = verify_password(password["oldPassword"], user["password"])
+        if password_match:
+            if password["newPassword"] == password["newPassword_confirmation"]:
+                sql = update(self.model).where(self.model.id == user["id"]).values(
+                    password=get_password_hash(password['newPassword']))
+                result = await db.execute(sql)
+                await db.commit()
+                await db.close()  # 释放会话
+                return result.rowcount
+        return password_match
 
     async def updateSetting(self, db: AsyncSession, obj_in: dict, user_id: int) -> int:
         """ 更新用户系统设置 """

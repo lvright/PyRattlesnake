@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from backend.core import get_password_hash
+
 
 accountData = [
     {
@@ -7,7 +9,7 @@ accountData = [
         "username": "superAdmin",
         "avatar": "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fwx1.sinaimg.cn%2Flarge%2F006APoFYly8gu2q67x7h7g30dc0dc0u0.gif&refer=http%3A%2F%2Fwx1.sinaimg.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660900043&t=a0e3b7e7ddc0e89bd6d0eafbc27ff8a5",
         "userId": "superAdmin",
-        "password": "888888",
+        "password": get_password_hash("888888"),
         "user_type": "100",
         "nickname": "蟒蛇大师",
         "phone": "16858888988",
