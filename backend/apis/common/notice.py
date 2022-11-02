@@ -68,13 +68,14 @@ async def get_notice_page(
 ):
     result = await getNotification.getQuery(
         db,
-        delete="0",
         queryObj={
             "title": title,
             "type": type,
             "maxDate": maxDate,
             "minDate": minDate
-        })
+        },
+        delete="0",
+    )
     return resp_200(data={
         "items": result["data"],
         "pageInfo": {
@@ -104,13 +105,14 @@ async def recycle_notice(
 ):
     result = await getNotification.getQuery(
         db,
-        delete="1",
         queryObj={
             "title": title,
             "type": type,
             "maxDate": maxDate,
             "minDate": minDate
-        })
+        },
+        delete="1",
+    )
     return resp_200(data={
         "items": result["data"],
         "pageInfo": {

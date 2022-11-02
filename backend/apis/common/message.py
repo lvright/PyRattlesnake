@@ -54,13 +54,14 @@ async def get_message_page(
 ):
     result = await getMessage.getQuery(
         db,
-        delete="0",
         queryObj={
             "read_status": read_status,
             "content_type": content_type,
             "maxDate": maxDate,
             "minDate": minDate
-        })
+        },
+        delete = "0",
+    )
     return resp_200(data={
         "items": result["data"],
         "pageInfo": {
@@ -90,13 +91,14 @@ async def get_send_message_page(
 ):
     result = await getMessage.getQuery(
         db,
-        delete="0",
         queryObj={
             "read_status": read_status,
             "content_type": content_type,
             "maxDate": maxDate,
             "minDate": minDate
-        })
+        },
+        delete="0",
+    )
     return resp_200(data={
         "items": result["data"],
         "pageInfo": {

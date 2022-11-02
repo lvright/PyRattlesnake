@@ -138,7 +138,7 @@ async def upload_image(
     contents = await file.read()
     savePath = "/static/attachment/" + file.filename
     with open(os.path.abspath("..") + savePath, "wb") as f: f.write(contents)
-    result = {
+    await getAnnex.create(db, obj_in={
         "object_name": str(random.randint(1, 100)),
         "origin_name": file.filename,
         "url": savePath,
@@ -147,8 +147,7 @@ async def upload_image(
         "storage_path": "attachment",
         "size_info": str(file.spool_max_size/1000)+"KB",
         "suffix": file.filename.split(".")[1]
-    }
-    await getAnnex.create(db, obj_in=result)
+    })
     return resp_200(data=result, msg="上传成功")
 
 
@@ -230,17 +229,21 @@ async def get_user_list(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    query_obj = {
-        "phone": phone,
-        "email": email,
-        "nickname": nickname,
-        "username": username,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, dept_id=dept_id, delete="0"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "phone": phone,
+            "email": email,
+            "nickname": nickname,
+            "username": username,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        dept_id=dept_id,
+        delete="0"
     )
     return resp_200(data={
         "items": result["data"],

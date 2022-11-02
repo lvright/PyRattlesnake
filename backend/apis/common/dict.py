@@ -246,15 +246,19 @@ async def get_dict_type_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "name": name,
-        "code": code,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
-    result = await getDictType.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="0"
+    result = await getDictData.getQuery(
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "name": name,
+            "code": code,
+            "status": status,
+            "type_id": type_id,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -283,15 +287,19 @@ async def recycle_dict_type(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "name": name,
-        "code": code,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
-    result = await getDictType.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="1"
+    result = await getDictData.getQuery(
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "name": name,
+            "code": code,
+            "status": status,
+            "type_id": type_id,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="1"
     )
     return resp_200(data={
         "items": result["data"],
@@ -321,16 +329,19 @@ async def get_dict_data_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "name": name,
-        "code": code,
-        "status": status,
-        "type_id": type_id,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getDictData.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="0"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "name": name,
+            "code": code,
+            "status": status,
+            "type_id": type_id,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -360,16 +371,19 @@ async def recycle_dict_data(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "name": name,
-        "code": code,
-        "status": status,
-        "type_id": type_id,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getDictData.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="1"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "name": name,
+            "code": code,
+            "status": status,
+            "type_id": type_id,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="1"
     )
     return resp_200(data={
         "items": result["data"],

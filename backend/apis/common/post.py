@@ -135,15 +135,18 @@ async def get_post_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "code": code,
-        "name": name,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getPost.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="0"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "code": code,
+            "name": name,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -172,15 +175,18 @@ async def get_post_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "code": code,
-        "name": name,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getPost.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="1"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "code": code,
+            "name": name,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="1"
     )
     return resp_200(data={
         "items": result["data"],

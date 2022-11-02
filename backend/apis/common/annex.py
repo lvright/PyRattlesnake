@@ -80,7 +80,11 @@ async def recycle_annex(
     })
 
 
-@router.get(path="/system/attachment/index", response_model=Result, summary="获取附件分页列表")
+@router.get(
+    path="/system/attachment/index",
+    response_model=Result,
+    summary="获取附件分页列表"
+)
 async def get_annex_page(
         pageSize: int,
         page: Optional[int],
@@ -94,14 +98,17 @@ async def get_annex_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "origin_name": origin_name,
-        "storage_mode": storage_mode,
-        "mime_type": mime_type,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
-    result = await getAnnex.getQuery(db, pageSize=pageSize, queryObj=queryObj, delete="0")
+    result = await getAnnex.getQuery(
+        db,
+        pageSize=pageSize,
+        queryObj={
+            "origin_name": origin_name,
+            "storage_mode": storage_mode,
+            "mime_type": mime_type,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="0")
     return resp_200(data={
         "items": result["data"],
         "pageInfo": {

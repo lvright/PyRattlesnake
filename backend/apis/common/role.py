@@ -208,15 +208,18 @@ async def get_role_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    query_obj = {
-        "code": code,
-        "name": name,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getRole.getQuery(
-        db, pageIndex=page, pageSize=pageSize, query_obj=query_obj, delete="0"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "code": code,
+            "name": name,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -245,15 +248,18 @@ async def recycle_role(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "code": code,
-        "name": name,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getRole.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="1"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "code": code,
+            "name": name,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="1"
     )
     return resp_200(data={
         "items": result["data"],

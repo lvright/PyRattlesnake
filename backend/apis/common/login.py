@@ -8,6 +8,7 @@ from starlette.datastructures import MutableHeaders
 
 from utils import resp_200, resp_400, resp_500, by_ip_get_address, ErrorUser
 from backend.apis.deps import get_redis, get_db, get_current_user
+from backend.core import verify_password, get_password_hash
 from backend.crud import toLogin
 from backend.scheams import Token, Result
 from backend.db import MyRedis
@@ -25,11 +26,14 @@ async def login_access_token(
         db: AsyncSession = Depends(get_db),
         from_data: OAuth2PasswordRequestForm = Depends()
 ):
-    token = await toLogin.go(
-        db, request, form_data={"username": from_data.username, "password": from_data.password}
-    )
-    if token:
-        return resp_200(data=token, msg="登录成功")
+    passwords_match = verify_password(from_data.password, get_password_hash(from_data.password))
+    if passwords_match:
+        token = await toLogin.go(
+            db, request, form_data={"username": from_data.username, "password": from_data.password}
+        )
+        if token:
+            return resp_200(data=token, msg="登录成功")
+        return resp_200(msg="账户或密码错误")
     return ErrorUser()
 
 

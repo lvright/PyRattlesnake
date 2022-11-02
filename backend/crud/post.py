@@ -51,7 +51,7 @@ class CRUDPost(CRUDBase[Post, PostStructure]):
     ) -> list:
         """ 按条件查询 """
 
-        baseSQL = Select(self.model).where(self.model.delete == delete)
+        baseSQL = select(self.model).where(self.model.delete == delete)
 
         if any([queryObj["name"], queryObj["code"]]):
             sql = baseSQL.where(self.model.name.like('%' + queryObj["name"] + '%'),

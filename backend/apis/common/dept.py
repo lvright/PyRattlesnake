@@ -131,16 +131,19 @@ async def get_dept_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "name": name,
-        "leader": leader,
-        "phone": phone,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getDept.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="0"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "name": name,
+            "leader": leader,
+            "phone": phone,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="0"
     )
     return resp_200(data={
         "items": result["data"],
@@ -170,16 +173,19 @@ async def recycle_dept(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    queryObj = {
-        "name": name,
-        "leader": leader,
-        "phone": phone,
-        "status": status,
-        "maxDate": maxDate,
-        "minDate": minDate
-    }
     result = await getDept.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryObj, delete="1"
+        db,
+        pageIndex=page,
+        pageSize=pageSize,
+        queryObj={
+            "name": name,
+            "leader": leader,
+            "phone": phone,
+            "status": status,
+            "maxDate": maxDate,
+            "minDate": minDate
+        },
+        delete="1"
     )
     return resp_200(data={
         "items": result["data"],
