@@ -11,7 +11,7 @@ router = APIRouter()
 
 manager = ConnectionManager()
 
-@router.websocket(path="/message.io")
+@router.websocket(path="/message.io/{token:path}")
 async def sys_message_io(
         websocket: WebSocket,
         token: str = Depends(check_jwt_token),

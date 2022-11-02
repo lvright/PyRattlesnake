@@ -42,7 +42,7 @@ class CRUDRole(CRUDBase[Role, RoleStructure]):
     async def getQuery(
             self,
             db: AsyncSession,
-            query_obj: dict,
+            queryObj: dict,
             orderBy: str = None,
             orderType: str = "ascending",
             pageIndex: int = 1,

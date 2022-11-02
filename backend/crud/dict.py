@@ -32,8 +32,6 @@ class CRUDDictData(CRUDBase[Dict, DictDate]):
     ) -> list:
         """ 根据查询条件获取 """
 
-        result = None
-
         baseSQL = select(self.model).where(self.model.delete == delete)
 
         if any([queryObj["name"], queryObj["code"]]):

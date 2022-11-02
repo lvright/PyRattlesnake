@@ -246,7 +246,7 @@ async def get_dict_type_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDictData.getQuery(
+    result = await getDictType.getQuery(
         db,
         pageIndex=page,
         pageSize=pageSize,
@@ -254,7 +254,6 @@ async def get_dict_type_page(
             "name": name,
             "code": code,
             "status": status,
-            "type_id": type_id,
             "maxDate": maxDate,
             "minDate": minDate
         },
@@ -287,7 +286,7 @@ async def recycle_dict_type(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDictData.getQuery(
+    result = await getDictType.getQuery(
         db,
         pageIndex=page,
         pageSize=pageSize,
@@ -295,7 +294,6 @@ async def recycle_dict_type(
             "name": name,
             "code": code,
             "status": status,
-            "type_id": type_id,
             "maxDate": maxDate,
             "minDate": minDate
         },

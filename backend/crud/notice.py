@@ -14,7 +14,7 @@ class CURDNotification(CRUDBase[Notification, SystemNotification]):
 
     async def getQuery(
             self, db: AsyncSession,
-            query_obj: dict,
+            queryObj: dict,
             orderBy: str = None,
             orderType: str = "ascending",
             pageIndex: int = 1,
@@ -25,9 +25,9 @@ class CURDNotification(CRUDBase[Notification, SystemNotification]):
 
         baseSQL = select(self.model).where(self.model.delete == delete)
 
-        if any([query_obj["title"], query_obj["type"]]):
-            sql = baseSQL.where(self.model.title.like('%' + query_obj["title"] + '%'),
-                                self.model.type.like('%' + query_obj["type"] + '%'))
+        if any([queryObj["title"], queryObj["type"]]):
+            sql = baseSQL.where(self.model.title.like('%' + queryObj["title"] + '%'),
+                                self.model.type.like('%' + queryObj["type"] + '%'))
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
