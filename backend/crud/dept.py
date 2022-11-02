@@ -14,8 +14,7 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
 
     async def deptTree(self, db: AsyncSession) -> list:
         """ 获取树状部门结构数据 """
-        sql = select(*[self.model.id, self.model.name.label("label"),
-                       self.model.parent_id, self.model.id.label("value")])
+        sql = select(*[self.model.id, self.model.name.label("label"), self.model.parent_id, self.model.id.label("value")])
         _dept = await db.execute(sql)
         dept_list = jsonable_encoder(_dept.all())
         if dept_list:
@@ -69,15 +68,11 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
-        elif queryObj["status"]:
-            sql = baseSQL.where(self.model.status == str(queryObj["status"]))
-        else:
-            sql = baseSQL.offset((pageIndex - 1) * pageSize)
+        elif queryObj["status"]: sql = baseSQL.where(self.model.status == str(queryObj["status"]))
+        else: sql = baseSQL.offset((pageIndex - 1) * pageSize)
 
-        if orderType == "descending":
-            sql = sql.order_by(desc(orderBy)).limit(pageSize)
-        else:
-            sql = sql.order_by(orderBy).limit(pageSize)
+        if orderType == "descending": sql = sql.order_by(desc(orderBy)).limit(pageSize)
+        else: sql = sql.order_by(orderBy).limit(pageSize)
 
         _query = await db.scalars(sql)
         total = await self.get_number(db)

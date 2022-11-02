@@ -31,13 +31,10 @@ class CURDNotification(CRUDBase[Notification, SystemNotification]):
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
-        else:
-            sql = baseSQL.offset((pageIndex - 1) * pageSize)
+        else: sql = baseSQL.offset((pageIndex - 1) * pageSize)
 
-        if orderType == "descending":
-            sql = sql.order_by(desc(orderBy)).limit(pageSize)
-        else:
-            sql = sql.order_by(orderBy).limit(pageSize)
+        if orderType == "descending":  sql = sql.order_by(desc(orderBy)).limit(pageSize)
+        else: sql = sql.order_by(orderBy).limit(pageSize)
 
         _query = await db.scalars(sql)
         total = await self.get_number(db)

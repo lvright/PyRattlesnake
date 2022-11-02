@@ -112,20 +112,15 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
                                 self.model.nickname.like('%' + queryObj["nickname"] + '%'),
                                 self.model.phone.like('%' + queryObj["phone"] + '%'),
                                 self.model.email.like('%' + queryObj["email"] + '%'))
-        elif dept_id:
-            sql = baseSQL.where(DeptRelation.dept_id == dept_id, self.model.id == DeptRelation.user_id)
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
-        elif queryObj["status"]:
-            sql = baseSQL.where(self.model.status == str(queryObj["status"]))
-        else:
-            sql = baseSQL.offset((pageIndex - 1) * pageSize)
+        elif dept_id: sql = baseSQL.where(DeptRelation.dept_id == dept_id, self.model.id == DeptRelation.user_id)
+        elif queryObj["status"]: sql = baseSQL.where(self.model.status == str(queryObj["status"]))
+        else: sql = baseSQL.offset((pageIndex - 1) * pageSize)
 
-        if orderType == "descending":
-            sql = sql.order_by(desc(orderBy)).limit(pageSize)
-        else:
-            sql = sql.order_by(orderBy).limit(pageSize)
+        if orderType == "descending": sql = sql.order_by(desc(orderBy)).limit(pageSize)
+        else: sql = sql.order_by(orderBy).limit(pageSize)
 
         _query = await db.scalars(sql)
         total = await self.get_number(db)

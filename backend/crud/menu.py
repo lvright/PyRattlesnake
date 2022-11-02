@@ -92,17 +92,12 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
-        elif queryObj["hidden"]:
-            sql = baseSQL.where(self.model.hidden == queryObj["hidden"])
-        elif queryObj["status"]:
-            sql = baseSQL.where(self.model.status == str(queryObj["status"]))
-        else:
-            sql = baseSQL.offset((pageIndex - 1) * pageSize)
+        elif queryObj["hidden"]: sql = baseSQL.where(self.model.hidden == queryObj["hidden"])
+        elif queryObj["status"]: sql = baseSQL.where(self.model.status == str(queryObj["status"]))
+        else: sql = baseSQL.offset((pageIndex - 1) * pageSize)
 
-        if orderType == "descending":
-            sql = sql.order_by(desc(orderBy))
-        else:
-            sql = sql.order_by(orderBy)
+        if orderType == "descending": sql = sql.order_by(desc(orderBy))
+        else: sql = sql.order_by(orderBy)
 
         _query = await db.scalars(sql)
         total = await self.get_number(db)
