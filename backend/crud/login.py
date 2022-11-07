@@ -26,9 +26,7 @@ class CRUBLogin(CRUDBase[Admin, Account]):
         if user_info:
             access_token_expires = timedelta(minutes=setting.ACCESS_TOKEN_EXPIRE_MINUTES)
             token = create_access_token(user_info, access_token_expires)
-            set_ipconfig = update(self.model)\
-                .where(self.model.id == user_info['id'])\
-                .values(login_ip=request.client.host)
+            set_ipconfig = update(self.model).where(self.model.id == user_info['id']).values(login_ip=request.client.host)
             set_login_log = insert(LoginLog).values({
                 "username": user_info["username"],
                 "ip": request.client.host,
