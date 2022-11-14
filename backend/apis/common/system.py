@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import random
 import os
-from fastapi import APIRouter, Depends, Request, Security, Form, UploadFile, File
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.encoders import jsonable_encoder
-from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.datastructures import MutableHeaders
+import random
 from typing import Optional
 
-from utils import resp_200, resp_400, resp_500, resp_404, by_ip_get_address, ErrorUser
-from backend.apis.deps import get_redis, get_db, get_current_user, page_total
-from backend.crud import getLoginLog, getOperLog, getBackendSetting, getDept, getRole, getPost, getUser, getAnnex
+from fastapi import APIRouter, Depends, Form, UploadFile, File
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.apis.deps import get_db, page_total
 from backend.core import check_jwt_token
-from backend.scheams import Token, Result, BackendSetting, Ids
-from backend.db import MyRedis
+from backend.crud import getLoginLog, getOperLog, getBackendSetting, getDept, getRole, getPost, getUser, getAnnex
+from backend.scheams import Result, BackendSetting, Ids
+from utils import resp_200
 
 router = APIRouter()
 

@@ -27,11 +27,11 @@
           <a-tab-pane key="login-log" title="登录日志">
             <a-timeline class="pl-5 mt-3">
               <a-timeline-item
-                :label="`地理位置；${item.ip_location}`"
+                :label="`地理位置：${item.ip_location}`"
                 v-for="(item, idx) in loginLogList"
                 :key="idx"
               >
-                您于 {{ item.login_time }} 登录系统， {{ item.message }}
+                您于 {{ item.login_time }} 登录系统{{ item.message }}
               </a-timeline-item>
             </a-timeline>
           </a-tab-pane>

@@ -17,8 +17,8 @@ class Message(Base):
 
     read_status = check_or_enum(name="read)_status", enumList=["0", "1"], comment="阅读状态: 0->未被阅读 1->已被阅读")
 
-    send_by = Column(Integer, comment="发送用户ID")
+    send_by = Column(Integer, comment="发送人ID")
 
-    send_user = Column(String(20), comment="发送用户昵称")
+    send_user = Column(String(20), comment="接受用户")
 
     receive_by = Column(Integer, comment="接收方式")

@@ -5,7 +5,7 @@ import time
 from typing import Optional
 
 import pandas as pd
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends, Body, UploadFile, File
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -234,6 +234,18 @@ async def export_user(
                      + "/static/user_file_export/" + str(int(time.time()))
     wb.save(save_file_name + ".xls")
     return resf_200(filename=str(int(time.time())), path=save_file_name + '.xls')
+
+
+@router.post(
+    path="/system/user/import",
+    summary="导入用户"
+)
+async def import_user(
+        file: UploadFile = File(...),
+        db: AsyncSession = Depends(get_db),
+        token: str = Depends(check_jwt_token)
+):
+    pass
 
 
 @router.post(

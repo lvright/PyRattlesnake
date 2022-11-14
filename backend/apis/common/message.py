@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from fastapi import APIRouter
-from fastapi import APIRouter, Depends, Request, Security
 from typing import Optional
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.datastructures import MutableHeaders
 
-from utils import resp_200, resp_400, resp_500, by_ip_get_address, ErrorUser
-from backend.apis.deps import get_redis, get_db, get_current_user, check_jwt_token, page_total
-from backend.crud import getMessage
-from backend.scheams import Token, Result, MessageStructure, ChangeStatus, Ids, ChangeSort, SendMessage
-from backend.db import MyRedis
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.apis.deps import get_db, check_jwt_token
+from backend.crud import getMessage, getUser
+from backend.scheams import Result, SendMessage
+from utils import resp_200
 
 router = APIRouter()
 
@@ -27,10 +24,12 @@ async def send_message(
         token: str = Depends(check_jwt_token)
 ):
     for user_id in message.users:
+        send_user = await getUser.get(db, user_id)
         await getMessage.create(db, obj_in={
             "content": message.content,
             "title": message.title,
-            "send_user": token["username"]
+            "send_user": send_user["username"],
+            "send_by": token["id"]
         })
     return resp_200(msg="已发送")
 
