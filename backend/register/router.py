@@ -5,7 +5,7 @@ from backend.core.conf import setting
 from backend.apis import app_router
 from backend.apis.deps import get_current_user
 from backend.apis.common import login, admin, system, dept, post, role, dict, menu, annex, message, notice
-from backend.websocket import sys_message
+from backend.ws import sys_message
 
 def register_router(app: FastAPI):
     """ 注册路由 """
