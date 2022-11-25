@@ -78,7 +78,11 @@ class CRUDDept(CRUDBase[Dept, DeptStructure]):
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
-        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
+        return {
+            "items": result, "pageInfo": {
+                "total": total, "currentPage": pageIndex, "totalPage": page_total(total, pageSize)
+            }
+        }
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """

@@ -2,22 +2,6 @@
   <div class="mr-2 flex justify-end lg:justify-between w-full lg:w-auto">
     <a-space class="mr-0 lg:mr-5" size="medium">
 
-      <a-tooltip :content="$t('sys.search')">
-        <a-button :shape="'circle'" class="hidden lg:inline">
-          <template #icon>
-            <icon-search />
-          </template>
-        </a-button>
-      </a-tooltip>
-
-      <a-tooltip content="锁屏">
-        <a-button :shape="'circle'" class="hidden lg:inline">
-          <template #icon>
-            <icon-lock />
-          </template>
-        </a-button>
-      </a-tooltip>
-
       <a-tooltip :content="isFullScreen ? $t('sys.closeFullScreen') : $t('sys.fullScreen')">
         <a-button :shape="'circle'" class="hidden lg:inline" @click="screen">
           <template #icon>

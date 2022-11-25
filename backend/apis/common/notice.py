@@ -66,24 +66,9 @@ async def get_notice_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getNotification.getQuery(
-        db,
-        queryObj={
-            "title": title,
-            "type": type,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0",
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    return resp_200(data=await getNotification.getQuery(
+        db, queryObj={"title": title, "type": type, "maxDate": maxDate, "minDate": minDate}, delete="0",
+    ))
 
 
 @router.get(
@@ -103,21 +88,6 @@ async def recycle_notice(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getNotification.getQuery(
-        db,
-        queryObj={
-            "title": title,
-            "type": type,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1",
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    return resp_200(data=await getNotification.getQuery(
+        db, queryObj={"title": title, "type": type, "maxDate": maxDate, "minDate": minDate}, delete="1",
+    ))

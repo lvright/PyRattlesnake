@@ -51,24 +51,11 @@ async def get_message_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getMessage.getQuery(
-        db,
-        queryObj={
-            "read_status": read_status,
-            "content_type": content_type,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete = "0",
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "read_status": read_status, "content_type": content_type,
+        "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getMessage.getQuery(db, queryObj=queryData, delete="0"))
 
 
 @router.get(
@@ -88,21 +75,8 @@ async def get_send_message_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getMessage.getQuery(
-        db,
-        queryObj={
-            "read_status": read_status,
-            "content_type": content_type,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0",
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "read_status": read_status, "content_type": content_type,
+        "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getMessage.getQuery(db, queryObj=queryData, delete="1"))

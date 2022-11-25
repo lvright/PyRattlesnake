@@ -166,7 +166,7 @@ async def change_dict_data(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    await getDictData.update(db, id=dict_data.id, obj_in={"status": dict_data.status})
+    await getDictData.changeStatus(db, id=dict_data.id, status=dict_data.status)
     return resp_200(msg="修改成功")
 
 
@@ -246,27 +246,13 @@ async def get_dict_type_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDictType.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "code": code,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "code": code, "status": status,
+        "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getDictType.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="0"
+    ))
 
 
 @router.get(
@@ -286,27 +272,13 @@ async def recycle_dict_type(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDictType.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "code": code,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "code": code, "status": status,
+        "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getDictType.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))
 
 
 @router.get(
@@ -327,28 +299,13 @@ async def get_dict_data_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDictData.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "code": code,
-            "status": status,
-            "type_id": type_id,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "code": code, "status": status,
+        "type_id": type_id, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getDictData.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="0"
+    ))
 
 
 @router.get(
@@ -369,25 +326,10 @@ async def recycle_dict_data(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDictData.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "code": code,
-            "status": status,
-            "type_id": type_id,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "code": code, "status": status,
+        "type_id": type_id, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getDictData.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))

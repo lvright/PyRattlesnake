@@ -49,7 +49,6 @@ class CRUDRole(CRUDBase[Role, RoleStructure]):
             pageSize: int = 10,
             delete: str = "0"
     ) -> list:
-
         """ 按条件查询 """
 
         baseSQL = select(self.model).where(self.model.delete == delete)
@@ -70,7 +69,11 @@ class CRUDRole(CRUDBase[Role, RoleStructure]):
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
-        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
+        return {
+            "items": result, "pageInfo": {
+                "total": total, "currentPage": pageIndex, "totalPage": page_total(total, pageSize)
+            }
+        }
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """

@@ -166,12 +166,8 @@ async def get_login_log(
         db, orderBy="login_time", orderType="desc", pageIndex=1, pageSize=pageSize
     )
     result = [res for res in result if res["username"] == username and res]
-    return resp_200(data={
-        "items": result,
-        "pageInfo": {
-            "total": total,
-            "currentPage": 1,
-            "totalPage": page_total(total, pageSize)
+    return resp_200(data={"items": result, "pageInfo": {
+            "total": total, "currentPage": 1, "totalPage": page_total(total, pageSize)
         }
     })
 
@@ -194,12 +190,8 @@ async def get_oper_log(
         db, orderBy="login_time", orderType="desc", pageIndex=1, pageSize=pageSize
     )
     result = [res for res in result if res["username"] == username and result]
-    return resp_200(data={
-        "items": result,
-        "pageInfo": {
-            "total": total,
-            "currentPage": 1,
-            "totalPage": page_total(total, pageSize)
+    return resp_200(data={"items": result, "pageInfo": {
+            "total": total, "currentPage": 1, "totalPage": page_total(total, pageSize)
         }
     })
 
@@ -226,27 +218,10 @@ async def get_user_list(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getUser.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "phone": phone,
-            "email": email,
-            "nickname": nickname,
-            "username": username,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        dept_id=dept_id,
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "phone": phone, "email": email, "nickname": nickname, "username": username,
+        "status": status, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getUser.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, dept_id=dept_id, delete="0"
+    ))

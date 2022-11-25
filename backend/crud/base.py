@@ -163,9 +163,9 @@ class CRUDBase(Generic[ModelType, SchemaType]):
         await db.close()  # 释放会话
         return result.all()
 
-    async def changeStatus(self, sql, db: AsyncSession, status: str = "1"):
-        # elif any([query_obj["minDate"], query_obj["maxDate"]]):
-        # sql = sql.where(self.model.created_at >= query_obj["minDate"], self.model.created_at <= query_obj["maxDate"])
-        if status:
-            sql = sql.where(self.model.status == str(status))
-            return sql
+    async def changeStatus(self, db: AsyncSession, id: Union[int, str], status: Union[int, str] = "1") -> int:
+        """ 修改状态 """
+        sql = update(self.model).where(self.model.id == id).values({"status": status})
+        result = await db.execute(sql)
+        await db.commit()
+        return result.rowcounty

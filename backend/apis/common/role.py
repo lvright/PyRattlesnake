@@ -197,7 +197,8 @@ async def save_role_permission(
     summary="获取角色分页列表"
 )
 async def get_role_page(
-        page: int, pageSize: int,
+        page: int,
+        pageSize: int,
         orderBy: Optional[str] = "",
         orderType: Optional[str] = "",
         name: Optional[str] = "",
@@ -208,27 +209,10 @@ async def get_role_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getRole.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "code": code,
-            "name": name,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    return resp_200(data=await getRole.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="0"
+    ))
 
 
 @router.get(
@@ -237,7 +221,8 @@ async def get_role_page(
     summary="获取被删除角色分页列表"
 )
 async def recycle_role(
-        page: int, pageSize: int,
+        page: int,
+        pageSize: int,
         orderBy: Optional[str] = "",
         orderType: Optional[str] = "",
         name: Optional[str] = "",
@@ -248,24 +233,7 @@ async def recycle_role(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getRole.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "code": code,
-            "name": name,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    return resp_200(data=await getRole.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))

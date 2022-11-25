@@ -62,26 +62,13 @@ async def recycle_annex(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getAnnex.getQuery(
-        db,
-        pageSize=pageSize,
-        queryObj={
-            "origin_name": origin_name,
-            "storage_mode": storage_mode,
-            "mime_type": mime_type,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "origin_name": origin_name, "storage_mode": storage_mode,
+        "mime_type": mime_type, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getAnnex.getQuery(
+        db, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))
 
 
 @router.get(
@@ -102,23 +89,10 @@ async def get_annex_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getAnnex.getQuery(
-        db,
-        pageSize=pageSize,
-        queryObj={
-            "origin_name": origin_name,
-            "storage_mode": storage_mode,
-            "mime_type": mime_type,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "origin_name": origin_name, "storage_mode": storage_mode,
+        "mime_type": mime_type, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getAnnex.getQuery(
+        db, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))

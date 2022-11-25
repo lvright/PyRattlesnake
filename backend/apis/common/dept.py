@@ -119,7 +119,8 @@ async def recovery_dept(
     summary="获取部门分页列表"
 )
 async def get_dept_page(
-        page: int, pageSize: int,
+        page: int,
+        pageSize: int,
         orderBy: Optional[str] = "",
         orderType: Optional[str] = "",
         name: Optional[str] = "",
@@ -131,28 +132,13 @@ async def get_dept_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDept.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "leader": leader,
-            "phone": phone,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "leader": leader, "phone": phone,
+        "status": status, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getDept.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="0"
+    ))
 
 
 @router.get(
@@ -161,7 +147,8 @@ async def get_dept_page(
     summary="获取被删除部门分页列表"
 )
 async def recycle_dept(
-        page: int, pageSize: int,
+        page: int,
+        pageSize: int,
         orderBy: Optional[str] = "",
         orderType: Optional[str] = "",
         name: Optional[str] = "",
@@ -173,25 +160,10 @@ async def recycle_dept(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getDept.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "leader": leader,
-            "phone": phone,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "leader": leader, "phone": phone,
+        "status": status, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getDept.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))

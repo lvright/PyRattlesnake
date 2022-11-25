@@ -96,7 +96,7 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
     async def getQuery(
             self, db: AsyncSession,
             queryObj: dict,
-            dept_id: int,
+            deptId: int,
             orderBy: str = None,
             orderType: str = "ascending",
             pageIndex: int = 1,
@@ -115,7 +115,7 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
-        elif dept_id: sql = baseSQL.where(DeptRelation.dept_id == dept_id, self.model.id == DeptRelation.user_id)
+        elif deptId: sql = baseSQL.where(DeptRelation.dept_id == dept_id, self.model.id == DeptRelation.user_id)
         elif queryObj["status"]: sql = baseSQL.where(self.model.status == str(queryObj["status"]))
         else: sql = baseSQL.offset((pageIndex - 1) * pageSize)
 
@@ -126,7 +126,11 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         total = await self.get_number(db)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
-        return {"data": result, "total": total, "page_total": page_total(total, pageSize)}
+        return {
+            "items": result, "pageInfo": {
+                "total": total, "currentPage": pageIndex, "totalPage": page_total(total, pageSize)
+            }
+        }
 
 
 getUser = CRUBAdmin(Admin)

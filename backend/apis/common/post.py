@@ -135,27 +135,10 @@ async def get_post_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getPost.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "code": code,
-            "name": name,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    return resp_200(data=await getPost.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="0"
+    ))
 
 
 @router.get(
@@ -175,24 +158,7 @@ async def get_post_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getPost.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "code": code,
-            "name": name,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
+    return resp_200(data=await getPost.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))

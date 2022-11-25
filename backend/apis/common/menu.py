@@ -130,28 +130,13 @@ async def get_menu_page(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getMenu.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "title": title,
-            "hidden": hidden,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="0"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "title": title, "hidden": hidden,
+        "status": status, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getMenu.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="0"
+    ))
 
 
 @router.get(
@@ -172,25 +157,11 @@ async def recycle_menu(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    result = await getMenu.getQuery(
-        db,
-        pageIndex=page,
-        pageSize=pageSize,
-        queryObj={
-            "name": name,
-            "title": title,
-            "hidden": hidden,
-            "status": status,
-            "maxDate": maxDate,
-            "minDate": minDate
-        },
-        delete="1"
-    )
-    return resp_200(data={
-        "items": result["data"],
-        "pageInfo": {
-            "total": result["total"],
-            "currentPage": page,
-            "totalPage": result["page_total"]
-        }
-    })
+    queryData = {
+        "name": name, "title": title, "hidden": hidden,
+        "status": status, "maxDate": maxDate, "minDate": minDate
+    }
+    return resp_200(data=await getMenu.getQuery(
+        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="1"
+    ))
+

@@ -103,12 +103,18 @@ class CRUDMenu(CRUDBase[SystemMenu, MenuStructure]):
         total = await self.get_number(db)
         routers = jsonable_encoder(_query.all())
         await db.close()  # 释放会话
+        result = []
         if routers:
-            result = []
             for item in routers:
                 item.setdefault("children", [menu for menu in routers if menu["parent_id"] == item["id"]])
                 if item["parent_id"] == 0: result.append(item)
-        return {"data": result or [], "total": len(result), "page_total": page_total(len(result), pageSize)}
+            return {
+                "items": result, "pageInfo": {
+                    "total": total, "currentPage": pageIndex, "totalPage": page_total(total, pageSize)
+                }
+            }
+        return result
+
 
     async def getChangeSort(self, db: AsyncSession, obj_in: dict) -> int:
         """ 修改列表排序 """
