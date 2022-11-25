@@ -20,7 +20,7 @@ from utils import SetRedis, by_ip_get_address, logger
 class CRUBLogin(CRUDBase[Admin, Account]):
 
     async def go(self, db: AsyncSession, request: Request, form_data: dict) -> dict:
-        sql = select(self.model).where(self.model.username == form_data['username'],)
+        sql = select(self.model).where(self.model.username == form_data['username'])
         _user = await db.scalars(sql)
         user_info = jsonable_encoder(_user.first())
         if user_info:

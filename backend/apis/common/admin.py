@@ -287,7 +287,7 @@ async def init_password(
         token: str = Depends(check_jwt_token)
 ):
     await getUser.update(db, id=user.id, obj_in={"password": get_password_hash("123456")})
-    return resp_200(msg="密码已充值")
+    return resp_200(msg="密码已重置")
 
 
 @router.put(
