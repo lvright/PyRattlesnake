@@ -104,7 +104,6 @@ async def get_user_detail(
     result.setdefault("dept_id", await getDept.userDept(db, user_id))
     result.setdefault("roleList", await getRole.userRole(db, user_id))
     result.setdefault("postList", await getPost.userPost(db, user_id))
-    print("result", result)
     return resp_200(data=result)
 
 
@@ -236,6 +235,7 @@ async def export_user(
     return resf_200(filename=str(int(time.time())), path=save_file_name + '.xls')
 
 
+# TODO 导入用户功能待开发
 @router.post(
     path="/system/user/import",
     summary="导入用户"
@@ -325,9 +325,8 @@ async def get_user_page(
         token: str = Depends(check_jwt_token)
 ):
     queryData = {
-        "phone": phone, "email": email, "nickname": nickname,
-        "username": username, "status": status,
-        "maxDate": maxDate, "minDate": minDate
+        "phone": phone, "email": email, "nickname": nickname, "username": username,
+        "status": status, "maxDate": maxDate, "minDate": minDate
     }
     return resp_200(data=await getUser.getQuery(
         db, pageIndex=page, pageSize=pageSize, queryObj=queryData, deptId=dept_id, delete="0"
@@ -354,9 +353,8 @@ async def recycle_user(
         token: str = Depends(check_jwt_token)
 ):
     queryData = {
-        "phone": phone, "email": email, "nickname": nickname,
-        "username": username, "status": status,
-        "maxDate": maxDate, "minDate": minDate
+        "phone": phone, "email": email, "nickname": nickname, "username": username,
+        "status": status, "maxDate": maxDate, "minDate": minDate
     }
     return resp_200(data=await getUser.getQuery(
         db, pageIndex=page, pageSize=pageSize, queryObj=queryData, deptId=dept_id, delete="1"
