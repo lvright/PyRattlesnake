@@ -13,17 +13,15 @@ from backend.scheams import Account
 
 class CRUBAdmin(CRUDBase[Admin, Account]):
 
-    async def getUserInfo(self, db: AsyncSession, user: dict) -> dict:
+    async def info(self, db: AsyncSession, user: dict) -> dict:
         """ 获取用户详情 """
-        sql = select(self.model)\
-            .where(self.model.id == user["id"])\
-            .where(self.model.status == "1")
+        sql = select(self.model).where(self.model.id == user["id"]).where(self.model.status == "1")
         _user = await db.scalars(sql)
         result = jsonable_encoder(_user.first())
         await db.close()  # 释放会话
         return result
 
-    async def getUserRouters(self, db: AsyncSession, user: dict) -> list:
+    async def routers(self, db: AsyncSession, user: dict) -> list:
         """ 获取用户权限理由 """
         fields = [
             SystemMenu.id,
@@ -63,7 +61,7 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
             await db.close()  # 释放会话
             return result
 
-    async def getUserSetting(self, db: AsyncSession, user: dict) -> dict:
+    async def setting(self, db: AsyncSession, user: dict) -> dict:
         """ 根据用户ID获取用户系统设置 """
         sql = select(Setting).where(user["id"] == Setting.user_id)
         _setting = await db.scalars(sql)
@@ -115,7 +113,7 @@ class CRUBAdmin(CRUDBase[Admin, Account]):
         elif any([queryObj["minDate"], queryObj["maxDate"]]):
             sql = baseSQL.where(self.model.created_at >= queryObj["minDate"],
                                 self.model.created_at <= queryObj["maxDate"])
-        elif deptId: sql = baseSQL.where(DeptRelation.dept_id == dept_id, self.model.id == DeptRelation.user_id)
+        elif deptId: sql = baseSQL.where(DeptRelation.dept_id == deptId, self.model.id == DeptRelation.user_id)
         elif queryObj["status"]: sql = baseSQL.where(self.model.status == str(queryObj["status"]))
         else: sql = baseSQL.offset((pageIndex - 1) * pageSize)
 

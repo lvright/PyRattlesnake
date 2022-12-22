@@ -32,9 +32,9 @@ async def user_info(
         db: AsyncSession = Depends(get_db),
         token: str = Depends(check_jwt_token)
 ):
-    user = await getUser.getUserInfo(db, token)
-    routers = await getUser.getUserRouters(db, user)
-    user.setdefault("backend_setting", await getUser.getUserSetting(db, user))
+    user = await getUser.info(db, token)
+    routers = await getUser.routers(db, user)
+    user.setdefault("backend_setting", await getUser.setting(db, user))
     return resp_200(
         data={
             "codes": routers["codes"],
@@ -94,16 +94,18 @@ async def update_setting(
     summary="获取用户详情"
 )
 async def get_user_detail(
-        user_id: int, token:
-        str = Depends(check_jwt_token),
-        db: AsyncSession = Depends(get_db)
+        user_id: int,
+        token: str = Depends(check_jwt_token),
+        db: AsyncSession = Depends(get_db),
 ):
-    result = {}
-    result = await getUser.get(db, id=user_id)
-    result.setdefault("backend_setting", await getUser.getUserSetting(db, user=result))
-    result.setdefault("dept_id", await getDept.userDept(db, user_id))
-    result.setdefault("roleList", await getRole.userRole(db, user_id))
-    result.setdefault("postList", await getPost.userPost(db, user_id))
+    user_detail = await getUser.get(db, id=user_id)
+    result = {
+        "backend_setting": await getUser.setting(db, user_detail),
+        "dept_id": await getDept.userDept(db, user_id),
+        "roleList": await getRole.userRole(db, user_id),
+        "postList": await getPost.userPost(db, user_id)
+    }
+    result.update(user_detail)
     return resp_200(data=result)
 
 
@@ -122,12 +124,25 @@ async def save_user(
     for key in ["post_ids", "role_ids", "dept_id"]: user_data.pop(key)
     new_user_id = await getUser.create(db, user_data)
     if user.post_ids:
-        create_relation_post = [{"user_id": new_user_id, "post_id": post_id} for post_id in user.post_ids]
+        create_relation_post = [
+            {
+                "user_id": new_user_id,
+                "post_id": post_id
+            } for post_id in user.post_ids
+        ]
         await getPost.createRelation(db, *create_relation_post)
     if user.role_ids:
-        create_relation_role = [{"user_id": new_user_id, "role_id": role_id} for role_id in user.role_ids]
+        create_relation_role = [
+            {
+                "user_id": new_user_id,
+                "role_id": role_id
+            } for role_id in user.role_ids
+        ]
         await getRole.createRelation(db, *create_relation_role)
-    await getDept.createRelation(db, {"user_id": new_user_id, "dept_id": user.dept_id})
+    if user.dept_id:
+        await getDept.createRelation(
+            db, {"user_id": new_user_id, "dept_id": user.dept_id}
+        )
     return resp_200(msg="创建成功")
 
 
@@ -147,13 +162,25 @@ async def update_user(
     user_data.setdefault("password", get_password_hash(user_data["password"]))
     await getUser.update(db, id, obj_in=user_data)
     if user.post_ids:
-        update_post_result = [{"user_id": id, "post_id": post_id} for post_id in user.post_ids]
+        update_post_result = [
+            {
+                "user_id": id,
+                "post_id": post_id
+            } for post_id in user.post_ids
+        ]
         await getPost.createRelation(db, *update_post_data)
     if user.role_ids:
-        update_role_result = [{"user_id": id, "role_id": role_id} for role_id in user.role_ids]
+        update_role_result = [
+            {
+                "user_id": id,
+                "role_id": role_id
+            } for role_id in user.role_ids
+        ]
         await getRole.createRelation(db, *update_role_data)
     if user.dept_id:
-        await getDept.createRelation(db, {"user_id": id, "dept_id": user.dept_id})
+        await getDept.createRelation(
+            db, {"user_id": id, "dept_id": user.dept_id}
+        )
     return resp_200(msg="创建成功")
 
 
