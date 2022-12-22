@@ -52,6 +52,7 @@ class CRUDDictData(CRUDBase[Dict, DictDate]):
         else:
             sql = sql.order_by(orderBy).limit(pageSize)
 
+        total = await self.get_number(db)
         _query = await db.scalars(sql)
         result = jsonable_encoder(_query.all())
         await db.close()  # 释放会话

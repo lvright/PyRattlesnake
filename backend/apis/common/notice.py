@@ -55,16 +55,11 @@ async def recycle_notice(
     summary="系统通知分页列表"
 )
 async def get_notice_page(
-        page: Optional[int] = 1,
-        pageSize: Optional[int] = 10,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        title: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        type: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        page: Optional[int] = 1, pageSize: Optional[int] = 10,
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        title: Optional[str] = "", type: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     return resp_200(data=await getNotification.getQuery(
         db, queryObj={"title": title, "type": type, "maxDate": maxDate, "minDate": minDate}, delete="0",
@@ -77,16 +72,11 @@ async def get_notice_page(
     summary="系统通知分页列表"
 )
 async def recycle_notice(
-        page: Optional[int] = 1,
-        pageSize: Optional[int] = 10,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        title: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        type: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        page: Optional[int] = 1, pageSize: Optional[int] = 10,
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        title: Optional[str] = "", type: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     return resp_200(data=await getNotification.getQuery(
         db, queryObj={"title": title, "type": type, "maxDate": maxDate, "minDate": minDate}, delete="1",

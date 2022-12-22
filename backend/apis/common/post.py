@@ -125,19 +125,15 @@ async def recovery_post(
 )
 async def get_post_page(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        code: Optional[str] = "",
-        status: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    queryData = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
     return resp_200(data=await getPost.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="0"
+        db, pageIndex=page, pageSize=pageSize, queryObj={
+            "code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate
+        }, delete="0"
     ))
 
 
@@ -148,17 +144,13 @@ async def get_post_page(
 )
 async def get_post_page(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        code: Optional[str] = "",
-        status: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    queryData = {"code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate}
     return resp_200(data=await getPost.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, delete="1"
+        db, pageIndex=page, pageSize=pageSize, queryObj={
+            "code": code, "name": name, "status": status, "maxDate": maxDate, "minDate": minDate
+        }, delete="1"
     ))

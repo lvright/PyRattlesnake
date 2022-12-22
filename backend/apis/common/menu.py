@@ -119,16 +119,10 @@ async def recovery_menu(
 )
 async def get_menu_page(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        title: Optional[str] = "",
-        hidden: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", title: Optional[str] = "", hidden: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "title": title, "hidden": hidden,
@@ -146,16 +140,10 @@ async def get_menu_page(
 )
 async def recycle_menu(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        title: Optional[str] = "",
-        hidden: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", title: Optional[str] = "", hidden: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "title": title, "hidden": hidden,

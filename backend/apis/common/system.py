@@ -203,25 +203,15 @@ async def get_oper_log(
 )
 async def get_user_list(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        dept_id: Optional[str] = "",
-        role_id: Optional[str] = "",
-        post_id: Optional[str] = "",
-        username: Optional[str] = "",
-        nickname: Optional[str] = "",
-        phone: Optional[str] = "",
-        email: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        dept_id: Optional[str] = "", role_id: Optional[str] = "", post_id: Optional[str] = "", status: Optional[str] = "",
+        username: Optional[str] = "", nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
+        maxDate: Optional[str] = "",  minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    queryData = {
-        "phone": phone, "email": email, "nickname": nickname, "username": username,
-        "status": status, "maxDate": maxDate, "minDate": minDate
-    }
     return resp_200(data=await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, dept_id=dept_id, delete="0"
+        db, pageIndex=page, pageSize=pageSize, queryObj={
+            "phone": phone, "email": email, "nickname": nickname, "username": username,
+            "status": status, "maxDate": maxDate, "minDate": minDate
+        }, dept_id=dept_id, delete="0"
     ))

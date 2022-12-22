@@ -236,15 +236,10 @@ async def recovery_dict_type(
 )
 async def get_dict_type_page(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        code: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "code": code, "status": status,
@@ -262,15 +257,10 @@ async def get_dict_type_page(
 )
 async def recycle_dict_type(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        code: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", code: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "code": code, "status": status,
@@ -288,16 +278,10 @@ async def recycle_dict_type(
 )
 async def get_dict_data_page(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        code: Optional[str] = "",
-        type_id: Optional[int] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", code: Optional[str] = "", type_id: Optional[int] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "code": code, "status": status,
@@ -315,16 +299,10 @@ async def get_dict_data_page(
 )
 async def recycle_dict_data(
         page: int, pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        code: Optional[str] = "",
-        type_id: Optional[int] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", code: Optional[str] = "", type_id: Optional[int] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "code": code, "status": status,

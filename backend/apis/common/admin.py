@@ -338,26 +338,23 @@ async def recovery_user(
     summary="分页获取系统用户列表"
 )
 async def get_user_page(
-        page: int,
-        pageSize: int,
-        status: Optional[str] = "",
-        username: Optional[str] = "",
-        dept_id: Optional[str] = None,
-        nickname: Optional[str] = "",
-        phone: Optional[str] = "",
-        email: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        page: int, pageSize: int,
+        status: Optional[str] = "", username: Optional[str] = "", dept_id: Optional[str] = None,
+        nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    queryData = {
-        "phone": phone, "email": email, "nickname": nickname, "username": username,
-        "status": status, "maxDate": maxDate, "minDate": minDate
-    }
-    return resp_200(data=await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, deptId=dept_id, delete="0"
-    ))
+    return resp_200(
+        data=await getUser.getQuery(
+            db, pageIndex=page, pageSize=pageSize,
+            queryObj={
+                "phone": phone, "email": email, "nickname": nickname,
+                "username": username, "status": status,
+                "maxDate": maxDate, "minDate": minDate
+            },
+            deptId=dept_id, delete="0"
+        )
+    )
 
 
 @router.get(
@@ -366,24 +363,21 @@ async def get_user_page(
     summary="展示回收站用户"
 )
 async def recycle_user(
-        page: int,
-        pageSize: int,
-        dept_id: Optional[str] = "",
-        username: Optional[str] = "",
-        nickname: Optional[str] = "",
-        phone: Optional[str] = "",
-        email: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        page: int, pageSize: int,
+        status: Optional[str] = "", username: Optional[str] = "", dept_id: Optional[str] = None,
+        nickname: Optional[str] = "", phone: Optional[str] = "", email: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
-    queryData = {
-        "phone": phone, "email": email, "nickname": nickname, "username": username,
-        "status": status, "maxDate": maxDate, "minDate": minDate
-    }
-    return resp_200(data=await getUser.getQuery(
-        db, pageIndex=page, pageSize=pageSize, queryObj=queryData, deptId=dept_id, delete="1"
-    ))
+    return resp_200(
+        data=await getUser.getQuery(
+            db, pageIndex=page, pageSize=pageSize,
+            queryObj={
+                "phone": phone, "email": email, "nickname": nickname,
+                "username": username, "status": status,
+                "maxDate": maxDate, "minDate": minDate
+            },
+            deptId=dept_id, delete="1"
+        )
+    )
 

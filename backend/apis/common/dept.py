@@ -119,18 +119,11 @@ async def recovery_dept(
     summary="获取部门分页列表"
 )
 async def get_dept_page(
-        page: int,
-        pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        leader: Optional[str] = "",
-        phone: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        page: int, pageSize: int,
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", leader: Optional[str] = "", phone: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "leader": leader, "phone": phone,
@@ -147,18 +140,11 @@ async def get_dept_page(
     summary="获取被删除部门分页列表"
 )
 async def recycle_dept(
-        page: int,
-        pageSize: int,
-        orderBy: Optional[str] = "",
-        orderType: Optional[str] = "",
-        name: Optional[str] = "",
-        leader: Optional[str] = "",
-        phone: Optional[str] = "",
-        maxDate: Optional[str] = "",
-        minDate: Optional[str] = "",
-        status: Optional[str] = "",
-        db: AsyncSession = Depends(get_db),
-        token: str = Depends(check_jwt_token)
+        page: int, pageSize: int,
+        orderBy: Optional[str] = "", orderType: Optional[str] = "",
+        name: Optional[str] = "", leader: Optional[str] = "", phone: Optional[str] = "", status: Optional[str] = "",
+        maxDate: Optional[str] = "", minDate: Optional[str] = "",
+        db: AsyncSession = Depends(get_db), token: str = Depends(check_jwt_token)
 ):
     queryData = {
         "name": name, "leader": leader, "phone": phone,
